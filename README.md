@@ -2,6 +2,7 @@
 -----------------------------------------------------
 ![](images/spritebox-logo.png)
 -------------------------------------------------------------------
+
 -----------------------------------------------------
 ![](images/spritebox-banner.png)
 -------------------------------------------------------------------
@@ -22,4 +23,4 @@ Includes:
 
 #### Licensing: [Spritebox.js main-page, examples and documentation](../main.html)
 
- Spritebox.js is open-source under the MIT License. Game-developers who use Spritebox should purchase our LICENSE FOR SPRITEBOX DEVELOPMENT.
+ Spritebox.js currently open-source under the MIT License..
