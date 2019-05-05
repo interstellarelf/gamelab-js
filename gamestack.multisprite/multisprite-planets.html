@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Planets</title>
+
+    <script src="../dist/spritebox/spritebox.js"></script>
+    
+                <!-- spritebox-example.css style -->
+                <link rel="stylesheet" href="../res/styles/spritebox-example.css">
+
+    <style>
+      body {
+        overflow: hidden;
+      }
+    </style>
+
+  </head>
+  <body>
+
+    <header>
+      <img src="../res/images/spritebox-logo.png" alt="" id="logo">
+      <span class="title">Multisprite Planets</span>
+    </header>
+
+    <script>
+
+      //Create the game-window
+      var gameWindow = new Gamestack.GameWindow().Background('black'),
+        planetList = new Gamestack.SpriteArray();
+
+      //Function for finding point on circle by radians
+      function findPointOnCircle(originX, originY, radius, angleRadians) {
+        var newX = radius * Math.cos(angleRadians) + originX
+        var newY = radius * Math.sin(angleRadians) + originY
+        return {"x": newX, "y": newY}
+      }
+
+      //Array of orbit-lines
+      var orbitLines = [];
+
+      //When gamestack loaded
+      Gamestack.ready(function () {
+
+        //compute center-screen
+        var centerPos = gameWindow.center();
+
+        for (var x = 1; x <= 8; x++) {
+
+          //Load planet-graphics into sprite-object
+          var planet = new Gamestack.Sprite(`res/images/solar_system_pack/Planets-Sm/small-planet (${x}).png`);
+
+          //set an orbit-radian amount (revolving planets)
+          planet.orbit_radians = Math.random() * 2.9;
+
+          //set orbit speed
+          planet.orbit_speed = (0.002 * Math.random() * 8);
+
+          //set rotation speed
+          planet.rot_speed = (0.2 * Math.random() * 10);
+
+          //add update for rotation-effect
+          planet.onUpdate(function () {
+
+            //increment rotation
+            this.rotation.x += this.rot_speed;
+
+          });
+
+          //add to the planetList
+          planetList.add(planet);
+
+          var orbitSize = new Gamestack.Vector(x * 75, x * 75);
+
+          var orbitLine = new Gamestack.Elipse(centerPos, orbitSize);
+
+          //attach orbitLine to the planet object
+          planet.orbitLine = orbitLine;
+
+          orbitLines.push(orbitLine);
+
+        }
+
+        //size all when loaded
+        planetList.onLoadSprites(function (sprites) {
+          this.each(function (ix, item) {
+            var sizeInteger = Math.ceil(Math.random() * 50) + 15;
+            item.Size(sizeInteger, sizeInteger);
+          });
+        });
+
+        //draw the orbit-lines
+        gameWindow.onBeforeDraw(function () {
+
+          orbitLines.forEach(function (line) {
+
+            line.draw();
+
+          });
+
+          //Update position for orbit-effect
+          planetList.each(function (ix, planet) {
+
+            var line = planet.orbitLine;
+            planet.orbit_radians += planet.orbit_speed;
+            var point = findPointOnCircle(line.position.x, line.position.y, line.size.x / 2, planet.orbit_radians);
+            planet.Position(new Gamestack.Vector(point.x, point.y));
+
+          });
+
+        });
+
+        planetList.each(function(ix, p){
+
+            gameWindow.add(p);
+
+        });
+
+
+
+        /***************
+                         *
+                         * Call gameWindow.start()
+                         *
+                         * *************/
+
+        gameWindow.start();
+
+      });
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+
+    <title>Terrain-Chopper</title>
+
+    <script src="../dist/spritebox/spritebox.js"></script>
+
+    <script src="../dist/renderstack/renderstack.js"></script>
+
+    <script src="../res/libraries/dat.gui.js"></script>
+
+    <!-- dat.gui.css style -->
+    <link rel="stylesheet" href="../res/libraries/dat.gui.css">
+
+    <!-- spritebox-example.css style -->
+    <link rel="stylesheet" href="../res/styles/spritebox-example.css">
+
+  </head>
+  <body>
+
+    <header>
+      <img src="../res/images/spritebox-logo.png" alt="" id="logo">
+      <span class="title">Renderstack:: Terrain-Chopper</span>
+    </header>
+
+    <script>
+
+      var Options = {
+        base_sprite_01: 'todo',
+        edge_textures: 'todo',
+        scatter_textures: 'todo'
+      };
+
+
+      var Outputs = {
+        top:"",
+        //left side edged
+        left:"",
+        bottom:"",
+        right:"",
+        none:"",
+        top_left:"",
+        top_right:"",
+        top_left_right:""
+      };
+
+
+      //Create the game-window
+      var gameWindow = new Gamestack.GameWindow().Background('#333333');
+
+      var base_sprite_01 = new Gamestack.Sprite('res/images/terrain-maker/terrain-01/background.jpg'),
+      base_sprite_02 = new Gamestack.Sprite('res/images/terrain-maker/terrain-01/background.jpg'),
+      base_sprite_03 = new Gamestack.Sprite('res/images/terrain-maker/terrain-01/background.jpg'),
+      base_sprite_04 = new Gamestack.Sprite('res/images/terrain-maker/terrain-01/background.jpg');
+
+      var edge_sprites = {
+
+        top: new Gamestack.Sprite('res/images/tile-maker/terrain-01/top.png'),
+        side: new Gamestack.Sprite('res/images/tile-maker/terrain-01/side-01.png')
+
+      };
+
+      base_sprite_01.onLoad(function () {
+
+            var squareScript = new EffectModule(gameWindow.getCanvas()).load('res/canvas-effects/terrain.square.js', function () {
+            this.append('top', [edge_sprites.top], base_sprite_01, 5, 2);
+
+            this.append('bottom', [edge_sprites.top], base_sprite_01, 5, 2);
+
+            this.append('left', [edge_sprites.side], base_sprite_01, 3, 1);
+            this.append('right', [edge_sprites.side], base_sprite_01, 3, 1);
+
+
+              });
+      });
+
+      var text_box = new Gamestack.Text('-box.png').Position(5, 100);
+
+      gameWindow.add(text_box);
+
+      base_sprite_01.Size(200, 200);
+      base_sprite_01.Pos(5, 150);
+      base_sprite_01.selected_animation.FrameSize(200, 200);
+
+      base_sprite_02.Size(200, 200);
+      base_sprite_02.Pos(250, 150);
+      base_sprite_02.selected_animation.FrameSize(200, 200);
+      base_sprite_02.selected_animation.FrameBounds(new Gamestack.Vector(1, 0), new Gamestack.Vector(1, 0));
+
+
+      base_sprite_03.Size(200, 200);
+      base_sprite_03.Pos(5, 370);
+      base_sprite_03.selected_animation.FrameSize(200, 200);
+      base_sprite_03.selected_animation.FrameBounds(new Gamestack.Vector(2, 0), new Gamestack.Vector(2, 0));
+
+
+      base_sprite_04.Size(200, 200);
+      base_sprite_04.Pos(250, 370);
+      base_sprite_04.selected_animation.FrameSize(200, 200);
+      base_sprite_04.selected_animation.FrameBounds(new Gamestack.Vector(3, 0), new Gamestack.Vector(3, 0));
+
+
+      gameWindow.add(base_sprite_01);
+        gameWindow.add(base_sprite_02);
+
+        gameWindow.add(base_sprite_03);
+          gameWindow.add(base_sprite_04);
+
+      var effect = new EffectModule(gameWindow.getCanvas()).load('res/canvas-effects/terrain.smooth.js', function () {
+
+        gameWindow.onAfterDraw(function () {
+
+          effect.draw(gameWindow.ctx);
+
+        });
+
+      });
+
+
+
+      gameWindow.start();
+
+      var Resources = {
+        cracks: new Gamestack.Sprite('res/images/tile-maker/structure/brick/overlay/cracks.png')
+      };
+
+      var gui = new dat.GUI();
+      gui.add(Options, 'base_sprite_01');
+      gui.add(Options, 'edge_textures');
+      gui.add(Options, 'scatter_textures');
+
+      gui.domElement.innerHTML += `<button class="render">Render</button>`;
+
+      var EdgeSpritesInGame = [];
+
+      var SquareTiles = {
+
+        fit_array_size_x: function (sprites, size) {
+
+          var unit_x = Math.ceil(size.x / sprites.length),
+            count = 0;
+
+          sprites.forEach(function (s) {
+            s.size.x = unit_x;
+          });
+          return sprites;
+        },
+
+        fit_array_size_y: function (sprites, size) {
+
+          var unit_y = Math.ceil(size.y / sprites.length),
+            count = 0;
+
+          sprites.forEach(function (s) {
+            s.size.y = unit_y;
+          });
+          return sprites;
+        },
+
+        unit_callback: function (unit, size, key) {
+
+          var q = 0;
+
+          while (q < size[key]) {
+            callback(q);
+            q += unit;
+          }
+
+        },
+
+        append_top: function (sprites, base_sprite_01, fit_total_x) {
+
+          var total_x = 0;
+
+          var MyTopSprites = [];
+
+          var size_x = Math.round(base_sprite_01.size.x / fit_total_x);
+
+          alert(size_x);
+
+          var index = -1;
+
+          sprites.next = function(){
+              index += 1;
+              return this[index % this.length];
+          };
+
+          while (total_x < base_sprite_01.size.x) {
+
+                          var top_Sprite = new Gamestack.Sprite().FromData(sprites.next()), s = top_Sprite;
+
+                          var h_to_w = top_Sprite.size.y / top_Sprite.size.x;
+
+                          top_Sprite.size.x = size_x;
+                          top_Sprite.size.y = size_x * h_to_w;
+
+                          top_Sprite.Pos(base_sprite_01.position.x + total_x, base_sprite_01.position.y - (s.size.y / 2));
+
+                          total_x += size_x;
+
+                          EdgeSpritesInGame.push(top_Sprite);
+                          gameWindow.add(EdgeSpritesInGame[EdgeSpritesInGame.length - 1], {layer: 1});
+
+          }
+        }
+
+      };
+    </script>
+
+  </body>
+</html>

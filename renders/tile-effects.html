@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+
+    <title>Tile-Effects</title>
+
+    <script src="../dist/spritebox/spritebox.js"></script>
+
+        <script src="res/libraries/svg.js"></script>
+
+    <style>
+      body {
+        overflow: hidden;
+        overflow-y: scroll;
+      }
+    </style>
+
+  </head>
+  <body>
+
+    <h1 class="title">Tile Effects</h1>
+
+    <div class="container">
+
+      <h2 class="name">Circular Shading</h1>
+
+      <div class="content">
+
+      </div>
+
+    </div>
+
+
+    <div class="container">
+
+      <h2 class="name">Linear Shading</h1>
+
+      <div class="content">
+
+      </div>
+
+    </div>
+
+
+    <div class="container">
+
+      <h2 class="name">Cracks</h1>
+
+      <div class="content">
+
+        <canvas class="content-canvas"></canvas>
+
+      </div>
+
+    </div>
+
+
+        <div class="container">
+
+          <h2 class="name">Chipping</h1>
+
+          <div class="content">
+
+            <canvas class="content-canvas"></canvas>
+
+          </div>
+
+        </div>
+
+
+    <div class="container">
+
+      <h2 class="name">Sharp-Landscape</h1>
+
+      <div class="content">
+
+        <canvas class="content-canvas"></canvas>
+
+      </div>
+
+    </div>
+
+
+    <div class="container">
+
+      <h2 class="name">Rolling Landscape</h1>
+
+      <div class="content">
+
+        <canvas class="content-canvas"></canvas>
+
+      </div>
+
+    </div>
+
+    <script>
+
+
+
+    var Effects = {
+
+              radial_shader: function (domElement, width, height) {
+
+                var canvas = SVG(domElement).size('100%', '100%'),
+                  ellipse = canvas.ellipse(width, height);
+
+                var gradient = canvas.gradient('radial', function (stop) {
+                  stop.at(0, 'rgba(255,255,255,0.5)')
+                  stop.at(1, 'rgba(0,0,0,0.1)')
+                });
+
+                ellipse.fill(gradient);
+
+                console.log(ellipse);
+
+              },
+
+              linear_shader: function (domElement, width, height) {
+
+                var canvas = SVG(domElement).size('100%', '100%'),
+                  rect = canvas.rect(width, height);
+
+                var gradient = canvas.gradient('linear', function (stop) {
+                  stop.at(0, 'rgba(255,255,255,0.5)')
+                  stop.at(1, 'rgba(0,0,0,0.1)')
+                });
+
+                rect.fill(gradient);
+
+                console.log(rect);
+
+              }
+
+    };
+
+
+
+    window.onload = function(){
+
+
+      Effects.radial_shader(document.querySelectorAll('.content')[0], 100, 100);
+
+
+  Effects.linear_shader(document.querySelectorAll('.content')[1], 100, 100);
+
+    };
+
+
+    </script>
+
+  </body>
+</html>

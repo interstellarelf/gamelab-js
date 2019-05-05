@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Lightning</title>
+
+    <script src="../dist/spritebox/spritebox.js"></script>
+    <script src="res/canvas-effects/lightning-points.js"></script>
+
+        <!-- spritebox-example.css style -->
+        <link rel="stylesheet" href="../res/styles/spritebox-example.css">
+
+
+  </head>
+  <body>
+
+        <header>
+          <img src="../res/images/spritebox-logo.png" alt="" id="logo">
+          <span class="title">Effect:: Multi-Color-Lightning</span>
+        </header>
+
+    <script>
+
+      var gameWindowList = [];
+
+
+      function createLightningPoints(min, max, line_color, blur_color){
+
+        return{ min, max, line_color, blur_color };
+
+      };
+
+
+
+      var lightnings = {
+
+        one:createLightningPoints(new Gamestack.Vector(100, 100),
+                                new Gamestack.Vector(200, 100),
+                                'aqua',
+                                'orangered'),
+
+                                two:createLightningPoints(new Gamestack.Vector(200, 250),
+                                                        new Gamestack.Vector(250, 350),
+                                                        'brown',
+                                                        'blue'),
+
+
+                                                        three:createLightningPoints(new Gamestack.Vector(100, 250),
+                                                                                new Gamestack.Vector(100, 400),
+                                                                                'teal',
+                                                                                'green')
+      };
+
+      /***************
+                         * Call gameWindow.start()
+                         * *************/
+
+      Gamestack.ready(function () {
+
+        alert('ready');
+
+        //Create the game-window
+        var gameWindow = new Gamestack.GameWindow().Background('black');
+
+
+        for(var x in lightnings)
+        {
+
+        var l = lightnings[x];
+
+      var instance = new window.LightningPoints(gameWindow).Points(l.min.x, l.min.y, l.max.x, l.max.y).LineColor(l.line_color).BlurColor(l.blur_color);
+
+        l.instance = instance;
+
+        }
+
+
+
+
+                for(var x in lightnings)
+                {
+
+                  var l = lightnings[x];
+
+              alert(jstr(l.instance ));
+
+                }
+
+        gameWindow.start();
+
+      });
+    </script>
+
+  </body>
+</html>

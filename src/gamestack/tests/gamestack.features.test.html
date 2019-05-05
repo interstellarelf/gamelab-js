@@ -1,0 +1,165 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+
+    <title>Test Feature Interface</title>
+
+    <script src="../gamestack.main.js"></script>
+
+      <script src="../objects/Vector.js"></script>
+
+      <script src="../core/GameWindow.js"></script>
+
+        <script src="../objects/camera.js"></script>
+
+          <script src="../objects/Html/main.elements.js"></script>
+
+      <script src="../gamestack.modifiers.js"></script>
+
+    <style>
+
+    body{
+      position:absolute;
+      background:#333333;
+    }
+
+      * {
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        font-family: Monospace;
+      }
+      header {
+        position: absolute;
+        width: 100%;
+        height: 70px;
+        top: 45px;
+      }
+      header img {
+        position: fixed;
+        left: 30%;
+        width: 20%;
+        height: auto;
+        max-width: 150px;
+        padding: 4px;
+      }
+      header span.title {
+        position: fixed;
+        left: 35%;
+        margin-left: 150px;
+        margin-top: 45px;
+        padding: 9px;
+        font-size: 18px;
+        line-height: 40px;
+        top: 1.5px;
+        color: white;
+      }
+      .container {
+        background: black;
+        position:absolute;
+        left:50%;
+        margin-left:-320px;
+        width:640px;
+        height:640px;
+      }
+
+      .testConsole {
+          position:absolute;
+          z-index:9999;
+          width:70%;
+          left:15;
+          background:black;
+          border:1px inset lightblue;
+      }
+    </style>
+
+    <!--#How to run: be sure that gamestack/server.js is running on node. Then go to http://localhost:3137/main.html, then click the name/link of this document -->
+
+  </head>
+  <body style="background-color:black;">
+
+    <div class="container">
+
+      <canvas id="gameWindow">
+
+      </canvas>
+
+    </div>
+
+    <script>
+
+    function WebTest(lib, fxnKey){
+
+      this.__should = '!B';
+
+      var $object = this;
+
+      setTimeout(function(){
+
+        new Gamestack.Text([lib, fxnKey, $object.__should].join(':'))
+        .FontSize(10)
+        .TextAlign('right')
+        .ScalePos(0.1, 0.2).show()
+        .then(function(){
+
+            console.log('test appended');
+
+        });
+
+
+      }, 20);
+
+      this.should = function(v){
+          this.__should = ':should --' + v;
+          return this;
+      };
+
+      this.prove = function(condition){
+        if(!condition())
+        {
+          alert('1 test failed');
+        }
+        else{
+          alert('condition was true');
+        }
+
+        return this;
+      };
+
+    };
+
+      /************************
+     * Memory-Test
+     * *************************/
+
+      let canvas = document.querySelector('#gameWindow');
+
+      let gameWindow = new Gamestack.GameWindow(canvas); //instantiate GameWindow
+
+      new Gamestack.Text('Does the symbol interface work?').show()
+      .then(function(){
+
+        new WebTest('Gamestack', 'Sprite()').should('have functions for x, y, z')
+        .prove(function(){
+
+          return true;
+
+        });
+
+      });
+
+      Gamestack.ready(function () {
+
+
+
+      });
+
+
+      alert('add Text/duration');
+
+    </script>
+
+  </body>
+</html>

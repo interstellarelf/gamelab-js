@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Sprite-Image-Effects</title>
+
+    <script src="../dist/spritebox/spritebox.js"></script>
+
+    <style>
+      body {
+        overflow: hidden;
+        overflow-y: scroll;
+      }
+      #container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        margin-top: 50px;
+      }
+    </style>
+
+  </head>
+  <body>
+
+    <div id="container"></div/>
+
+    <script>
+
+      /***************
+      * Call gameWindow.start()
+      * *************/
+
+      Gamestack.ready(function () {
+
+        //Create the game-window
+        var gameWindow = new Gamestack.GameWindow().Background('black').GridStyle(3, 3, 150, 150, 'res/images/square.png');
+
+        //Declare the line_names. Names will be reflected in file-names (for scripts) and in text-values shown next to the line
+
+        var effect_names = [
+            'edge-shade', 'broken'
+          ],
+
+          //block_objects : object of lines
+          line_objects = {};
+
+        //for each line name
+        for (var digit in line_names) {
+
+          //x is the name
+          var x = line_names[digit];
+
+          //add a line object
+          line_objects[x] = new Gamestack.Line2D().Color('aquamarine').Size(100, 100);
+          //position line object
+          line_objects[x].Pos(25, 25);
+          //create text as property of line object
+          line_objects[x].text = new Gamestack.Text(x).Position(5, 100);
+          //load a script, which defines the line
+          line_objects[x].load('res/objects/lines/line.' + x + '.js', function () {
+            this.Fill();
+          });
+
+          //add line object with grid[digit] as argument
+          gameWindow.add(line_objects[x], gameWindow.grid[digit]);
+          //add text object with grid[digit] as argument
+          gameWindow.add(line_objects[x].text, gameWindow.grid[digit]);
+
+        }
+
+        //start gameWindow
+        gameWindow.start();
+
+      });
+    </script>
+
+  </body>
+</html>
