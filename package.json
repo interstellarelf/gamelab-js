@@ -1,5 +1,5 @@
 {
-  "name": "spritebox-js",
+  "name": "gamestack-js",
   "version": "0.8.0",
   "description": "The javascript library for 2D games",
   "main": "main.js",
