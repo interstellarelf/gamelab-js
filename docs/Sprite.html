@@ -1,60 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+      Sprite
+      - Documentation
+    </title>
 
-  <title>
-      Sprite - Documentation
-  </title>
+    <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+    <script src="scripts/jquery.js"></script>
+    <script src="scripts/custom.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad();
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-spritebox-dark.css">
+    <style>
 
-  <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
-
- <script src="scripts/jquery.js"></script>
-
-   <script src="scripts/custom.js"></script>
-
-  <script>hljs.initHighlightingOnLoad();</script>
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-
-  <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-  <link type="text/css" rel="stylesheet" href="styles/jsdoc-spritebox-dark.css">
-
-</head>
-
-<body>
+      i.g-icon {
+        position: absolute;
+        z-index: 9999;
+        top: 5px;
+        left: 200px;
+        border: none;
+        background: url("images/gamestack-g.png");
+        background-size:96% 100%;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+      }
 
 
+
+      div#main{
+
+      background:#101010;
+
+      }
+
+    </style>
+
+  </head>
+
+  <body>
+
+    
     <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+    
 
+    <input type="checkbox" id="nav-trigger" class="nav-trigger"/>
+    <label for="nav-trigger" class="navicon-button x">
+      <div class="navicon"></div>
+    </label>
 
+    <label for="nav-trigger" class="overlay"></label>
 
-  <input type="checkbox" id="nav-trigger" class="nav-trigger" />
-  <label for="nav-trigger" class="navicon-button x">
-    <div class="navicon"></div>
-  </label>
+    <div class="top-nav-wrapper">
+      <ul>
+        <li >
+          <img class="logo" style="cursor:pointer; position:relative; height:34px; width:auto; " src="images/gamestack-logo.png" onclick="window.location='index.html';"></img>
+            <i class="g-icon"></i>
+        </li>
 
-  <label for="nav-trigger" class="overlay"></label>
+        
+        <li>
+          <form id="search-form" class="navbar-form" role="search">
 
-  <div class="top-nav-wrapper">
-    <ul>
-      <li >
-        <img class="logo"  style="cursor:pointer; position:relative; height:34px; width:auto; " src="images/gamestack-logo.png" onclick="window.location='index.html';" ></img>
-      </li>
-
-       
-           <li>
-            <form id="search-form" class="navbar-form" role="search">
             <i class="search-icon-planet"></i>
-              <input type="text" id="search-input" placeholder="Search" class="search-input">
-            </form>
-             </div>
-           </li>
-           
+            <input type="text" id="search-input" placeholder="Search" class="search-input">
+          </form>
+        </div>
+      </li>
+      
 
     </ul>
   </div>
@@ -69,9 +90,9 @@
 
   <div id="main">
     
-      <h1 class="page-title">
-        Sprite
-      </h1>
+    <h1 class="page-title">
+      Sprite
+    </h1>
     
 
     
@@ -268,7 +289,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6347">line 6347</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6325">line 6325</a>
         </li>
       </ul>
     </dd>
@@ -446,7 +467,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6409">line 6409</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6387">line 6387</a>
         </li>
       </ul>
     </dd>
@@ -592,7 +613,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6571">line 6571</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6549">line 6549</a>
         </li>
       </ul>
     </dd>
@@ -738,7 +759,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6705">line 6705</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6683">line 6683</a>
         </li>
       </ul>
     </dd>
@@ -884,7 +905,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6800">line 6800</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6778">line 6778</a>
         </li>
       </ul>
     </dd>
@@ -977,7 +998,7 @@ Use this function when a sprite, instantiated from json-data, carries initialize
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6818">line 6818</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6796">line 6796</a>
         </li>
       </ul>
     </dd>
@@ -1123,7 +1144,7 @@ Use this function when a sprite, instantiated from json-data, carries initialize
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6830">line 6830</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6808">line 6808</a>
         </li>
       </ul>
     </dd>
@@ -1214,7 +1235,7 @@ Use this function when a sprite, instantiated from json-data, carries initialize
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6852">line 6852</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6830">line 6830</a>
         </li>
       </ul>
     </dd>
@@ -1305,7 +1326,7 @@ Use this function when a sprite, instantiated from json-data, carries initialize
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6881">line 6881</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6859">line 6859</a>
         </li>
       </ul>
     </dd>
@@ -1480,7 +1501,7 @@ Use this function when a sprite, instantiated from json-data, carries initialize
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6896">line 6896</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6874">line 6874</a>
         </li>
       </ul>
     </dd>
@@ -1571,7 +1592,7 @@ Use this function when a sprite, instantiated from json-data, carries initialize
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6943">line 6943</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6921">line 6921</a>
         </li>
       </ul>
     </dd>
@@ -1662,7 +1683,7 @@ Use this function when a sprite, instantiated from json-data, carries initialize
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6986">line 6986</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6964">line 6964</a>
         </li>
       </ul>
     </dd>
@@ -1753,7 +1774,7 @@ Use this function when a sprite, instantiated from json-data, carries initialize
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6996">line 6996</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6974">line 6974</a>
         </li>
       </ul>
     </dd>
@@ -1844,7 +1865,7 @@ Use this function when a sprite, instantiated from json-data, carries initialize
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7007">line 7007</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6985">line 6985</a>
         </li>
       </ul>
     </dd>
@@ -1935,7 +1956,7 @@ Use this function when a sprite, instantiated from json-data, carries initialize
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7020">line 7020</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line6998">line 6998</a>
         </li>
       </ul>
     </dd>
@@ -2110,7 +2131,7 @@ Use this function when a sprite, instantiated from json-data, carries initialize
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7037">line 7037</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7015">line 7015</a>
         </li>
       </ul>
     </dd>
@@ -2201,7 +2222,7 @@ Use this function when a sprite, instantiated from json-data, carries initialize
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7074">line 7074</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7052">line 7052</a>
         </li>
       </ul>
     </dd>
@@ -2292,7 +2313,7 @@ Use this function when a sprite, instantiated from json-data, carries initialize
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7100">line 7100</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7078">line 7078</a>
         </li>
       </ul>
     </dd>
@@ -2464,7 +2485,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7203">line 7203</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7181">line 7181</a>
         </li>
       </ul>
     </dd>
@@ -2556,7 +2577,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7301">line 7301</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7279">line 7279</a>
         </li>
       </ul>
     </dd>
@@ -2702,7 +2723,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7361">line 7361</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7339">line 7339</a>
         </li>
       </ul>
     </dd>
@@ -2848,7 +2869,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7477">line 7477</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7455">line 7455</a>
         </li>
       </ul>
     </dd>
@@ -3139,7 +3160,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7514">line 7514</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7492">line 7492</a>
         </li>
       </ul>
     </dd>
@@ -3430,7 +3451,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7622">line 7622</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7600">line 7600</a>
         </li>
       </ul>
     </dd>
@@ -3576,7 +3597,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7677">line 7677</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7655">line 7655</a>
         </li>
       </ul>
     </dd>
@@ -3722,7 +3743,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7700">line 7700</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7678">line 7678</a>
         </li>
       </ul>
     </dd>
@@ -3897,7 +3918,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7722">line 7722</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7700">line 7700</a>
         </li>
       </ul>
     </dd>
@@ -4072,7 +4093,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7767">line 7767</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7745">line 7745</a>
         </li>
       </ul>
     </dd>
@@ -4218,7 +4239,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7809">line 7809</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7787">line 7787</a>
         </li>
       </ul>
     </dd>
@@ -4364,7 +4385,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7841">line 7841</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7819">line 7819</a>
         </li>
       </ul>
     </dd>
@@ -4597,7 +4618,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7873">line 7873</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7851">line 7851</a>
         </li>
       </ul>
     </dd>
@@ -4830,7 +4851,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7924">line 7924</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7902">line 7902</a>
         </li>
       </ul>
     </dd>
@@ -5035,7 +5056,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7986">line 7986</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line7964">line 7964</a>
         </li>
       </ul>
     </dd>
@@ -5211,7 +5232,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line8030">line 8030</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line8008">line 8008</a>
         </li>
       </ul>
     </dd>
@@ -5302,7 +5323,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line8066">line 8066</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line8044">line 8044</a>
         </li>
       </ul>
     </dd>
@@ -5477,7 +5498,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line8132">line 8132</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line8110">line 8110</a>
         </li>
       </ul>
     </dd>
@@ -5652,7 +5673,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line8167">line 8167</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line8145">line 8145</a>
         </li>
       </ul>
     </dd>
@@ -5798,7 +5819,7 @@ mySprite.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line8199">line 8199</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line8177">line 8177</a>
         </li>
       </ul>
     </dd>
@@ -5945,7 +5966,7 @@ objects will behave clastically and resist passing through one-another</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line8250">line 8250</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line8228">line 8228</a>
         </li>
       </ul>
     </dd>
@@ -6091,7 +6112,7 @@ objects will behave clastically and resist passing through one-another</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line8328">line 8328</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line8306">line 8306</a>
         </li>
       </ul>
     </dd>
@@ -6182,7 +6203,7 @@ objects will behave clastically and resist passing through one-another</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line8363">line 8363</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line8341">line 8341</a>
         </li>
       </ul>
     </dd>
@@ -6273,7 +6294,7 @@ objects will behave clastically and resist passing through one-another</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line9533">line 9533</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line9511">line 9511</a>
         </li>
       </ul>
     </dd>
@@ -6315,57 +6336,95 @@ objects will behave clastically and resist passing through one-another</p>
 
   <br class="clear">
 
-
-    <div class="modal fade" id="searchResults">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Search results</h4>
-          </div>
-          <div class="modal-body"></div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
+  
+  <div class="modal fade" id="searchResults">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Search results</h4>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
     </div>
-
+    <!-- /.modal-dialog -->
+  </div>
+  
 
   <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+    Documentation generated by
+    <a href="https://github.com/jsdoc3/jsdoc">JSDoc
+      3.5.5</a>
   </footer>
 
   <script src="scripts/linenumber.js"></script>
   <script src="scripts/pagelocation.js"></script>
 
+  <script>
 
-    <script type="text/javascript">
-        $(document).ready(function() {
-            SearcherDisplay.init();
+    var g = {rotation:0};
 
-            $('#search-form').submit(function (e) {
+    var DisplayUpdates = {
 
-                  //alert('form submit');
+      Logo:{
+        start: function () {
 
-                 // localStorage.setItem('searchValue', $('#search-input').val());
+        setInterval(function () {
 
-                  SearcherDisplay.startSearch();
+            g.rotation += 1.0;
 
-                  e.preventDefault();
+          var GDom = document.querySelector('i.g-icon');
 
-                  return false;
+            GDom.style.transform = `rotate(${g.rotation}deg)`;
 
-            });
-        });
+        }, 20);
 
-    </script>
+        }
+      }
+
+    };
+
+
+  $(document).ready(function(){
+
+      console.log('Document-Ready::');
+      DisplayUpdates.Logo.start();
+
+  });
+
+  </script>
 
 
 
-    <script type="text/x-docstrap-searchdb">
+  
+  <script type="text/javascript">
+    $(document).ready(function () {
+
+      SearcherDisplay.init();
+
+      $('#search-form').submit(function (e) {
+
+        //alert('form submit'); localStorage.setItem('searchValue', $('#search-input').val());
+
+        SearcherDisplay.startSearch();
+
+        e.preventDefault();
+
+        return false;
+
+      });
+    });
+  </script>
+  
+
+  <script type="text/x-docstrap-searchdb">
     <%= searchableDocuments %>
-    </script>
+  </script>
 
 
 </body>

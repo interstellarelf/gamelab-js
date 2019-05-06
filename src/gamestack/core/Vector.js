@@ -2,16 +2,14 @@
   console.log('Vector class... creating');
 
   /**
-   * Creates a Vector object with x, y, and z properties.
-   * <info-bit>Vector-2D requires only x and y args --new Vector(10, 10)
-   * For Vector-3D, use x,y, and z --new Vector(10, 10, 10)
-   * Pass an existing Vector as the sole argument in order to copy that Vector to a new instance</info-bit>
+   * Creates a Vector object with x, y, and --optional z.
    * @param   {number} x the x coordinate
    * @param   {number} y the y coordinate
    * @param   {number} z the optional z coordinate
    * @param   {number} r the optional r value
    * @returns {Vector} a Vector object
    */
+
 
   class Vector {
     constructor(x, y, z, r) {

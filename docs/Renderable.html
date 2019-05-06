@@ -1,60 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+      Renderable
+      - Documentation
+    </title>
 
-  <title>
-      Renderable - Documentation
-  </title>
+    <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+    <script src="scripts/jquery.js"></script>
+    <script src="scripts/custom.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad();
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-spritebox-dark.css">
+    <style>
 
-  <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
-
- <script src="scripts/jquery.js"></script>
-
-   <script src="scripts/custom.js"></script>
-
-  <script>hljs.initHighlightingOnLoad();</script>
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-
-  <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-  <link type="text/css" rel="stylesheet" href="styles/jsdoc-spritebox-dark.css">
-
-</head>
-
-<body>
+      i.g-icon {
+        position: absolute;
+        z-index: 9999;
+        top: 5px;
+        left: 200px;
+        border: none;
+        background: url("images/gamestack-g.png");
+        background-size:96% 100%;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+      }
 
 
+
+      div#main{
+
+      background:#101010;
+
+      }
+
+    </style>
+
+  </head>
+
+  <body>
+
+    
     <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+    
 
+    <input type="checkbox" id="nav-trigger" class="nav-trigger"/>
+    <label for="nav-trigger" class="navicon-button x">
+      <div class="navicon"></div>
+    </label>
 
+    <label for="nav-trigger" class="overlay"></label>
 
-  <input type="checkbox" id="nav-trigger" class="nav-trigger" />
-  <label for="nav-trigger" class="navicon-button x">
-    <div class="navicon"></div>
-  </label>
+    <div class="top-nav-wrapper">
+      <ul>
+        <li >
+          <img class="logo" style="cursor:pointer; position:relative; height:34px; width:auto; " src="images/gamestack-logo.png" onclick="window.location='index.html';"></img>
+            <i class="g-icon"></i>
+        </li>
 
-  <label for="nav-trigger" class="overlay"></label>
+        
+        <li>
+          <form id="search-form" class="navbar-form" role="search">
 
-  <div class="top-nav-wrapper">
-    <ul>
-      <li >
-        <img class="logo"  style="cursor:pointer; position:relative; height:34px; width:auto; " src="images/gamestack-logo.png" onclick="window.location='index.html';" ></img>
-      </li>
-
-       
-           <li>
-            <form id="search-form" class="navbar-form" role="search">
             <i class="search-icon-planet"></i>
-              <input type="text" id="search-input" placeholder="Search" class="search-input">
-            </form>
-             </div>
-           </li>
-           
+            <input type="text" id="search-input" placeholder="Search" class="search-input">
+          </form>
+        </div>
+      </li>
+      
 
     </ul>
   </div>
@@ -69,9 +90,9 @@
 
   <div id="main">
     
-      <h1 class="page-title">
-        Renderable
-      </h1>
+    <h1 class="page-title">
+      Renderable
+    </h1>
     
 
     
@@ -213,7 +234,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line2722">line 2722</a>
+          <a href="gamestack.js.html">gamestack.js</a>, <a href="gamestack.js.html#line2700">line 2700</a>
         </li>
       </ul>
     </dd>
@@ -269,57 +290,95 @@
 
   <br class="clear">
 
-
-    <div class="modal fade" id="searchResults">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Search results</h4>
-          </div>
-          <div class="modal-body"></div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
+  
+  <div class="modal fade" id="searchResults">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Search results</h4>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
     </div>
-
+    <!-- /.modal-dialog -->
+  </div>
+  
 
   <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+    Documentation generated by
+    <a href="https://github.com/jsdoc3/jsdoc">JSDoc
+      3.5.5</a>
   </footer>
 
   <script src="scripts/linenumber.js"></script>
   <script src="scripts/pagelocation.js"></script>
 
+  <script>
 
-    <script type="text/javascript">
-        $(document).ready(function() {
-            SearcherDisplay.init();
+    var g = {rotation:0};
 
-            $('#search-form').submit(function (e) {
+    var DisplayUpdates = {
 
-                  //alert('form submit');
+      Logo:{
+        start: function () {
 
-                 // localStorage.setItem('searchValue', $('#search-input').val());
+        setInterval(function () {
 
-                  SearcherDisplay.startSearch();
+            g.rotation += 1.0;
 
-                  e.preventDefault();
+          var GDom = document.querySelector('i.g-icon');
 
-                  return false;
+            GDom.style.transform = `rotate(${g.rotation}deg)`;
 
-            });
-        });
+        }, 20);
 
-    </script>
+        }
+      }
+
+    };
+
+
+  $(document).ready(function(){
+
+      console.log('Document-Ready::');
+      DisplayUpdates.Logo.start();
+
+  });
+
+  </script>
 
 
 
-    <script type="text/x-docstrap-searchdb">
+  
+  <script type="text/javascript">
+    $(document).ready(function () {
+
+      SearcherDisplay.init();
+
+      $('#search-form').submit(function (e) {
+
+        //alert('form submit'); localStorage.setItem('searchValue', $('#search-input').val());
+
+        SearcherDisplay.startSearch();
+
+        e.preventDefault();
+
+        return false;
+
+      });
+    });
+  </script>
+  
+
+  <script type="text/x-docstrap-searchdb">
     <%= searchableDocuments %>
-    </script>
+  </script>
 
 
 </body>
