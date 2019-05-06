@@ -6,21 +6,18 @@
 -----------------------------------------------------
 ![](images/gamestack-banner.png)
 -------------------------------------------------------------------
-#### Spritebox.js is a javascript library for 2D games.
+#### Gamestack.js is a javascript library for 2D games.
 -------------------------------------------------------------------
-Includes:
-  - javascript solutions to common 2D game problems
-  - examples and documentation to show how the Spritebox library works
 
-#### Spritebox.js features:
- -  javascript game-objects, 2D-graphics, gamepad-input, events, sounds, and behaviors
- -  Sprites, Animations, Sounds, Particles
- -  gamepad-input
- -  events and function-overrides
+#### Features:
+ -  js game-objects
+ -  animations, sounds and gamepad-input
+ -  events and behaviors
+ -  framerate and memory tracking
+ -  usage examples
 
+#### Demos: [Gamestack.js main-page, examples and documentation](../main.html)
 
-#### Demos: [Spritebox.js main-page, examples and documentation](../main.html)
+#### Licensing: [Gamestack.js main-page, examples and documentation](../main.html)
 
-#### Licensing: [Spritebox.js main-page, examples and documentation](../main.html)
-
- Spritebox.js currently open-source under the MIT License..
+Gamestack.js currently open-source under the MIT License.

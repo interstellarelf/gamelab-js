@@ -197,6 +197,7 @@ h3.reference-title {
     font-weight: 400;
     margin-top: 2em;
     max-width: 200px;
+    border-bottom: 1px solid #696969;
 }
 
 h3.reference-title small {
@@ -398,7 +399,7 @@ nav ul li ul {
 }
 
 nav>ul>li {
-    border-bottom: 1px solid #e2e2e2;
+    border-bottom: 1px solid #4d4e53;
     padding: 10px 0 20px 0;
 }
 
@@ -953,9 +954,16 @@ input.search-input {
     background: transparent;
     box-shadow: 0;
     border: 0;
-    border-bottom: 1px solid #c7c7c7;
     padding: 7px 15px 12px 35px;
     margin: 0 auto;
+}
+
+
+section.readme img{
+
+  height:auto;
+  max-width:350px;
+
 }
 
 
