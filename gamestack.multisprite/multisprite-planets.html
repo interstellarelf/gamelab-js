@@ -5,7 +5,7 @@
     <title>Planets</title>
 
     <script src="../dist/spritebox/spritebox.js"></script>
-    
+
                 <!-- spritebox-example.css style -->
                 <link rel="stylesheet" href="../res/styles/spritebox-example.css">
 
@@ -48,7 +48,7 @@
         for (var x = 1; x <= 8; x++) {
 
           //Load planet-graphics into sprite-object
-          var planet = new Gamestack.Sprite(`res/images/solar_system_pack/Planets-Sm/small-planet (${x}).png`);
+          var planet = new Gamestack.Sprite(`res/images/planets/planet (1).png`);
 
           //set an orbit-radian amount (revolving planets)
           planet.orbit_radians = Math.random() * 2.9;
@@ -104,7 +104,7 @@
             var line = planet.orbitLine;
             planet.orbit_radians += planet.orbit_speed;
             var point = findPointOnCircle(line.position.x, line.position.y, line.size.x / 2, planet.orbit_radians);
-            planet.Position(new Gamestack.Vector(point.x, point.y));
+            planet.Position(new Gamestack.Vector(point.x, point.y).sub(planet.size.div(2)));
 
           });
 

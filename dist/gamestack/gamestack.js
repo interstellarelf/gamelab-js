@@ -1685,32 +1685,6 @@ var UIObjectPrefabs = {
 };
 ;
 
-var SymbolSlicer = function () {
-  function SymbolSlicer() {
-    _classCallCheck(this, SymbolSlicer);
-
-    if (new.target === SymbolSlicer) {
-      throw new TypeError("Cannot construct SymbolSlicer instance directly. Use a subclass instead.");
-    }
-  }
-
-  _createClass(SymbolSlicer, [{
-    key: "on",
-    value: function on(object, symbol, callback) {
-      var syms = Object.getOwnPropertySymbols(object);
-
-      syms.forEach(function (s) {
-
-        if (Symbol.keyFor(symbol) == s) callback();
-      });
-    }
-  }]);
-
-  return SymbolSlicer;
-}();
-
-;
-
 (function () {
   console.log('Camera class... creating');
 
