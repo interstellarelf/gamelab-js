@@ -309,14 +309,23 @@
 
       this.callback = callbackFunction || this.callback || function() {};
 
-      let __inst = this;
+      let $collision = this;
 
-      $Q(this.objects).on('collide', $Q(this.siblings), function(obj1, obj2) {
+      this.objects.forEach(function($obj){
 
-        __inst.callback(obj1, obj2);
+        $obj.onUpdate(function(){
 
+          var $sprite = this;
 
+          $collision.siblings.forEach(function($sib){
+            if($sprite.hasBoxCollision($sib))
+            {
+              $collision.callback($sprite, $sib);
+            }
+          });
+        });
       });
+
 
       return this;
 

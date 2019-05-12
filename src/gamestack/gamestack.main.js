@@ -366,39 +366,6 @@ let Gamestack_Module = function() {
 
     },
 
-    removeOffscreenObjects: function(gw) {
-
-      gw = gw || Gamestack.game_windows[0];
-
-      Gamestack.each(Gamestack.all_objects, function(ix, item) {
-
-        if (item instanceof Gamestack.Sprite && item.onScreen() == false && !item.__keepAlive && !item.keepAlive) {
-
-          gw.remove(item);
-
-        }
-      });
-    },
-
-    removeDeadObjects: function(gw) {
-
-      gw = gw || Gamestack.game_windows[0];
-
-      Gamestack.each(Gamestack.all_objects, function(ix, item) {
-
-        if (item instanceof Gamestack.Sprite && item.isDead()) {
-
-          // console.log('removing:' + item.image.domElement.src);
-          gw.remove(item);
-
-        }
-      });
-    },
-
-    getGameWindow: function() {
-
-      return this._gameWindow;
-    },
 
     assignAll: function(object, args, keys) {
 
@@ -925,6 +892,8 @@ function $Q(selector) {
           if (typeof(item1.onUpdate) == 'function') {
 
             var update = function(sprite) {
+
+              console.log('Box collide::' + jstr([this, item2]));
 
               if (this.hasBoxCollision(item2, padding)) {
 

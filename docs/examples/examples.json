@@ -1,0 +1,20 @@
+[
+  {
+    "path": "./examples/gamestack.multisprite/multisprite-planets.html"
+  },
+  {
+    "path": "./examples/gamestack.display/display-features.html"
+  },
+  {
+    "path": "./examples/gamestack.sprite/game-sprites.html"
+  },
+  {
+    "path": "./examples/gamestack.sprite/side-scroller.html"
+  },
+  {
+    "path": "./examples/gamestack.sprite/space-game.html"
+  },
+  {
+    "path": "./examples/gamestack.effect/multi-color-lightning-effect.html"
+  }
+]

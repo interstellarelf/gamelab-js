@@ -1,4 +1,10 @@
 
+  /**
+   * Creates a new Module
+   * @param   {string} uri the uri that the .js file is located at
+    * @param   {Function} callback=function(){} The callback to call after the module is loaded
+   * @returns {Module} a Gamestack.Module object
+   * */
 
 console.info('Module class :: keep as public');
 

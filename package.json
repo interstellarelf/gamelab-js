@@ -46,7 +46,12 @@
     "doc": "client/docs"
   },
   "dependencies": {
+    "1.0.3": "^1.0.3",
     "express": "latest",
+    "grunt": "^1.0.4",
+    "js-doc": "^0.5.0",
+    "jsdoc": "^3.6.1",
+    "node-fs-extra": "^0.8.2",
     "opn": "latest",
     "stream": "latest"
   },

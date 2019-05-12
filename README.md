@@ -11,12 +11,12 @@
 
 #### Features:
  -  js game-objects
- -  animations, sounds and gamepad-input
- -  events and behaviors
- -  framerate and memory tracking
- -  usage examples
+ -  animations, sounds, gamepad-input
+ -  events + behaviors
+ -  framerate + memory tracking
+ -  html + javascript examples + documentation
 
-#### Demos: [Gamestack.js main-page, examples and documentation](../main.html)
+#### Examples: [Gamestack.js main-page, examples and documentation](../main.html)
 
 #### Licensing: [Gamestack.js main-page, examples and documentation](../main.html)
 

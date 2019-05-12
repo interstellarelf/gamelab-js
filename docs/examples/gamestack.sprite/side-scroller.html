@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+
+    <title>Side Scroller Test</title>
+
+    <script src="../dist/gamestack/gamestack.js"></script>
+
+                <!-- spritebox-example.css style -->
+                <link rel="stylesheet" href="../res/styles/spritebox-example.css">
+
+  </head>
+  <body>
+
+
+        <header>
+          <img src="../res/images/spritebox-logo.png" alt="" id="logo">
+          <span class="title">Side-Scroller</span>
+        </header>
+
+
+    <script>
+
+      var SCREEN_SCALE = 0.5,
+
+        sizeUnit = Math.round(64 * SCREEN_SCALE);
+
+      var Game = {},
+        COLLISION_BOXES = [];
+
+      Game.COLLISION_BOXES = COLLISION_BOXES;
+
+      var player,
+        Animation = Gamestack.Animation,
+        Vector = Gamestack.Vector,
+        VectorFrameBounds = Gamestack.VectorFrameBounds;
+
+
+    var SPRINGS = [];
+
+
+
+      //create some animations and sounds within an object:
+
+      var GameAssets = {
+
+        player_run: new Animation().Src("res/images/characters/custom/spaceman1.png").FrameSize(new Vector(130, 130, 0)).FrameBounds(new Vector(0, 0), new Vector(23, 0)),
+
+        player_idle: new Animation().Src("res/images/characters/custom/spaceman1.png").FrameSize(new Vector(130, 130, 0)).FrameBounds(new Vector(0, 0), new Vector(0, 0)),
+
+
+        player_jump: new Animation({
+          src: "res/images/characters/custom/spaceman1.png",
+
+          duration: 400,
+          frameSize: new Vector(130, 130, 0),
+          frameBounds: new VectorFrameBounds(new Vector(26, 3), new Vector(30, 3))
+
+          /*Use the extras variable to pass any Sound() to be played when the animation runs. The sound will start playing on first frame*/
+
+        }),
+
+        player_fall: new Animation({
+          src: "res/images/characters/custom/spaceman1.png",
+
+          frameSize: new Vector(130, 130, 0),
+          frameBounds: new VectorFrameBounds(new Vector(36, 3), new Vector(36, 3))
+        }),
+
+        spring:new Animation().Src('res/images/interactives/spring-sheet.png').FrameSize(new Vector(200, 200)).FrameBounds(new Vector(0, 0), new Vector(4, 0)),
+
+        Sound: {
+
+          collect_item: new Sound('res/sounds/collect_item.mp3').Volume(0.3)
+
+        }
+
+      };
+
+
+
+      //set the frame speed for custom player_run.animate()
+
+      GameAssets.player_run.fspeed = 1;
+
+      //custom animate function:
+
+      GameAssets.player_run.animate = function () {
+
+        if (Math.abs(player.speed.x) > 0.3) {
+
+          console.log('UPDATING');
+
+          this.cix += this.fspeed;
+
+          if (this.cix > 23) {
+
+            //cause looping back and forth behavior
+
+            this.fspeed = -1;
+
+            this.cix = 23;
+
+          } else if (this.cix < 9) {
+
+            //cause looping back and forth behavior
+
+            this.fspeed = 1;
+
+            this.cix = 9;
+
+          }
+
+        } else {
+
+          this.fspeed = 1;
+          this.cix = 0;
+
+        }
+
+        this.update();
+
+      };
+
+      //Add the player Sprite()
+
+      player = new Sprite();
+
+      //Set the size{} of player
+
+      player.Size(new Vector(55, 55));
+
+      //set player.type for later reference (see $Q() queries to reference multiple collections of Sprite() and rig events, etc.. )
+
+      player.type = "player";
+
+      player.position.x = 300;
+
+      //set player animation
+
+      player.Animation(GameAssets.player_run);
+
+      player.onUpdate(function () {
+
+        //Fall steadily
+        this.accelY(0.2, 7.5);
+
+        //if not on the ground
+        if (!this.GROUNDED) {
+          //flip
+
+            this.fall();
+
+        }
+
+      });
+
+      //Create the game-window
+      var gameWindow = new Gamestack.GameWindow().Background('black');
+
+      var blockModel = new Gamestack.Sprite('res/images/blocks/square_brick.png');
+
+      blockModel.Size(sizeUnit, sizeUnit);
+
+
+
+      var powerBlockModel = new Gamestack.Sprite('res/images/blocks/blank-power-block.png');
+
+      powerBlockModel.Size(sizeUnit, sizeUnit);
+
+
+    var springModel = new Gamestack.Sprite().Animation(GameAssets.spring);
+
+    springModel.Size(64, 64);
+
+
+      var Level1_Maps = {
+
+        terrain: new Gamestack.Frame().Size(512, 512).Image('res/maps/side-scroller/level-01/terrain.png')
+
+      };
+
+      var least_dist = 30000000;
+
+      var ColorExtractor = function () {
+
+        return {
+          each(map, callback) {
+            map.forEach(function (pixelArea) {
+              callback(pixelArea);
+            });
+          },
+
+          by_diff: function (key, map, tolerance) {
+
+            var my_color = Gamestack.Colors[key],
+
+              diff_total = 0;
+
+            var pixelAreas = [];
+
+            //    alert('Color::' + key);      alert('COLOR::' + jstr(my_color));
+
+            this.each(map, function (pixelArea) {
+              var color = new Gamestack.RGBAColor().fromData(pixelArea.pixel.data);
+
+              var dist = color.distance(my_color);
+
+              if (dist < least_dist) {
+                least_dist = dist;
+                console.log('NEW DIST::' + least_dist);
+              }
+
+              if (dist <= tolerance)
+                pixelAreas.push(pixelArea);
+              }
+            );
+
+            return {
+
+              data: pixelAreas,
+
+              call: function (fxn) {
+
+                fxn = fxn.bind(this);
+
+                fxn(this.data);
+
+              }
+
+            };
+          }
+
+        }
+
+      };
+
+      Level1_Maps.terrain.onLoad(function () {
+
+        this.createColorMap(1);
+
+        var blackPixels = new ColorExtractor().by_diff('map_black', this.colorMap, 10).call(function (blacks) {
+
+          blacks.forEach(function (pixelArea) {
+
+            console.log('black-pixel::' + jstr(pixelArea));
+
+            var block = new Gamestack.Sprite(blockModel);
+
+            block.Size(sizeUnit, sizeUnit);
+
+            block.Position(pixelArea.position.x * sizeUnit, pixelArea.position.y * sizeUnit);
+
+            Game.COLLISION_BOXES.push(block);
+
+            gameWindow.add(block);
+
+          });
+
+        });
+
+        var orangePixels = new ColorExtractor().by_diff('map_orange', this.colorMap, 5).call(function (oranges) {
+          oranges.forEach(function (pixelArea) {
+            console.log('orange-pixel::' + jstr(pixelArea));
+            var block = new Gamestack.Sprite(blockModel);
+            block.Size(sizeUnit, sizeUnit);
+            block.Position(pixelArea.position.x * sizeUnit, pixelArea.position.y * sizeUnit);
+
+            Game.COLLISION_BOXES.push(block);
+
+            gameWindow.add(block);
+          });
+
+        });
+
+        var greenPixels = new ColorExtractor().by_diff('map_green', this.colorMap, 5).call(function (pixelObjects) {
+          pixelObjects.forEach(function (pixelArea) {
+            console.log('green-pixel::' + jstr(pixelArea));
+            var block = new Gamestack.Sprite(powerBlockModel);
+            block.Size(sizeUnit, sizeUnit);
+
+            Game.COLLISION_BOXES.push(block);
+
+            block.Position(pixelArea.position.x * sizeUnit, pixelArea.position.y * sizeUnit);
+            gameWindow.add(block);
+          });
+
+        });
+
+
+
+
+
+        var bluePixels = new ColorExtractor().by_diff('map_blue', this.colorMap, 5).call(function (pixelObjects) {
+          pixelObjects.forEach(function (pixelArea) {
+            console.log('blue-pixel::' + jstr(pixelArea));
+            var block = new Gamestack.Sprite(powerBlockModel);
+            block.Size(sizeUnit, sizeUnit);
+
+            Game.COLLISION_BOXES.push(block);
+
+            block.Position(pixelArea.position.x * sizeUnit, pixelArea.position.y * sizeUnit);
+            gameWindow.add(block);
+          });
+
+        });
+
+
+
+                var redPixels = new ColorExtractor().by_diff('map_red', this.colorMap, 5).call(function (pixelObjects) {
+                  pixelObjects.forEach(function (pixelArea) {
+                    console.log('red-pixel::' + jstr(pixelArea));
+                    var sprite = new Gamestack.Sprite(springModel);
+
+                    sprite.type = 'spring';
+                    sprite.Size(sizeUnit, sizeUnit);
+
+                    Game.COLLISION_BOXES.push(sprite);
+
+                    SPRINGS.push(sprite);
+
+                    sprite.Position(pixelArea.position.x * sizeUnit, pixelArea.position.y * sizeUnit);
+                    gameWindow.add(sprite);
+                  });
+
+
+                              var springScript = new Gamestack.Script(player, SPRINGS).load('res/scripts/side-scroller/spring.js', function () {
+
+                                console.log('This is a callback');
+
+                              });
+
+                });
+
+
+      });
+
+      //add a player-update for the camera to follow player:
+
+      player.onUpdate(function () {
+
+        //control the __gameStack Camera, with player-sprite as focus
+
+        var target = this.position.sub(new Gamestack.Vector(gameWindow.canvas.width / 2, gameWindow.canvas.height * 0.65));
+
+        camera = gameWindow.camera;
+
+        var diff = camera.position.sub(target);
+
+        //camera follows player
+
+        var speedX = Math.ceil(diff.x * -0.1),
+          speedY = Math.ceil(diff.y * -0.1);
+
+
+        camera.position.x += speedX;
+
+        if((speedY < 0 && this.GROUNDED) || (speedY > 0 &&  !this.JUMPING))
+        camera.position.y += speedY;
+
+      });
+
+      gameWindow.camera.position.y = 460 * sizeUnit;
+
+      player.position.y = 480 * sizeUnit;
+
+
+
+      player.runSwitch = {
+
+        RIGHT:false,
+        LEFT:false
+
+      };
+
+
+      gameWindow.add(player);
+
+      var collider = new Gamestack.Script(player, Game.COLLISION_BOXES).load('res/scripts/side-scroller/collisions.js', function () {
+
+        console.log('This is my callback');
+
+      });
+
+      var run = new Gamestack.Script(player, []).load('res/scripts/side-scroller/run.js', function () {
+
+        console.log('This is my callback');
+
+      });
+
+
+
+      var jump = new Gamestack.Script(player, []).load('res/scripts/side-scroller/jump.js', function () {
+
+        console.log('This is a callback');
+
+      });
+
+      var flip = new Gamestack.Script(player, []).load('res/scripts/side-scroller/flip.js', function () {
+
+        console.log('This is a callback');
+
+      });
+
+      var fall = new Gamestack.Script(player, []).load('res/scripts/side-scroller/fall.js', function () {
+
+        console.log('This is a callback');
+
+      });
+
+      var buttons= new Gamestack.Script(player, []).load('res/scripts/side-scroller/buttons.js', function () {
+
+        console.log('This is a callback');
+
+      });
+
+
+
+      var controller = new Gamestack.Script(player, []).load('res/scripts/side-scroller/controller.js', function () {
+
+        console.log('This is a callback');
+
+      });
+
+      new Gamestack.GamepadEvent().Gamepads(1).Keys('button_0').Call(function (pressed) {
+
+        player.Controller.press('button_0', pressed);
+
+        if (player.Controller.isPressed('button_0')) {
+          if (player.jump)
+            player.jump(pressed);
+            player.Controller.press('button_0', false);
+          }
+      });
+
+
+      /***************
+                                     * Call gameWindow.start()
+                                     * *************/
+
+      setTimeout(function () {
+
+        gameWindow.start();
+
+      }, 500);
+    </script>
+
+  </body>
+</html>

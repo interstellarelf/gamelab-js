@@ -1,19 +1,34 @@
 
   /**
-   * Creates a GameWindow object.
-   *
+   * Creates a new GameWindow
    * <iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/GameWindow.html'> </iframe>
    * @param   {Object} canvas the canvas element for this gameWindow. --GameWindow's if not supplied, the constructor will create a full-screen canvas, if a canvas.
-    * @param   {Object} drawables the drawable objects to be drawn. --Drawables can also be added after constructor call.
+    * @param   {Array} drawables=[] a list of drawable objects to be drawn. --Drawables can also be added after constructor call.
    * @returns {GameWindow} a Gamestack.GameWindow object
    * */
 
   class GameWindow {
     constructor(canvas = false, drawables = []) {
 
+
+            /**
+             * list of all drawables in the window.
+             *
+             * @property this.drawables
+             * @memberof GameWindow
+             **********/
+
       this.drawables = drawables;
 
       this.bool_events = Gamestack.bool_events || [];
+
+
+            /**
+             * the html-canvas of the GameWindow.
+             *
+             * @property this.canvas
+             * @memberof GameWindow
+             **********/
 
       this.canvas = canvas || false;
 
@@ -31,6 +46,14 @@
       document.body.style.width = "100%";
 
       document.body.style.height = "100%";
+
+      /**
+       * the camera of the GameWindow. --An instance of Gamestack.Camera
+       *
+       * @property this.camera
+       * @memberof GameWindow
+       **********/
+
 
       this.camera = new Gamestack.Camera();
 
@@ -116,6 +139,29 @@
 
       this.__trackStat = true;
       return this;
+    }
+
+
+    GridUnit(x, y, w, h, srcImage_Path){
+
+      var size = new Gamestack.Vector(w, h),
+      position = new Gamestack.Vector(x, y);
+
+      var sprite;
+
+      if(srcImage_Path)
+      {
+        sprite = new Gamestack.Sprite(srcImage_Path);
+        sprite.Size(size);
+        sprite.Pos(position);
+
+        Gamestack.game_windows[0].add(sprite);
+      }
+
+      return {
+        size:size,
+        position:position
+      };
     }
 
 
@@ -446,6 +492,22 @@
       if (ix >= 0) {
         this.drawables.splice(ix, 1);
       }
+    }
+
+
+    removeDeadObjects() {
+
+      var $window = this;
+
+      this.drawables.forEach(function(sprite){
+
+        if(sprite.life <= 0)
+        {
+          $window.remove(sprite);
+        }
+
+      });
+
     }
 
     /**

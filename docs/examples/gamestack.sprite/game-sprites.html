@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Game-Sprites-01</title>
+            <script src="../dist/gamestack/gamestack.js"></script>
+            <!-- spritebox-example.css style -->
+            <link rel="stylesheet" href="../res/styles/spritebox-example.css">
+  </head>
+  <body>
+            <header>
+              <img src="../res/images/gamestack-logo.png" alt="" id="logo">
+              <span class="title">Game-Sprites-01</span>
+            </header>
+    <script>
+
+      /***************
+      * Call gameWindow.start()
+      * *************/
+
+      Gamestack.ready(function () {
+
+        //Create the game-window
+        var gameWindow = new Gamestack.GameWindow().Background('black').GridStyle(4, 4, 150, 150, 'res/images/square.png');
+
+        //Declare the sprite_names. Names will be reflected in file-names (for scripts) and in text-values shown next to the line
+
+        var sprite_names = [
+            'samus-run', 'samus-run-gun', 'samus-jump', 'samus-morphball', 'belmont-run', 'belmont-whip'
+          ],
+
+          //sprite_objects : object of lines
+          sprite_objects = {};
+
+        //for each line name
+        for (var digit in sprite_names) {
+
+          //x is the name
+          var x = sprite_names[digit];
+
+          //add a line object
+          sprite_objects[x] = new Gamestack.Line2D().Color('aquamarine').Size(100, 100);
+          //position line object
+          sprite_objects[x].Pos(25, 25);
+          //create text as property of line object
+          sprite_objects[x].text = new Gamestack.Text(x).Position(5, 100);
+          //load a script, which defines the line
+          sprite_objects[x].load('res/objects/lines/line.' + x + '.js', function () {
+            this.Fill();
+          });
+
+          //add line object with grid[digit] as argument
+          gameWindow.add(sprite_objects[x], gameWindow.grid[digit]);
+          //add text object with grid[digit] as argument
+          gameWindow.add(sprite_objects[x].text, gameWindow.grid[digit]);
+
+        }
+
+        //start gameWindow
+        gameWindow.start();
+
+      });
+    </script>
+
+  </body>
+</html>

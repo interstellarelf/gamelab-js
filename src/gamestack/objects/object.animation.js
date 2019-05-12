@@ -7,9 +7,7 @@
      *
      * <iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/Animation.html'> </iframe>
      *
-     * @param   {string=} [src] the src/file-path for this Animation
-     * @param   {GameImage= | HTMLImageElement=} [gameImage] the existing GameImage to be applied
-     * @param   {Object= | Animation=} [anime] the existing Animation-data to be returned as fully unique instance
+     * @param   {string=} [src] the src-image-path for this Animation
      * @returns {Animation} an Animation object
      *
      * @example
@@ -67,9 +65,22 @@
                 this.image = new Gamestack.GameImage(args.src);
             }
 
+
+                /**
+                 * @property {Vector} frameSize the frameSize of the Animation
+                 * @memberof Animation
+                 **********/
+
             this.frameSize = this.frameSize || new Gamestack.Vector(args.frameSize || new Gamestack.Vector(0, 0));
 
+
+
             if (args.frameBounds && args.frameBounds.min && args.frameBounds.max) {
+
+              /**
+               * @property {VectorFrameBounds} frameBounds the frameBounds of the Animation, has three Vectors
+               * @memberof Animation
+               **********/
 
                 this.frameBounds = new Gamestack.VectorFrameBounds(args.frameBounds.min, args.frameBounds.max, args.frameBounds.termPoint);
 
@@ -87,6 +98,11 @@
             this.flipX = this.getArg(args, 'flipX', false);
 
             this.cix = 0;
+
+            /**
+             * @property {Frame} selected_frame the selected_frame of the Animation, a Gamestack.Frame
+             * @memberof Animation
+             **********/
 
             this.selected_frame = this.frames[0] || false;
 
@@ -640,7 +656,7 @@
                 });
 
 
-            if(this.cix == 0)    
+            if(this.cix == 0)
             this.tween.start();
 
             if(this.cix >= this.frames.length && !this._hang)

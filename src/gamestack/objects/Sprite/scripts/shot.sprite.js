@@ -119,7 +119,7 @@ class Shot
         return this;
     }
 
-  
+
     onCollide(collideables, callback)
     {
 

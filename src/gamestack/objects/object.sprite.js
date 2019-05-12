@@ -1,21 +1,17 @@
 /**
- * Creates an instance of Sprite.
+ * Creates a new Sprite.
  *
  * <info-bit>Gamestack.Sprite is a container for 2D Animations.
- * -apply Sprite class to create behaviors for an entire 2d-game-entity.
+ * -apply Sprite class to create a 2D game-object.
  *
  * Sprites hold reference to their-own Animations and Sounds.</info-bit>
-
  * <iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/Sprite.html'> </iframe>
 
- * @param   {string=} [src] the srcPath for the image of the Sprite
- * @param   {scale=} [anime] the scale to be applied to width + height of the image
+ * @param   {string} src the srcPath for the image of the Sprite
+ * @param   {number} scale=1.0 the scale to be applied to size of each animation-frame
  *
  * @returns {Sprite} a Gamestack.Sprite object
  *
- * @example
- *
- * //Create Sprite using Sprite constructor, with one src argument
  *
  *
  */
@@ -50,6 +46,9 @@ class Sprite extends Scriptable {
     this.animations = [];
 
     //create size property
+
+
+
     this.size = new Gamestack.Vector(0, 0);
 
     if (typeof(scale) == 'number') //image plus 'scale' argument
@@ -136,9 +135,25 @@ class Sprite extends Scriptable {
 
     this.description = args.description || "__spriteDesc";
 
+    /**
+     * @property {String} id the unique identifier of the Sprite --called automatically on constructor.
+     * @memberof Sprite
+     **********/
+
     this.id = this.create_id();
 
+
+    /**
+     * @property {Array} animations the array of animations attached to the Sprite
+     * @memberof Sprite
+     **********/
+
     this.animations = Gamestack.getArg(args, 'animations', []);
+
+    /**
+     * @property {Array} scripts the array of scripts attached to the Sprite
+     * @memberof Sprite
+     **********/
 
     this.scripts = Gamestack.getArg(args, 'scripts', []);
 
@@ -162,15 +177,47 @@ class Sprite extends Scriptable {
       this.scrollFactor = 0;
     }
 
+
+    /**
+     * @property {Vector} speed the speed of the Sprite
+     * @memberof Sprite
+     **********/
+
     this.speed = new Gamestack.Vector(Gamestack.getArg(args, 'speed', new Gamestack.Vector(0, 0)));
 
+    /**
+     * @property {Vector} size the vector-size of the Sprite
+     * @memberof Sprite
+     **********/
+
     this.size = new Gamestack.Vector(Gamestack.getArg(args, 'size', new Gamestack.Vector(0, 0)));
+
+
+
+    /**
+     * @property {Vector} position the position of the Sprite
+     * @memberof Sprite
+     **********/
 
     this.position = new Gamestack.Vector(Gamestack.getArg(args, 'position', new Gamestack.Vector(0, 0, 0)));
 
     this.collision_bounds = Gamestack.getArg(args, 'collision_bounds', new Gamestack.VectorBounds(new Gamestack.Vector(0, 0, 0), new Gamestack.Vector(0, 0, 0)));
 
+
+    /**
+     *
+     *
+     * @property {Vector} rotation the rotation of the Sprite
+     * @memberof Sprite
+     **********/
+
     this.rotation = new Gamestack.Vector(Gamestack.getArg(args, 'rotation', new Gamestack.Vector(0, 0, 0)));
+
+
+    /**
+     * @property {number} scale the scale of the Sprite, controls draw-size
+     * @memberof Sprite
+     **********/
 
     this.scale = args.scale || 1.0;
 
@@ -723,12 +770,33 @@ class Sprite extends Scriptable {
       },
       scrollFactor = this.noScroll ? 0 : this.scrollFactor;
 
-    var camPos = new Gamestack.Vector(camera.position).mult(scrollFactor);
+      var sprite = this,
 
-    var p = new Gamestack.Vector(this.position.x - camPos.x, this.position.y - camPos.y, this.position.z - camPos.z);
+      p = sprite.position,
 
-    return p.x + this.size.x > -1000 - w && p.x < w + 1000 &&
-      p.y + this.size.y > 0 - 1000 - h && p.y < h + 1000;
+      camera_pos = camera.position || {
+        x: 0,
+        y: 0,
+        z: 0
+      };
+
+      if (!sprite.hasOwnProperty('scrollFactor')) {
+        sprite.scrollFactor = 1.0;
+      }
+
+      var x = p.x,
+        y = p.y,
+        scrollFactor = sprite.scrollFactor >= -1.0 && sprite.scrollFactor <= 1.0 ? sprite.scrollFactor : 1.0;
+
+      if (sprite.noScroll) {
+        scrollFactor = 0;
+      }
+
+      x -= camera_pos.x * scrollFactor || 0;
+      y -= camera_pos.y * scrollFactor || 0;
+
+    return x + sprite.size.x > -1000 - w && x < w + 1000 &&
+      y + sprite.size.y > 0 - 1000 - h && y < h + 1000;
 
   }
 
@@ -1225,7 +1293,7 @@ class Sprite extends Scriptable {
           bw = size.x,
           bh = size.y;
 
-        var shot = new Gamestack.Sprite({
+        var shot = new Gamestack.Sprite().FromData({
 
           active: true,
 
@@ -1241,12 +1309,14 @@ class Sprite extends Scriptable {
 
           flipX: false,
 
-          life: options.life
+          life: options.life,
+
+          noScroll:true
 
         });
 
 
-        shot.setAnimation(animation);
+        shot.Animation(animation);
 
         rot_offset = new Gamestack.Vector(rot_offset, 0, 0);
 
@@ -1309,7 +1379,7 @@ class Sprite extends Scriptable {
 
     if (Gamestack.isAtPlay) {
 
-      var subsprite = gw.add(new Gamestack.Sprite({
+      var subsprite = gw.add(new Gamestack.Sprite().FromData({
 
         active: true,
 
@@ -1331,7 +1401,8 @@ class Sprite extends Scriptable {
 
       }));
 
-      subsprite.setAnimation(animation);
+
+      subsprite.Animation(animation);
 
       return subsprite;
 
@@ -1355,7 +1426,7 @@ class Sprite extends Scriptable {
     if (Gamestack.isAtPlay) {
 
       if (animation) {
-        this.setAnimation(animation)
+        this.Animation(animation)
       }
 
       this.selected_animation.run();

@@ -366,39 +366,6 @@ let Gamestack_Module = function() {
 
     },
 
-    removeOffscreenObjects: function(gw) {
-
-      gw = gw || Gamestack.game_windows[0];
-
-      Gamestack.each(Gamestack.all_objects, function(ix, item) {
-
-        if (item instanceof Gamestack.Sprite && item.onScreen() == false && !item.__keepAlive && !item.keepAlive) {
-
-          gw.remove(item);
-
-        }
-      });
-    },
-
-    removeDeadObjects: function(gw) {
-
-      gw = gw || Gamestack.game_windows[0];
-
-      Gamestack.each(Gamestack.all_objects, function(ix, item) {
-
-        if (item instanceof Gamestack.Sprite && item.isDead()) {
-
-          // console.log('removing:' + item.image.domElement.src);
-          gw.remove(item);
-
-        }
-      });
-    },
-
-    getGameWindow: function() {
-
-      return this._gameWindow;
-    },
 
     assignAll: function(object, args, keys) {
 
@@ -925,6 +892,8 @@ function $Q(selector) {
           if (typeof(item1.onUpdate) == 'function') {
 
             var update = function(sprite) {
+
+              console.log('Box collide::' + jstr([this, item2]));
 
               if (this.hasBoxCollision(item2, padding)) {
 
@@ -1820,7 +1789,9 @@ let ObjectFeatureMap = { //className / must have named function properties when 
 
   Line2d:['@spatial', '@pointarrayflippable', '@selftransposable',  '@data'],
 
-  Text:['@spatial', '@text', '@colored']
+  Text:['@spatial', '@text', '@colored'],
+
+  Shot:['@spatial', '@data']
 
 };
 
@@ -1912,47 +1883,46 @@ let UIObjectPrefabs = {
   Sprite: ['Side-Scroll-Player', 'Collider', 'Spaceship', 'Robot'],
 
 };
-;
+;(function() {
+  console.log('Camera class... creating');
 
-(function(){
-    console.log('Camera class... creating');
+  /**
+   * Creates a new Camera
 
-    /**
-     * Creates an instance of 2d-camera to be applied as the viewing-point for a GameWindow.
-
-     * @param {number} x an optional position-x
-     * @param {number} y an optional position-y
-     * @param {number} z an optional position-z
-     * @returns {Camera}
-     *
-     */
+   * @param {number} x=0 position-x
+   * @param {number} y=0 position-y
+   * @param {number} z=0 position-z
+   * @returns {Camera}
+   */
 
 
-    class Camera
-{
-    constructor(x, y, z)
-    {
-        if(isNaN(x))
-        {
-          x = 0;
-        }
+  class Camera {
+    constructor(x, y, z) {
+      if (isNaN(x)) {
+        x = 0;
+      }
 
-        if(isNaN(y))
-        {
-            y = 0;
-        }
+      if (isNaN(y)) {
+        y = 0;
+      }
 
-        if(isNaN(z))
-        {
-            z = 0;
-        }
+      if (isNaN(z)) {
+        z = 0;
+      }
+
+         /**
+          *
+          * @property {Vector} position the Vector position of Camera, having numeric x, y, and z values
+          * @memberof Camera
+          **********/
+
 
       this.position = new Gamestack.Vector(x, y, z);
     }
 
-}
+  }
 
-Gamestack.Camera = Camera;
+  Gamestack.Camera = Camera;
 
 })();
 ;
@@ -2024,20 +1994,35 @@ Gamestack.Game = Game;
 
 ;
   /**
-   * Creates a GameWindow object.
-   *
+   * Creates a new GameWindow
    * <iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/GameWindow.html'> </iframe>
    * @param   {Object} canvas the canvas element for this gameWindow. --GameWindow's if not supplied, the constructor will create a full-screen canvas, if a canvas.
-    * @param   {Object} drawables the drawable objects to be drawn. --Drawables can also be added after constructor call.
+    * @param   {Array} drawables=[] a list of drawable objects to be drawn. --Drawables can also be added after constructor call.
    * @returns {GameWindow} a Gamestack.GameWindow object
    * */
 
   class GameWindow {
     constructor(canvas = false, drawables = []) {
 
+
+            /**
+             * list of all drawables in the window.
+             *
+             * @property this.drawables
+             * @memberof GameWindow
+             **********/
+
       this.drawables = drawables;
 
       this.bool_events = Gamestack.bool_events || [];
+
+
+            /**
+             * the html-canvas of the GameWindow.
+             *
+             * @property this.canvas
+             * @memberof GameWindow
+             **********/
 
       this.canvas = canvas || false;
 
@@ -2055,6 +2040,14 @@ Gamestack.Game = Game;
       document.body.style.width = "100%";
 
       document.body.style.height = "100%";
+
+      /**
+       * the camera of the GameWindow. --An instance of Gamestack.Camera
+       *
+       * @property this.camera
+       * @memberof GameWindow
+       **********/
+
 
       this.camera = new Gamestack.Camera();
 
@@ -2140,6 +2133,29 @@ Gamestack.Game = Game;
 
       this.__trackStat = true;
       return this;
+    }
+
+
+    GridUnit(x, y, w, h, srcImage_Path){
+
+      var size = new Gamestack.Vector(w, h),
+      position = new Gamestack.Vector(x, y);
+
+      var sprite;
+
+      if(srcImage_Path)
+      {
+        sprite = new Gamestack.Sprite(srcImage_Path);
+        sprite.Size(size);
+        sprite.Pos(position);
+
+        Gamestack.game_windows[0].add(sprite);
+      }
+
+      return {
+        size:size,
+        position:position
+      };
     }
 
 
@@ -2472,6 +2488,22 @@ Gamestack.Game = Game;
       }
     }
 
+
+    removeDeadObjects() {
+
+      var $window = this;
+
+      this.drawables.forEach(function(sprite){
+
+        if(sprite.life <= 0)
+        {
+          $window.remove(sprite);
+        }
+
+      });
+
+    }
+
     /**
      * begins the animation-loop of GameWindow.
      *
@@ -2569,6 +2601,12 @@ Gamestack.Game = Game;
 
   Gamestack.GameWindow = GameWindow;
 ;
+  /**
+   * Creates a new Module
+   * @param   {string} uri the uri that the .js file is located at
+    * @param   {Function} callback=function(){} The callback to call after the module is loaded
+   * @returns {Module} a Gamestack.Module object
+   * */
 
 console.info('Module class :: keep as public');
 
@@ -3038,16 +3076,14 @@ const GammaFunctions = {};
   console.log('Vector class... creating');
 
   /**
-   * Creates a Vector object with x, y, and z properties.
-   * <info-bit>Vector-2D requires only x and y args --new Vector(10, 10)
-   * For Vector-3D, use x,y, and z --new Vector(10, 10, 10)
-   * Pass an existing Vector as the sole argument in order to copy that Vector to a new instance</info-bit>
+   * Creates a Vector object with x, y, and --optional z.
    * @param   {number} x the x coordinate
    * @param   {number} y the y coordinate
    * @param   {number} z the optional z coordinate
    * @param   {number} r the optional r value
    * @returns {Vector} a Vector object
    */
+
 
   class Vector {
     constructor(x, y, z, r) {
@@ -4547,14 +4583,23 @@ for(var x in ColorStrings)
 
       this.callback = callbackFunction || this.callback || function() {};
 
-      let __inst = this;
+      let $collision = this;
 
-      $Q(this.objects).on('collide', $Q(this.siblings), function(obj1, obj2) {
+      this.objects.forEach(function($obj){
 
-        __inst.callback(obj1, obj2);
+        $obj.onUpdate(function(){
 
+          var $sprite = this;
 
+          $collision.siblings.forEach(function($sib){
+            if($sprite.hasBoxCollision($sib))
+            {
+              $collision.callback($sprite, $sib);
+            }
+          });
+        });
       });
+
 
       return this;
 
@@ -5643,9 +5688,7 @@ class Three //dependency: THREE.js
      *
      * <iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/Animation.html'> </iframe>
      *
-     * @param   {string=} [src] the src/file-path for this Animation
-     * @param   {GameImage= | HTMLImageElement=} [gameImage] the existing GameImage to be applied
-     * @param   {Object= | Animation=} [anime] the existing Animation-data to be returned as fully unique instance
+     * @param   {string=} [src] the src-image-path for this Animation
      * @returns {Animation} an Animation object
      *
      * @example
@@ -5703,9 +5746,22 @@ class Three //dependency: THREE.js
                 this.image = new Gamestack.GameImage(args.src);
             }
 
+
+                /**
+                 * @property {Vector} frameSize the frameSize of the Animation
+                 * @memberof Animation
+                 **********/
+
             this.frameSize = this.frameSize || new Gamestack.Vector(args.frameSize || new Gamestack.Vector(0, 0));
 
+
+
             if (args.frameBounds && args.frameBounds.min && args.frameBounds.max) {
+
+              /**
+               * @property {VectorFrameBounds} frameBounds the frameBounds of the Animation, has three Vectors
+               * @memberof Animation
+               **********/
 
                 this.frameBounds = new Gamestack.VectorFrameBounds(args.frameBounds.min, args.frameBounds.max, args.frameBounds.termPoint);
 
@@ -5723,6 +5779,11 @@ class Three //dependency: THREE.js
             this.flipX = this.getArg(args, 'flipX', false);
 
             this.cix = 0;
+
+            /**
+             * @property {Frame} selected_frame the selected_frame of the Animation, a Gamestack.Frame
+             * @memberof Animation
+             **********/
 
             this.selected_frame = this.frames[0] || false;
 
@@ -6276,7 +6337,7 @@ class Three //dependency: THREE.js
                 });
 
 
-            if(this.cix == 0)    
+            if(this.cix == 0)
             this.tween.start();
 
             if(this.cix >= this.frames.length && !this._hang)
@@ -6301,23 +6362,19 @@ class Three //dependency: THREE.js
 
 })();
 ;/**
- * Creates an instance of Sprite.
+ * Creates a new Sprite.
  *
  * <info-bit>Gamestack.Sprite is a container for 2D Animations.
- * -apply Sprite class to create behaviors for an entire 2d-game-entity.
+ * -apply Sprite class to create a 2D game-object.
  *
  * Sprites hold reference to their-own Animations and Sounds.</info-bit>
-
  * <iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/Sprite.html'> </iframe>
 
- * @param   {string=} [src] the srcPath for the image of the Sprite
- * @param   {scale=} [anime] the scale to be applied to width + height of the image
+ * @param   {string} src the srcPath for the image of the Sprite
+ * @param   {number} scale=1.0 the scale to be applied to size of each animation-frame
  *
  * @returns {Sprite} a Gamestack.Sprite object
  *
- * @example
- *
- * //Create Sprite using Sprite constructor, with one src argument
  *
  *
  */
@@ -6352,6 +6409,9 @@ class Sprite extends Scriptable {
     this.animations = [];
 
     //create size property
+
+
+
     this.size = new Gamestack.Vector(0, 0);
 
     if (typeof(scale) == 'number') //image plus 'scale' argument
@@ -6438,9 +6498,25 @@ class Sprite extends Scriptable {
 
     this.description = args.description || "__spriteDesc";
 
+    /**
+     * @property {String} id the unique identifier of the Sprite --called automatically on constructor.
+     * @memberof Sprite
+     **********/
+
     this.id = this.create_id();
 
+
+    /**
+     * @property {Array} animations the array of animations attached to the Sprite
+     * @memberof Sprite
+     **********/
+
     this.animations = Gamestack.getArg(args, 'animations', []);
+
+    /**
+     * @property {Array} scripts the array of scripts attached to the Sprite
+     * @memberof Sprite
+     **********/
 
     this.scripts = Gamestack.getArg(args, 'scripts', []);
 
@@ -6464,15 +6540,47 @@ class Sprite extends Scriptable {
       this.scrollFactor = 0;
     }
 
+
+    /**
+     * @property {Vector} speed the speed of the Sprite
+     * @memberof Sprite
+     **********/
+
     this.speed = new Gamestack.Vector(Gamestack.getArg(args, 'speed', new Gamestack.Vector(0, 0)));
 
+    /**
+     * @property {Vector} size the vector-size of the Sprite
+     * @memberof Sprite
+     **********/
+
     this.size = new Gamestack.Vector(Gamestack.getArg(args, 'size', new Gamestack.Vector(0, 0)));
+
+
+
+    /**
+     * @property {Vector} position the position of the Sprite
+     * @memberof Sprite
+     **********/
 
     this.position = new Gamestack.Vector(Gamestack.getArg(args, 'position', new Gamestack.Vector(0, 0, 0)));
 
     this.collision_bounds = Gamestack.getArg(args, 'collision_bounds', new Gamestack.VectorBounds(new Gamestack.Vector(0, 0, 0), new Gamestack.Vector(0, 0, 0)));
 
+
+    /**
+     *
+     *
+     * @property {Vector} rotation the rotation of the Sprite
+     * @memberof Sprite
+     **********/
+
     this.rotation = new Gamestack.Vector(Gamestack.getArg(args, 'rotation', new Gamestack.Vector(0, 0, 0)));
+
+
+    /**
+     * @property {number} scale the scale of the Sprite, controls draw-size
+     * @memberof Sprite
+     **********/
 
     this.scale = args.scale || 1.0;
 
@@ -7025,12 +7133,33 @@ class Sprite extends Scriptable {
       },
       scrollFactor = this.noScroll ? 0 : this.scrollFactor;
 
-    var camPos = new Gamestack.Vector(camera.position).mult(scrollFactor);
+      var sprite = this,
 
-    var p = new Gamestack.Vector(this.position.x - camPos.x, this.position.y - camPos.y, this.position.z - camPos.z);
+      p = sprite.position,
 
-    return p.x + this.size.x > -1000 - w && p.x < w + 1000 &&
-      p.y + this.size.y > 0 - 1000 - h && p.y < h + 1000;
+      camera_pos = camera.position || {
+        x: 0,
+        y: 0,
+        z: 0
+      };
+
+      if (!sprite.hasOwnProperty('scrollFactor')) {
+        sprite.scrollFactor = 1.0;
+      }
+
+      var x = p.x,
+        y = p.y,
+        scrollFactor = sprite.scrollFactor >= -1.0 && sprite.scrollFactor <= 1.0 ? sprite.scrollFactor : 1.0;
+
+      if (sprite.noScroll) {
+        scrollFactor = 0;
+      }
+
+      x -= camera_pos.x * scrollFactor || 0;
+      y -= camera_pos.y * scrollFactor || 0;
+
+    return x + sprite.size.x > -1000 - w && x < w + 1000 &&
+      y + sprite.size.y > 0 - 1000 - h && y < h + 1000;
 
   }
 
@@ -7527,7 +7656,7 @@ class Sprite extends Scriptable {
           bw = size.x,
           bh = size.y;
 
-        var shot = new Gamestack.Sprite({
+        var shot = new Gamestack.Sprite().FromData({
 
           active: true,
 
@@ -7543,12 +7672,14 @@ class Sprite extends Scriptable {
 
           flipX: false,
 
-          life: options.life
+          life: options.life,
+
+          noScroll:true
 
         });
 
 
-        shot.setAnimation(animation);
+        shot.Animation(animation);
 
         rot_offset = new Gamestack.Vector(rot_offset, 0, 0);
 
@@ -7611,7 +7742,7 @@ class Sprite extends Scriptable {
 
     if (Gamestack.isAtPlay) {
 
-      var subsprite = gw.add(new Gamestack.Sprite({
+      var subsprite = gw.add(new Gamestack.Sprite().FromData({
 
         active: true,
 
@@ -7633,7 +7764,8 @@ class Sprite extends Scriptable {
 
       }));
 
-      subsprite.setAnimation(animation);
+
+      subsprite.Animation(animation);
 
       return subsprite;
 
@@ -7657,7 +7789,7 @@ class Sprite extends Scriptable {
     if (Gamestack.isAtPlay) {
 
       if (animation) {
-        this.setAnimation(animation)
+        this.Animation(animation)
       }
 
       this.selected_animation.run();
@@ -8729,7 +8861,7 @@ class Shot
         return this;
     }
 
-  
+
     onCollide(collideables, callback)
     {
 

@@ -1,43 +1,42 @@
+(function() {
+  console.log('Camera class... creating');
+
+  /**
+   * Creates a new Camera
+
+   * @param {number} x=0 position-x
+   * @param {number} y=0 position-y
+   * @param {number} z=0 position-z
+   * @returns {Camera}
+   */
 
 
-(function(){
-    console.log('Camera class... creating');
+  class Camera {
+    constructor(x, y, z) {
+      if (isNaN(x)) {
+        x = 0;
+      }
 
-    /**
-     * Creates an instance of 2d-camera to be applied as the viewing-point for a GameWindow.
+      if (isNaN(y)) {
+        y = 0;
+      }
 
-     * @param {number} x an optional position-x
-     * @param {number} y an optional position-y
-     * @param {number} z an optional position-z
-     * @returns {Camera}
-     *
-     */
+      if (isNaN(z)) {
+        z = 0;
+      }
 
+         /**
+          *
+          * @property {Vector} position the Vector position of Camera, having numeric x, y, and z values
+          * @memberof Camera
+          **********/
 
-    class Camera
-{
-    constructor(x, y, z)
-    {
-        if(isNaN(x))
-        {
-          x = 0;
-        }
-
-        if(isNaN(y))
-        {
-            y = 0;
-        }
-
-        if(isNaN(z))
-        {
-            z = 0;
-        }
 
       this.position = new Gamestack.Vector(x, y, z);
     }
 
-}
+  }
 
-Gamestack.Camera = Camera;
+  Gamestack.Camera = Camera;
 
 })();

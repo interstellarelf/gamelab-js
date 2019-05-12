@@ -59,7 +59,9 @@ let ObjectFeatureMap = { //className / must have named function properties when 
 
   Line2d:['@spatial', '@pointarrayflippable', '@selftransposable',  '@data'],
 
-  Text:['@spatial', '@text', '@colored']
+  Text:['@spatial', '@text', '@colored'],
+
+  Shot:['@spatial', '@data']
 
 };
 
