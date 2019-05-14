@@ -13,15 +13,10 @@ module.exports = function(grunt) {
 
   var fsExtra = require('node-fs-extra'), glob = require('glob');
 
+  //include in docs all examples from gamestack.demo
   var exampleFolders = [
 
-    'gamestack.sprite',
-
-    'gamestack.multisprite',
-
-    'gamestack.display',
-
-    'gamestack.effect'
+    'gamestack.demo'
 
   ];
 
