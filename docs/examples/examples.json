@@ -3,10 +3,16 @@
     "path": "./examples/gamestack.multisprite/multisprite-planets.html"
   },
   {
+    "path": "./examples/gamestack.multisprite/planets.html"
+  },
+  {
     "path": "./examples/gamestack.display/display-features.html"
   },
   {
     "path": "./examples/gamestack.sprite/game-sprites.html"
+  },
+  {
+    "path": "./examples/gamestack.sprite/shape-stacker-puzzle-game.html"
   },
   {
     "path": "./examples/gamestack.sprite/side-scroller.html"
