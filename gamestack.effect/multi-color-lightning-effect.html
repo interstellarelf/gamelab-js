@@ -7,84 +7,57 @@
     <script src="../dist/gamestack/gamestack.js"></script>
     <script src="res/canvas-effects/lightning-points.js"></script>
 
-        <!-- spritebox-example.css style -->
-        <link rel="stylesheet" href="../res/styles/spritebox-example.css">
-
+    <!-- spritebox-example.css style -->
+    <link rel="stylesheet" href="../res/styles/spritebox-example.css">
 
   </head>
   <body>
 
-        <header>
-          <img src="../res/images/gamestack-logo.png" alt="" id="logo">
-          <span class="title">Effect:: Multi-Color-Lightning</span>
-        </header>
+    <header>
+      <img src="../res/images/gamestack-logo.png" alt="" id="logo">
+      <span class="title">Effect:: Multi-Color-Lightning</span>
+    </header>
 
     <script>
 
       var gameWindowList = [];
 
+      function createLightningPoints(min, max, line_color, blur_color) {
 
-      function createLightningPoints(min, max, line_color, blur_color){
-
-        return{ min, max, line_color, blur_color };
+        return {min, max, line_color, blur_color};
 
       };
-
-
 
       var lightnings = {
 
-        one:createLightningPoints(new Gamestack.Vector(100, 100),
-                                new Gamestack.Vector(200, 100),
-                                'aqua',
-                                'orangered'),
+        one: createLightningPoints(new Gamestack.Vector(100, 100), new Gamestack.Vector(200, 100), 'cyan', 'deepskyblue'),
 
-                                two:createLightningPoints(new Gamestack.Vector(200, 250),
-                                                        new Gamestack.Vector(250, 350),
-                                                        'brown',
-                                                        'blue'),
+        two: createLightningPoints(new Gamestack.Vector(200, 250), new Gamestack.Vector(250, 350), 'orange', 'orangered'),
 
-
-                                                        three:createLightningPoints(new Gamestack.Vector(100, 250),
-                                                                                new Gamestack.Vector(100, 400),
-                                                                                'teal',
-                                                                                'green')
+        three: createLightningPoints(new Gamestack.Vector(100, 250), new Gamestack.Vector(100, 400), 'springgreen', 'green')
       };
 
-      /***************
-                         * Call gameWindow.start()
-                         * *************/
 
       Gamestack.ready(function () {
 
-        alert('ready');
 
-        //Create the game-window
         var gameWindow = new Gamestack.GameWindow().Background('black');
 
+        for (var x in lightnings) {
 
-        for(var x in lightnings)
-        {
+          var l = lightnings[x];
 
-        var l = lightnings[x];
+          var instance = new window.LightningPoints(gameWindow).Points(l.min.x, l.min.y, l.max.x, l.max.y).LineColor(l.line_color).BlurColor(l.blur_color);
 
-      var instance = new window.LightningPoints(gameWindow).Points(l.min.x, l.min.y, l.max.x, l.max.y).LineColor(l.line_color).BlurColor(l.blur_color);
-
-        l.instance = instance;
+          l.instance = instance;
 
         }
 
+        for (var x in lightnings) {
 
+          var l = lightnings[x];
 
-
-                for(var x in lightnings)
-                {
-
-                  var l = lightnings[x];
-
-              alert(jstr(l.instance ));
-
-                }
+        }
 
         gameWindow.start();
 

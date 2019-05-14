@@ -21,10 +21,8 @@ var ExampleLink = document.registerElement('example-link', {
 });
 
 
-
 $(document).ready(function(){
 
-  console.log('docready --custom.js');
 
   var ex_links = $('example-link');
 

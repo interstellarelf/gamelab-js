@@ -104,10 +104,10 @@ module.exports = function(grunt) {
           'src/gamestack/objects/**/*.js',
           'src/gamestack/gamestack.modifiers.js',
           'src/gamestack/stand-alone/*.js',
-
+          'src/gamestack/filters/**/*.js',
           'src/gamestack/Canvas.js',
           'src/gamestack/class/**/*.js',
-          'src/gamestack/third-party/*.js',
+          'src/gamestack/libs/*.js',
           'src/gamestack/outro.js'
         ],
         dest: 'src/__concat/gamestack.js'
@@ -242,6 +242,12 @@ module.exports = function(grunt) {
             console.log(JSON.stringify(files));
 
             files.forEach(function(f){
+
+              if(f.endsWith('.dev.html'))
+              {
+                console.log('--Excluding file with .dev.html extension::' + f);
+                return;
+              }
 
               console.log('FullPath --' + f);
                 console.log('__dirname --' + __dirname);

@@ -45,10 +45,10 @@
         //compute center-screen
         var centerPos = gameWindow.center();
 
-        for (var x = 1; x <= 8; x++) {
+        for (var x = 1; x < 8; x++) {
 
           //Load planet-graphics into sprite-object
-          var planet = new Gamestack.Sprite(`res/images/planets/planet (1).png`);
+          var planet = new Gamestack.Sprite(`res/images/planets/planet (${x}).png`);
 
           //set an orbit-radian amount (revolving planets)
           planet.orbit_radians = Math.random() * 2.9;
