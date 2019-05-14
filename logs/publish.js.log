@@ -834,3 +834,43 @@
 [2019-05-14T15:08:44.277] [INFO] default - WebGL
 [2019-05-14T15:08:44.277] [INFO] default - BoolEvent
 [2019-05-14T15:08:44.277] [INFO] default - --applying examples
+[2019-05-14T15:11:56.655] [INFO] default - --gathered examples.json data
+[2019-05-14T15:11:56.827] [INFO] default - GameWindow
+[2019-05-14T15:11:56.827] [INFO] default - Camera
+[2019-05-14T15:11:56.827] [INFO] default - Sprite
+[2019-05-14T15:11:56.827] [INFO] default - Animation
+[2019-05-14T15:11:56.827] [INFO] default - Frame
+[2019-05-14T15:11:56.827] [INFO] default - Sound
+[2019-05-14T15:11:56.827] [INFO] default - GamepadEvent
+[2019-05-14T15:11:56.827] [INFO] default - InputEvent
+[2019-05-14T15:11:56.827] [INFO] default - Renderable
+[2019-05-14T15:11:56.827] [INFO] default - Rectangle
+[2019-05-14T15:11:56.828] [INFO] default - Shot
+[2019-05-14T15:11:56.828] [INFO] default - Projectile
+[2019-05-14T15:11:56.828] [INFO] default - KeyboardEvent
+[2019-05-14T15:11:56.828] [INFO] default - VectorFrameBounds
+[2019-05-14T15:11:56.828] [INFO] default - GameImage
+[2019-05-14T15:11:56.828] [INFO] default - Vector
+[2019-05-14T15:11:56.828] [INFO] default - WebGL
+[2019-05-14T15:11:56.829] [INFO] default - BoolEvent
+[2019-05-14T15:11:56.829] [INFO] default - --applying examples
+[2019-05-14T15:12:18.388] [INFO] default - --gathered examples.json data
+[2019-05-14T15:12:18.687] [INFO] default - GameWindow
+[2019-05-14T15:12:18.687] [INFO] default - Camera
+[2019-05-14T15:12:18.687] [INFO] default - Sprite
+[2019-05-14T15:12:18.687] [INFO] default - Animation
+[2019-05-14T15:12:18.687] [INFO] default - Frame
+[2019-05-14T15:12:18.687] [INFO] default - Sound
+[2019-05-14T15:12:18.687] [INFO] default - GamepadEvent
+[2019-05-14T15:12:18.687] [INFO] default - InputEvent
+[2019-05-14T15:12:18.687] [INFO] default - Renderable
+[2019-05-14T15:12:18.688] [INFO] default - Rectangle
+[2019-05-14T15:12:18.688] [INFO] default - Shot
+[2019-05-14T15:12:18.688] [INFO] default - Projectile
+[2019-05-14T15:12:18.688] [INFO] default - KeyboardEvent
+[2019-05-14T15:12:18.688] [INFO] default - VectorFrameBounds
+[2019-05-14T15:12:18.688] [INFO] default - GameImage
+[2019-05-14T15:12:18.688] [INFO] default - Vector
+[2019-05-14T15:12:18.688] [INFO] default - WebGL
+[2019-05-14T15:12:18.688] [INFO] default - BoolEvent
+[2019-05-14T15:12:18.688] [INFO] default - --applying examples
