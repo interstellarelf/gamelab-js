@@ -1,7 +1,6 @@
 
   /**
-   * Creates a new WebGl.
-   *
+   * Creates a new WebGl --an experimental class for 3D-objects via THREE.js --requires THREE.js be included
    * @param   {Object} canvas the canvas element.
     * @param   {Object} drawables the drawable objects to be drawn.
    * @returns {WebGL} a 2d/3d game-window object
@@ -86,7 +85,7 @@
 
 
       /**
-       * returns the gameWindow.canvas property, an HTMLCanvasElement
+       * returns the webGL.canvas property, an HTMLCanvasElement
        *
        * @function
        * @memberof WebGL
@@ -184,10 +183,10 @@
     }
 
         /**
-         * the main update for the WebGL:: called automatically after call of GameWindow.start() or WebGL.animate()
+         * the main update for the WebGL:: called automatically after call of WebGL.start() or WebGL.animate()
          *
          * @function
-         * @memberof GameWindow
+         * @memberof WebGL
          **********/
 
     update() {
@@ -235,7 +234,7 @@
 
     draw() {
 
-      var __gameWindow = this;
+      var __WebGL = this;
 
       if (this.before_draw_ext) {
         this.before_draw_ext();
@@ -245,7 +244,7 @@
 
         if(typeof item.draw == 'function')
         {
-          item.draw(__gameWindow.ctx, __gameWindow.camera);
+          item.draw(__WebGL.ctx, __WebGL.camera);
         }
 
       });
@@ -365,7 +364,7 @@
         }
       };
 
-      console.info('GameWindow.add() --2nd argument options is object of arguments >>>', optionsGuide);
+      console.info('WebGL.add() --2nd argument options is object of arguments >>>', optionsGuide);
 
       var layer = options.layer || this.drawables.length - 1;
 
@@ -379,7 +378,7 @@
 
       obj.window_offset = offset;
 
-      //1: if Sprite(), Add object to the existing __gameWindow
+      //1: if Sprite(), Add object to the existing __WebGL
 
       var __inst = this;
 

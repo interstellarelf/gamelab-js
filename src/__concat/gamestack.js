@@ -3453,12 +3453,10 @@ const GammaFunctions = {};
 })();
 ;
   /**
-   * Creates a GameWindow object.
-   *
-   * <iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/GameWindow.html'> </iframe>
-   * @param   {Object} canvas the canvas element for this gameWindow. --GameWindow's if not supplied, the constructor will create a full-screen canvas, if a canvas.
-    * @param   {Object} drawables the drawable objects to be drawn. --Drawables can also be added after constructor call.
-   * @returns {GameWindow} a Gamestack.GameWindow object
+   * Creates a new WebGl --an experimental class for 3D-objects via THREE.js --requires THREE.js be included
+   * @param   {Object} canvas the canvas element.
+    * @param   {Object} drawables the drawable objects to be drawn.
+   * @returns {WebGL} a 2d/3d game-window object
    * */
 
   class WebGL {
@@ -3540,10 +3538,10 @@ const GammaFunctions = {};
 
 
       /**
-       * returns the gameWindow.canvas property, an HTMLCanvasElement
+       * returns the webGL.canvas property, an HTMLCanvasElement
        *
        * @function
-       * @memberof GameWindow
+       * @memberof WebGL
        **********/
 
     getCanvas(){
@@ -3552,10 +3550,10 @@ const GammaFunctions = {};
 
 
       /**
-       * returns a vector(x, y) showing the center of the GameWindow
+       * returns a vector(x, y) of the center of the WebGL
        *
        * @function
-       * @memberof GameWindow
+       * @memberof WebGL
        **********/
 
 
@@ -3570,7 +3568,7 @@ const GammaFunctions = {};
      * creates an array of gridUnits
      *
      * @function
-     * @memberof GameWindow
+     * @memberof WebGL
      **********/
 
      GridStyle(total_x, total_y, w, h, srcImage_Path)
@@ -3624,10 +3622,10 @@ const GammaFunctions = {};
 
 
     /**
-     * adds an update to the GameWindow:: update to be called every 20 milliseconds
+     * adds an update to the WebGL:: update to be called every 20 milliseconds
      *
      * @function
-     * @memberof GameWindow
+     * @memberof WebGL
      **********/
 
 
@@ -3638,10 +3636,10 @@ const GammaFunctions = {};
     }
 
         /**
-         * the main update for the GameWindow:: called automatically after call of GameWindow.start() or GameWindow.animate()
+         * the main update for the WebGL:: called automatically after call of WebGL.start() or WebGL.animate()
          *
          * @function
-         * @memberof GameWindow
+         * @memberof WebGL
          **********/
 
     update() {
@@ -3689,7 +3687,7 @@ const GammaFunctions = {};
 
     draw() {
 
-      var __gameWindow = this;
+      var __WebGL = this;
 
       if (this.before_draw_ext) {
         this.before_draw_ext();
@@ -3699,7 +3697,7 @@ const GammaFunctions = {};
 
         if(typeof item.draw == 'function')
         {
-          item.draw(__gameWindow.ctx, __gameWindow.camera);
+          item.draw(__WebGL.ctx, __WebGL.camera);
         }
 
       });
@@ -3713,10 +3711,10 @@ const GammaFunctions = {};
 
 
         /**
-         * adds a call before the GameWindow draw()
+         * adds a call before the WebGL draw()
          *
          * @function
-         * @memberof GameWindow
+         * @memberof WebGL
          **********/
 
     onBeforeDraw(f) {
@@ -3736,10 +3734,10 @@ const GammaFunctions = {};
     }
 
     /**
-     * adds a call after the GameWindow draw()
+     * adds a call after the WebGL draw()
      *
      * @function
-     * @memberof GameWindow
+     * @memberof WebGL
      **********/
 
 
@@ -3761,12 +3759,12 @@ const GammaFunctions = {};
     }
 
     /**
-     * sets the size of the GameWindow
+     * sets the size of the WebGL
      *
      * @function
-     * @param {integer} w the width of the GameWindow
-     * @param {integer} h the HEIGHT of the GameWindow
-     * @memberof GameWindow
+     * @param {integer} w the width of the WebGL
+     * @param {integer} h the HEIGHT of the WebGL
+     * @memberof WebGL
      **********/
 
     Size(w, h, isAbsoluteSize) { //call with no args to fill to browser-window-size;
@@ -3802,12 +3800,12 @@ const GammaFunctions = {};
     }
 
     /**
-     * adds an object to the GameWindow
+     * adds an object to the WebGL
      *
      * @function
      * @param {Object} obj the object to be added (Sprite)
-     * @param {Boolean} onBottom if true, adds to the bottom of layer-stack in GameWindow
-     * @memberof GameWindow
+     * @param {Boolean} onBottom if true, adds to the bottom of layer-stack in WebGL
+     * @memberof WebGL
      **********/
 
     add(obj, options={}) {
@@ -3819,7 +3817,7 @@ const GammaFunctions = {};
         }
       };
 
-      console.info('GameWindow.add() --2nd argument options is object of arguments >>>', optionsGuide);
+      console.info('WebGL.add() --2nd argument options is object of arguments >>>', optionsGuide);
 
       var layer = options.layer || this.drawables.length - 1;
 
@@ -3833,7 +3831,7 @@ const GammaFunctions = {};
 
       obj.window_offset = offset;
 
-      //1: if Sprite(), Add object to the existing __gameWindow
+      //1: if Sprite(), Add object to the existing __WebGL
 
       var __inst = this;
 
@@ -3862,11 +3860,11 @@ const GammaFunctions = {};
     }
 
     /**
-     * set background-color of GameWindow
+     * set background-color of WebGL
      *
      * @function
-     * @param {string} c the new background-color for GameWindow
-     * @memberof GameWindow
+     * @param {string} c the new background-color for WebGL
+     * @memberof WebGL
      **********/
 
     Background(c) {
@@ -3879,11 +3877,11 @@ const GammaFunctions = {};
     }
 
     /**
-     * removes an object from the GameWindow
+     * removes an object from the WebGL
      *
      * @function
      * @param {Object} obj the object to be removed (Sprite)
-     * @memberof GameWindow
+     * @memberof WebGL
      **********/
 
     remove(obj) {
@@ -3896,11 +3894,11 @@ const GammaFunctions = {};
     }
 
     /**
-     * begins the animation-loop of GameWindow.
+     * begins the animation-loop of WebGL.
      *
      * @function
      * @param {number} time optional time parameter for usage with Tween
-     * @memberof GameWindow
+     * @memberof WebGL
      **********/
 
 
@@ -3941,10 +3939,10 @@ const GammaFunctions = {};
     }
 
     /**
-     * begins the animation-loop of GameWindow, with performance Stats shown on-screen
+     * begins the animation-loop of WebGL, with performance Stats shown on-screen
      *
      * @function
-     * @memberof GameWindow
+     * @memberof WebGL
      **********/
 
 
