@@ -954,3 +954,23 @@
 [2019-05-14T19:12:43.733] [INFO] default - WebGL
 [2019-05-14T19:12:43.733] [INFO] default - BoolEvent
 [2019-05-14T19:12:43.733] [INFO] default - --applying examples
+[2019-05-15T10:43:46.692] [INFO] default - --gathered examples.json data
+[2019-05-15T10:43:46.998] [INFO] default - GameWindow
+[2019-05-15T10:43:46.999] [INFO] default - Camera
+[2019-05-15T10:43:46.999] [INFO] default - Sprite
+[2019-05-15T10:43:46.999] [INFO] default - Animation
+[2019-05-15T10:43:46.999] [INFO] default - Frame
+[2019-05-15T10:43:46.999] [INFO] default - Sound
+[2019-05-15T10:43:46.999] [INFO] default - GamepadEvent
+[2019-05-15T10:43:46.999] [INFO] default - InputEvent
+[2019-05-15T10:43:46.999] [INFO] default - Renderable
+[2019-05-15T10:43:46.999] [INFO] default - Rectangle
+[2019-05-15T10:43:46.999] [INFO] default - Shot
+[2019-05-15T10:43:46.999] [INFO] default - Projectile
+[2019-05-15T10:43:46.999] [INFO] default - KeyboardEvent
+[2019-05-15T10:43:46.999] [INFO] default - VectorFrameBounds
+[2019-05-15T10:43:46.999] [INFO] default - GameImage
+[2019-05-15T10:43:46.999] [INFO] default - Vector
+[2019-05-15T10:43:47.000] [INFO] default - WebGL
+[2019-05-15T10:43:47.000] [INFO] default - BoolEvent
+[2019-05-15T10:43:47.000] [INFO] default - --applying examples
