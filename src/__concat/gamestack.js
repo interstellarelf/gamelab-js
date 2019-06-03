@@ -1783,9 +1783,11 @@ let ObjectFeatureMap = { //className / must have named function properties when 
 
   Elipse:['@spatial'],
 
+  Frame:['@spatial'],
+
   Background: ['@spatial',  '@data'],
 
-  Animation: ['@framedriven', '@effectdriven','@posable',  '@data'],
+  Animation: ['@anchored', '@framedriven', '@effectdriven', '@data'],
 
   Line2d:['@spatial', '@pointarrayflippable', '@selftransposable',  '@data'],
 
@@ -1883,6 +1885,87 @@ let UIObjectPrefabs = {
   Sprite: ['Side-Scroll-Player', 'Collider', 'Spaceship', 'Robot'],
 
 };
+;class Bone {
+
+  constructor(parent, size) {
+    this.size = size || new Gamestack.Vector(0, 0);
+
+    if (typeof parent == 'Object' && parent.id)
+      this.parent_id = parent.id;
+
+
+    this.parent = parent;
+
+    this.size = size;
+
+    //every frame of the parent object gets same size::
+
+    if(parent.Size)
+    {
+        parent.Size(size.x, size.y, size.z);
+    }
+
+  }
+
+  Origin(x, y, z){
+
+    this.origin = new Gamestack.Vector(x, y, z);
+
+    this.parent.Origin(x, y, z);
+    return this;
+  }
+
+  Size(x, y, z){
+
+    this.size = new Gamestack.Vector(x, y, z);
+
+    this.parent.Size(x, y, z);
+
+  }
+
+  Rotation(x, y, z)
+  {
+    this.rotation = new Gamestack.Vector(x, y, z);
+    this.parent.Rotation(this.rotation);
+    return this;
+  }
+
+  onPosition(callback){
+
+    callback = callback.bind(this);
+
+    this.parent.onRun(function(){
+
+        callback();
+
+    });
+    return this;
+  }
+
+}
+
+
+class BoneState {
+
+  constructor(boneList) {
+
+    var states = [];
+
+    boneList.forEach(function(bone) {
+
+      states.push({
+        offset: new Gamestack.Vector(),
+        rotation: new Gamestack.Vector(),
+        size: new Gamestack.Vector(),
+      });
+
+    });
+
+  }
+
+}
+Gamestack.BoneState = BoneState;
+Gamestack.Bone = Bone;
 ;(function() {
   console.log('Camera class... creating');
 
@@ -2902,6 +2985,77 @@ class Elipse{
 Gamestack.Elipse = Elipse;
 ;
 
+
+
+class SpatialPattern {
+
+  constructor(src, unitSize){
+    this.objects= [];
+    this.basicGridChunk = new Gamestack.Sprite(src).Size(unitSize, unitSize);
+
+  }
+
+  StepFunction(call){
+    this.call = call || function(){};
+    return this;
+  }
+
+  add(sprite)
+  {
+    this.objects.push(sprite);
+
+  }
+
+  Min(m1, m2){
+    this.min = new Gamestack.Vector(m1, m2);
+    return this;
+  }
+  Max(m1, m2){
+    this.max = new Gamestack.Vector(m1, m2);
+    return this;
+  }
+
+  Fill(callback){
+
+    for(var x = this.min.x; x < this.max.x; x++)
+    {
+
+      for(var y = this.min.y; y < this.max.y; y++)
+      {
+
+       if(this.call(x, y))
+       {
+
+         var chunk = new Gamestack.Sprite().FromData(this.basicGridChunk);
+
+         chunk.target_x = x;
+         chunk.target_y = y;
+
+         chunk.onLoad(function(){
+
+          //  this.Size();
+
+          this.Position(this.target_x, this.target_y);
+
+         });
+
+          this.add(chunk);
+
+       }
+      }
+    }
+
+
+    callback(this.objects);
+
+  }
+
+}
+
+
+Gamestack.SpatialPattern = SpatialPattern;
+;
+
 var Trigonometry = {
 
   rotate_from_xy:function(cx, cy, x, y, angle) {
@@ -3443,7 +3597,7 @@ const GammaFunctions = {};
 
       point.z = 0;
 
-      return point
+      return new Gamestack.Vector(point);
     }
 
   }
@@ -3451,547 +3605,495 @@ const GammaFunctions = {};
   Gamestack.VectorMath = VectorMath;
 
 })();
-;
-  /**
-   * Creates a new WebGl --an experimental class for 3D-objects via THREE.js --requires THREE.js be included
-   * @param   {Object} canvas the canvas element.
-    * @param   {Object} drawables the drawable objects to be drawn.
-   * @returns {WebGL} a 2d/3d game-window object
-   * */
+;/**
+ * Creates a new WebGl --an experimental class for 3D-objects via THREE.js --requires THREE.js be included
+ * @param   {Object} canvas the canvas element.
+ * @param   {Object} drawables the drawable objects to be drawn.
+ * @returns {WebGL} a 2d/3d game-window object
+ * */
 
-  class WebGL {
-    constructor(canvas = false, drawables = []) {
+class WebGL {
+  constructor(canvas = false, drawables = []) {
 
-      if(!THREE)
-      {
-        return console.error('THREE.js required in window');
-      }
+    if (!THREE) {
+      return console.error('THREE.js required in window');
+    }
 
 
-      document.body.style.position = "absolute";
+    document.body.style.position = "absolute";
 
-      document.body.style.width = "100%";
+    document.body.style.width = "100%";
 
-      document.body.style.height = "100%";
-
-
-
-      var camera = new THREE.PerspectiveCamera();
-
-      var container = document.querySelector('#game-window');
-
-      this.renderer = new THREE.WebGLRenderer();
-      this.renderer.setSize( container.clientWidth, container.clientHeight );
+    document.body.style.height = "100%";
 
 
-      this.scene = new THREE.Scene();
-      this.camera = new THREE.PerspectiveCamera( 75, container.clientWidth / container.clientHeight, 0.1, 1000 ); //was 1000 last arg
+    var camera = new THREE.PerspectiveCamera();
+
+    var container = document.querySelector('#threejs-window');
+
+    this.renderer = new THREE.WebGLRenderer();
+
+    this.camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000); //was 1000 last arg
+
+    this.scene = new THREE.Scene();
+
+    this.renderer.setSize(container.clientWidth, container.clientHeight);
+
+    Gamestack.threejs = {};
+
+    Gamestack.threejs.renderer = this.renderer;
+
+    Gamestack.threejs.camera = this.camera;
+
+    Gamestack.threejs.scene = this.scene;
+
+    container.append(this.renderer.domElement);
 
 
-  container.append( this.renderer.domElement );
+    this.scene.add(this.camera);
+
+    this.light = new THREE.AmbientLight(0x404040); // soft white light
+    this.scene.add(this.light);
+
+    this.drawables = drawables;
+
+    this.bool_events = Gamestack.bool_events || [];
+
+    this.canvas = this.renderer.domElement;
+
+    this.camera.target = false;
+
+    var __inst = this;
+
+    this.update_ext = [];
 
 
-        this.scene.add(this.camera);
+    window.onerror = function() {
 
-        this.light = new THREE.AmbientLight( 0x404040 ); // soft white light
-        this.scene.add( this.light );
+      Gamestack.errors += 1;
 
-            this.drawables = drawables;
+      console.log('Canvas Error --');
 
-            this.bool_events = Gamestack.bool_events || [];
+      if (Gamestack.errors > Gamestack.settings.errorLimit) {
+        Gamestack.stopDraw = true;
 
-            this.canvas = this.renderer.domElement;
+        var call = call || window.setTimeout(function() {
 
-      this.camera.target = false;
-
-      var __inst = this;
-
-      this.update_ext = [];
-
-      Gamestack.game_windows.push(this);
-
-      window.onerror = function(){
-
-        Gamestack.errors += 1;
-
-        console.log('Canvas Error --');
-
-        if (Gamestack.errors > Gamestack.settings.errorLimit) {
-          Gamestack.stopDraw = true;
-
-        var call = call ||  window.setTimeout(function(){
-
-          if(call)
-          {
+          if (call) {
             window.clearTimeout(call);
           }
-            console.log('%cDraw stopped at errorLimit:' + Gamestack.settings.errorLimit, 'color:darkorange;');
+          console.log('%cDraw stopped at errorLimit:' + Gamestack.settings.errorLimit, 'color:darkorange;');
 
-          }, 200);
-
-        }
+        }, 200);
 
       }
 
-
     }
 
 
-      /**
-       * returns the webGL.canvas property, an HTMLCanvasElement
-       *
-       * @function
-       * @memberof WebGL
-       **********/
-
-    getCanvas(){
-      return this.canvas;
-    }
+  }
 
 
-      /**
-       * returns a vector(x, y) of the center of the WebGL
-       *
-       * @function
-       * @memberof WebGL
-       **********/
+  /**
+   * returns the webGL.canvas property, an HTMLCanvasElement
+   *
+   * @function
+   * @memberof WebGL
+   **********/
 
-
-    center() {
-
-      return new Gamestack.Vector(Math.round(this.canvas.width / 2), Math.round(this.canvas.height / 2));
-
-    }
-
-
-    /**
-     * creates an array of gridUnits
-     *
-     * @function
-     * @memberof WebGL
-     **********/
-
-     GridStyle(total_x, total_y, w, h, srcImage_Path)
-     {
-
-       if(!(this.grid instanceof Array))
-       {
-         this.grid = [];
-       }
-
-       function GridUnit(x, y, w, h, srcImage_Path){
-
-         var size = new Gamestack.Vector(w, h),
-         position = new Gamestack.Vector(x, y);
-
-         var sprite;
-
-         if(srcImage_Path)
-         {
-           sprite = new Gamestack.Sprite(srcImage_Path);
-           sprite.Size(size);
-           sprite.Pos(position);
-
-           Gamestack.game_windows[0].add(sprite);
-         }
-
-         return {
-           size:size,
-           position:position
-         };
-       };
-
-       for(var y = 0; y < total_y; y++)
-       {
-
-         for(var x = 0; x < total_x; x++)
-         {
-
-           this.grid.push(new GridUnit(x * w, y * h, w, h, srcImage_Path));
-
-         }
-
-       }
-       return this;
-     }
-
-  getCanvas(){
+  getCanvas() {
     return this.canvas;
   }
 
 
-
-    /**
-     * adds an update to the WebGL:: update to be called every 20 milliseconds
-     *
-     * @function
-     * @memberof WebGL
-     **********/
-
-
-    onUpdate(f) {
-
-      this.update_ext.push(f);
-
-    }
-
-        /**
-         * the main update for the WebGL:: called automatically after call of WebGL.start() or WebGL.animate()
-         *
-         * @function
-         * @memberof WebGL
-         **********/
-
-    update() {
-
-      Gamestack.each(this.drawables, function(ix, item) {
-
-        if (item && typeof(item.def_update) == 'function') {
-
-          item.def_update(item);
-
-        }
-
-        if (item && typeof(item.update) == 'function') {
-          item.update(item);
-
-        }
+  /**
+   * returns a vector(x, y) of the center of the WebGL
+   *
+   * @function
+   * @memberof WebGL
+   **********/
 
 
-                if (item && ['SpriteArray', 'RobotixArray', 'RobotixVerticalChain'].indexOf(item.constructor.name) >= 0  &&
-                   typeof item.each  == 'function') {
+  center() {
 
-                  item.each(function(ix, graphic){
+    return new Gamestack.Vector(Math.round(this.canvas.width / 2), Math.round(this.canvas.height / 2));
 
-                    graphic.update(graphic);
-
-                  });
-
-                }
-
-      });
-
-      Gamestack.each(this.bool_events, function(ix, item) {
-
-        if (item && item.bool()) {
-          item.callback();
-        }
-
-      });
+  }
 
 
-      for (var x in this.update_ext) {
-        this.update_ext[x]();
-      }
-    }
 
-    draw() {
+  getCanvas() {
+    return this.canvas;
+  }
 
-      var __WebGL = this;
 
-      if (this.before_draw_ext) {
-        this.before_draw_ext();
+  /**
+   * adds an update to the WebGL:: update to be called every 20 milliseconds
+   *
+   * @function
+   * @memberof WebGL
+   **********/
+
+
+  onUpdate(f) {
+
+    this.update_ext.push(f);
+
+  }
+
+  /**
+   * the main update for the WebGL:: called automatically after call of WebGL.start() or WebGL.animate()
+   *
+   * @function
+   * @memberof WebGL
+   **********/
+
+  update() {
+
+    Gamestack.each(this.drawables, function(ix, item) {
+
+      if (item && typeof(item.def_update) == 'function') {
+
+        item.def_update(item);
+
       }
 
-      Gamestack.each(this.drawables, function(ix, item) {
+      if (item && typeof(item.update) == 'function') {
+        item.update(item);
 
-        if(typeof item.draw == 'function')
-        {
-          item.draw(__WebGL.ctx, __WebGL.camera);
-        }
-
-      });
-
-
-      if (this.after_draw_ext) {
-        this.after_draw_ext();
       }
 
-    }
 
+      if (item && ['SpriteArray', 'RobotixArray', 'RobotixVerticalChain'].indexOf(item.constructor.name) >= 0 &&
+        typeof item.each == 'function') {
 
-        /**
-         * adds a call before the WebGL draw()
-         *
-         * @function
-         * @memberof WebGL
-         **********/
+        item.each(function(ix, graphic) {
 
-    onBeforeDraw(f) {
+          graphic.update(graphic);
 
-      var boundCall = f.bind(this);
+        });
 
-      if(!this.before_draw_ext)
-      this.before_draw_ext = function(){};
-
-      var beforeDraw = this.before_draw_ext.bind(this);
-
-      this.before_draw_ext = function() {
-        beforeDraw();
-        boundCall();
-      };
-
-    }
-
-    /**
-     * adds a call after the WebGL draw()
-     *
-     * @function
-     * @memberof WebGL
-     **********/
-
-
-    onAfterDraw(f) {
-
-      var boundCall = f.bind(this);
-
-      if(!this.after_draw_ext)
-      this.after_draw_ext = function(){};
-
-
-      var afterDraw = this.after_draw_ext.bind(this);
-
-      this.after_draw_ext = function() {
-        afterDraw();
-        boundCall();
-      };
-
-    }
-
-    /**
-     * sets the size of the WebGL
-     *
-     * @function
-     * @param {integer} w the width of the WebGL
-     * @param {integer} h the HEIGHT of the WebGL
-     * @memberof WebGL
-     **********/
-
-    Size(w, h, isAbsoluteSize) { //call with no args to fill to browser-window-size;
-
-      w = w || this.canvas.parentNode.clientWidth;
-
-      h = h || this.canvas.parentNode.clientHeight;
-
-      var c = this.canvas;
-
-      if (c) {
-        c.setAttribute('width', w)
-      };
-
-      if (c) {
-        c.setAttribute('height', h)
-      };
-
-      Gamestack.WIDTH = w;
-
-      Gamestack.HEIGHT = h;
-
-      this.canvas.width = w;
-
-      this.canvas.height = h;
-
-      this.size = new Gamestack.Vector(w, h);
-
-      this.isAbsoluteSize = isAbsoluteSize || false;
-
-      return this;
-
-    }
-
-    /**
-     * adds an object to the WebGL
-     *
-     * @function
-     * @param {Object} obj the object to be added (Sprite)
-     * @param {Boolean} onBottom if true, adds to the bottom of layer-stack in WebGL
-     * @memberof WebGL
-     **********/
-
-    add(obj, options={}) {
-
-      var optionsGuide = {
-        obj:'The Object{} being added into play',
-        options:{
-          position:'The Vector(x, y) offset to use when drawing the obj'
-        }
-      };
-
-      console.info('WebGL.add() --2nd argument options is object of arguments >>>', optionsGuide);
-
-      var layer = options.layer || this.drawables.length - 1;
-
-      if(!(typeof layer == 'number' && layer >= 0))
-      layer = this.drawables.length;
-
-      var offset = new Gamestack.Vector(0, 0);
-
-      if(options.position)
-      offset = options.position;
-
-      obj.window_offset = offset;
-
-      //1: if Sprite(), Add object to the existing __WebGL
-
-      var __inst = this;
-
-      if (obj instanceof Gamestack.Camera) {
-
-        this.camera = obj;
-
-      } else if (obj instanceof Gamestack.GSEvent) {
-
-        if (Gamestack.__running) {
-
-          return console.error('Events can only be added before Gamstack.animate() is called::aka before the main update / loop begins');
-        } else {
-
-          obj.apply();
-
-        }
-      } else {
-
-        this.drawables.splice(layer, 0, obj);
-
-      };
-
-      return obj;
-
-    }
-
-    /**
-     * set background-color of WebGL
-     *
-     * @function
-     * @param {string} c the new background-color for WebGL
-     * @memberof WebGL
-     **********/
-
-    Background(c) {
-      this.canvas.style.background = c;
-
-      this.canvas.style.backgroundColor = c;
-
-      return this;
-
-    }
-
-    /**
-     * removes an object from the WebGL
-     *
-     * @function
-     * @param {Object} obj the object to be removed (Sprite)
-     * @memberof WebGL
-     **********/
-
-    remove(obj) {
-
-      var ix = this.drawables.indexOf(obj);
-
-      if (ix >= 0) {
-        this.drawables.splice(ix, 1);
-      }
-    }
-
-    /**
-     * begins the animation-loop of WebGL.
-     *
-     * @function
-     * @param {number} time optional time parameter for usage with Tween
-     * @memberof WebGL
-     **********/
-
-
-    animate(time) {
-
-      var __inst = this;
-
-      requestAnimationFrame(function() {
-
-        __inst.animate();
-
-      });
-
-
-      if (Gamestack.__stats) {
-        Gamestack.__stats.begin();
-        Gamestack.__statsMS.begin();
-        Gamestack.__statsMB.update();
       }
 
-      Gamestack.isAtPlay = true;
+    });
 
-      if (window.TWEEN)
-        TWEEN.update(time);
+    Gamestack.each(this.bool_events, function(ix, item) {
 
-      __inst.update();
-
-      console.log('Rendering');
-      this.renderer.render(this.scene, this.camera);
-
-      this.draw();
-
-      if (Gamestack.__stats) {
-        Gamestack.__stats.end();
-        Gamestack.__statsMS.end();
+      if (item && item.bool()) {
+        item.callback();
       }
 
-    }
-
-    /**
-     * begins the animation-loop of WebGL, with performance Stats shown on-screen
-     *
-     * @function
-     * @memberof WebGL
-     **********/
+    });
 
 
-    start() {
-
-      if (typeof(Stats) == 'function') //Stats library exists
-      {
-        //basic stat animation
-        Gamestack.__stats = new Stats();
-        Gamestack.__stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-
-        Gamestack.__stats.dom.style.left = '10%';
-
-        Gamestack.__stats.dom.setAttribute('class', 'stat');
-
-        this.canvas.parentNode.appendChild(Gamestack.__stats.dom);
-
-        //basic stat animation
-        Gamestack.__statsMS = new Stats();
-        Gamestack.__statsMS.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
-
-        Gamestack.__statsMS.dom.style.left = '10%';
-
-        Gamestack.__statsMS.dom.style.marginLeft = '90px';
-
-        Gamestack.__statsMS.dom.setAttribute('class', 'stat');
-
-        this.canvas.parentNode.appendChild(Gamestack.__statsMS.dom);
-
-        //basic stat animation
-        Gamestack.__statsMB = new Stats();
-        Gamestack.__statsMB.showPanel(2); // 0: fps, 1: ms, 2: mb, 3+: custom
-
-        Gamestack.__statsMB.dom.style.left = '10%';
-
-        Gamestack.__statsMB.dom.setAttribute('class', 'stat');
-
-        Gamestack.__statsMB.dom.style.marginLeft = '180px';
-
-        this.canvas.parentNode.appendChild(Gamestack.__statsMB.dom);
-      }
-
-      this.animate();
+    for (var x in this.update_ext) {
+      this.update_ext[x]();
     }
   }
 
-  Gamestack.WebGL = WebGL;
+  draw() {
 
-  Gamestack.WebGl = WebGL;
+    var __WebGL = this;
+
+    if (this.before_draw_ext) {
+      this.before_draw_ext();
+    }
+
+    Gamestack.each(this.drawables, function(ix, item) {
+
+      if (typeof item.draw == 'function') {
+        item.draw(__WebGL.ctx, __WebGL.camera);
+      }
+
+    });
+
+
+    if (this.after_draw_ext) {
+      this.after_draw_ext();
+    }
+
+  }
+
+
+  /**
+   * adds a call before the WebGL draw()
+   *
+   * @function
+   * @memberof WebGL
+   **********/
+
+  onBeforeDraw(f) {
+
+    var boundCall = f.bind(this);
+
+    if (!this.before_draw_ext)
+      this.before_draw_ext = function() {};
+
+    var beforeDraw = this.before_draw_ext.bind(this);
+
+    this.before_draw_ext = function() {
+      beforeDraw();
+      boundCall();
+    };
+
+  }
+
+  /**
+   * adds a call after the WebGL draw()
+   *
+   * @function
+   * @memberof WebGL
+   **********/
+
+
+  onAfterDraw(f) {
+
+    var boundCall = f.bind(this);
+
+    if (!this.after_draw_ext)
+      this.after_draw_ext = function() {};
+
+
+    var afterDraw = this.after_draw_ext.bind(this);
+
+    this.after_draw_ext = function() {
+      afterDraw();
+      boundCall();
+    };
+
+  }
+
+  /**
+   * sets the size of the WebGL
+   *
+   * @function
+   * @param {integer} w the width of the WebGL
+   * @param {integer} h the HEIGHT of the WebGL
+   * @memberof WebGL
+   **********/
+
+  Size(w, h, isAbsoluteSize) { //call with no args to fill to browser-window-size;
+
+    w = w || this.canvas.parentNode.clientWidth;
+
+    h = h || this.canvas.parentNode.clientHeight;
+
+    var c = this.canvas;
+
+    if (c) {
+      c.setAttribute('width', w)
+    };
+
+    if (c) {
+      c.setAttribute('height', h)
+    };
+
+    Gamestack.WIDTH = w;
+
+    Gamestack.HEIGHT = h;
+
+    this.canvas.width = w;
+
+    this.canvas.height = h;
+
+    this.size = new Gamestack.Vector(w, h);
+
+    this.isAbsoluteSize = isAbsoluteSize || false;
+
+    return this;
+
+  }
+
+  /**
+   * adds an object to the WebGL
+   *
+   * @function
+   * @param {Object} obj the object to be added (Sprite)
+   * @param {Boolean} onBottom if true, adds to the bottom of layer-stack in WebGL
+   * @memberof WebGL
+   **********/
+
+  add(obj, options = {}) {
+
+    var optionsGuide = {
+      obj: 'The Object{} being added into play',
+      options: {
+        position: 'The Vector(x, y) offset to use when drawing the obj'
+      }
+    };
+
+    console.info('WebGL.add() --2nd argument options is object of arguments >>>', optionsGuide);
+
+    var layer = options.layer || this.drawables.length - 1;
+
+    if (!(typeof layer == 'number' && layer >= 0))
+      layer = this.drawables.length;
+
+    var offset = new Gamestack.Vector(0, 0);
+
+    if (options.position)
+      offset = options.position;
+
+    obj.window_offset = offset;
+
+    //1: if Sprite(), Add object to the existing __WebGL
+
+    var __inst = this;
+
+    if (obj instanceof Gamestack.Camera) {
+
+      this.camera = obj;
+
+    } else if (obj instanceof Gamestack.GSEvent) {
+
+      if (Gamestack.__running) {
+
+        return console.error('Events can only be added before Gamstack.animate() is called::aka before the main update / loop begins');
+      } else {
+
+        obj.apply();
+
+      }
+    } else {
+
+      this.drawables.splice(layer, 0, obj);
+
+    };
+
+    return obj;
+
+  }
+
+  /**
+   * set background-color of WebGL
+   *
+   * @function
+   * @param {string} c the new background-color for WebGL
+   * @memberof WebGL
+   **********/
+
+  Background(c) {
+    this.canvas.style.background = c;
+
+    this.canvas.style.backgroundColor = c;
+
+    return this;
+
+  }
+
+  /**
+   * removes an object from the WebGL
+   *
+   * @function
+   * @param {Object} obj the object to be removed (Sprite)
+   * @memberof WebGL
+   **********/
+
+  remove(obj) {
+
+    var ix = this.drawables.indexOf(obj);
+
+    if (ix >= 0) {
+      this.drawables.splice(ix, 1);
+    }
+  }
+
+  /**
+   * begins the animation-loop of WebGL.
+   *
+   * @function
+   * @param {number} time optional time parameter for usage with Tween
+   * @memberof WebGL
+   **********/
+
+
+  animate(time) {
+
+    var __inst = this;
+
+    requestAnimationFrame(function() {
+
+      __inst.animate();
+
+    });
+
+
+    if (Gamestack.__stats) {
+      Gamestack.__stats.begin();
+      Gamestack.__statsMS.begin();
+      Gamestack.__statsMB.update();
+    }
+
+    Gamestack.isAtPlay = true;
+
+    if (window.TWEEN)
+      TWEEN.update(time);
+
+    console.log('Rendering');
+    this.renderer.render(this.scene, this.camera);
+
+
+    if (Gamestack.__stats) {
+      Gamestack.__stats.end();
+      Gamestack.__statsMS.end();
+    }
+
+  }
+
+  /**
+   * begins the animation-loop of WebGL, with performance Stats shown on-screen
+   *
+   * @function
+   * @memberof WebGL
+   **********/
+
+
+  start() {
+
+    if (typeof(Stats) == 'function') //Stats library exists
+    {
+      //basic stat animation
+      Gamestack.__stats = new Stats();
+      Gamestack.__stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+
+      Gamestack.__stats.dom.style.left = '10%';
+
+      Gamestack.__stats.dom.setAttribute('class', 'stat');
+
+      this.canvas.parentNode.appendChild(Gamestack.__stats.dom);
+
+      //basic stat animation
+      Gamestack.__statsMS = new Stats();
+      Gamestack.__statsMS.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
+
+      Gamestack.__statsMS.dom.style.left = '10%';
+
+      Gamestack.__statsMS.dom.style.marginLeft = '90px';
+
+      Gamestack.__statsMS.dom.setAttribute('class', 'stat');
+
+      this.canvas.parentNode.appendChild(Gamestack.__statsMS.dom);
+
+      //basic stat animation
+      Gamestack.__statsMB = new Stats();
+      Gamestack.__statsMB.showPanel(2); // 0: fps, 1: ms, 2: mb, 3+: custom
+
+      Gamestack.__statsMB.dom.style.left = '10%';
+
+      Gamestack.__statsMB.dom.setAttribute('class', 'stat');
+
+      Gamestack.__statsMB.dom.style.marginLeft = '180px';
+
+      this.canvas.parentNode.appendChild(Gamestack.__statsMB.dom);
+    }
+
+    this.animate();
+  }
+}
+
+Gamestack.WebGL = WebGL;
+
+Gamestack.WebGl = WebGL;
 ;class RGBAColor {
   constructor(r=0, g=0, b=0, a=0) {
     this.r = r;
@@ -4705,6 +4807,7 @@ for(var x in ColorStrings)
         constructor() {
             var __inst = this;
             this.framePos = new Gamestack.Vector(0, 0);
+            this.origin = new Gamestack.Vector(0, 0);
         }
 
         Image(src) {
@@ -4722,22 +4825,16 @@ for(var x in ColorStrings)
 
         }
 
-        Size(s) {
-
-            this.size = new Gamestack.Vector(s, s, s);
-
-            this.frameSize = new Gamestack.Vector(s, s, s);
-
-            return this;
-
+        Origin(x, y, z)
+        {
+          this.origin = new Gamestack.Vector(x, y, z);
+          return this;
         }
 
-        Position(p) {
-            this.position = new Gamestack.Vector(p, p, p);
-
-            this.framePos = new Gamestack.Vector(p, p, p);
-
-            return this;
+        Rotation(x, y, z)
+        {
+          this.rotation = new Gamestack.Vector(x, y, z);
+          return this;
         }
 
         FramePos(p) {
@@ -4746,6 +4843,12 @@ for(var x in ColorStrings)
             this.framePos = new Gamestack.Vector(p, p, p);
 
             return this;
+        }
+
+        FrameSize(x, y, z)
+        {
+          this.frameSize = new Gamestack.Vector(x, y, z);
+          return this;
         }
 
         StoreOffscreen(){
@@ -5677,705 +5780,860 @@ class Three //dependency: THREE.js
 
     }
 }
-;(function () {
-    console.log('Animation class... creating');
+;(function() {
+  console.log('Animation class... creating');
+
+  /**
+   *
+   * Creates an instance of Animation with one or more Frames.
+   *
+   * <iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/Animation.html'> </iframe>
+   *
+   * @param   {string=} [src] the src-image-path for this Animation
+   * @returns {Animation} an Animation object
+   *
+   * @example
+   *
+   * //constructor call: Creates a single-frame Animation from src
+   * var singleFrameAnime = new Animation('directory/myFile.png');
+   *
+   * @example
+   * //constructor call with chainable function-calls: Creates multi-frame Animation from src, then sets properties with chainable-function-calls.
+   * var multiFrameAnime = new Gamestack.Animation('../images/characters/full/spaceman1.png') //constructor is called
+   * .FrameSize(130, 130)
+   * .FrameBounds(new Gamestack.Vector(9, 0), new Gamestack.Vector(23, 0), new Gamestack.Vector(23, 0))
+   * .Seesaw() //The Animation will play back-and-forth repeatedly (cycle through frames forwards, then backwards and so on.
+   * .Duration(900); //Animation lasts 900 millis OR just under 1 second
+   *
+   *  @design
+   *
+   * //single-responsibility : to define a list of frames, then progress that list of frames with a 'selected_frame' property
+   * var singleFrameAnime = new Animation('directory/myFile.png');
+   */
+
+  class Animation {
+
+    constructor(src = {}) {
+
+      var args = typeof(src) == 'object' ? src : {};
+
+      //Gamestack.Modifiers.informable(this, args);
+
+      if (typeof src == 'string') {
+        this.Src(src, args.frameBounds);
+      } else if (args instanceof Gamestack.GameImage) {
+        console.log('Animation(): args are an instance of GameImage');
+
+        this.image = args;
+      } else if (args instanceof HTMLImageElement) {
+        console.log('Animation(): args was an instance of HTMLImageElement');
+
+        this.image = new Gamestack.GameImage(args);
+      } else if (args instanceof Gamestack.Animation) {
+
+        this.image = args.image;
+
+      } else if (typeof(args) == 'object' && args.src) {
+        this.src = args.src;
+        this.image = new Gamestack.GameImage(args.src);
+      }
+
+
+      this.visible = args.visible || false;
+
+
+      /**
+       * @property {Vector} frameSize the frameSize of the Animation
+       * @memberof Animation
+       **********/
+
+      this.frameSize = this.frameSize || new Gamestack.Vector(args.frameSize || new Gamestack.Vector(0, 0));
+
+
+      if (args.frameBounds && args.frameBounds.min && args.frameBounds.max) {
+
+        /**
+         * @property {VectorFrameBounds} frameBounds the frameBounds of the Animation, has three Vectors
+         * @memberof Animation
+         **********/
+
+        this.frameBounds = new Gamestack.VectorFrameBounds(args.frameBounds.min, args.frameBounds.max, args.frameBounds.termPoint);
+
+      } else {
+
+        this.frameBounds = new Gamestack.VectorFrameBounds(new Gamestack.Vector(0, 0, 0), new Gamestack.Vector(0, 0, 0), new Gamestack.Vector(0, 0, 0));
+
+      }
+
+
+      this.origin = new Gamestack.Vector(0, 0, 0);
+
+      this.frameOffset = this.getArg(args, 'frameOffset', new Gamestack.Vector(0, 0, 0));
+
+      this.apply2DFrames();
+
+      this.flipX = this.getArg(args, 'flipX', false);
+
+      this.cix = 0;
+
+      /**
+       * @property {Frame} selected_frame the selected_frame of the Animation, a Gamestack.Frame
+       * @memberof Animation
+       **********/
+
+      this.selected_frame = this.frames[0] || false;
+
+      this.timer = 0;
+
+      this.duration = args.duration || 2000;
+
+      this.seesaw_mode = args.seesaw_mode || false;
+
+      this.reverse_frames = args.reverse_frames || false;
+
+      this.run_ext = args.run_ext || [];
+
+      this.complete_ext = args.complete_ext || [];
+
+
+      // this.colorMap = this.createColorMap(5);
+
+    }
+
+    Origin(x, y, z) {
+
+      this.origin = new Gamestack.Vector(x, y, z);
+
+      this.frames.forEach(function($f) {
+
+        $f.origin = new Gamestack.Vector(x, y, z);
+
+      });
+
+      if(this.selected_frame)
+      {
+        this.selected_frame.origin = new Gamestack.Vector(x, y, z);
+      }
+
+      return this;
+    }
+
+    Position(x, y, z) {
+      this.position = new Gamestack.Vector(x, y, z);
+
+      this.frames.forEach(function($f) {
+
+        $f.position = new Gamestack.Vector(x, y, z);
+
+      });
+
+      return this;
+    }
+
+    Bone(b) {
+      this.bone = b;
+      return this;
+    }
+
+    ParentBone(b) {
+      this.parentBone = b;
+      return this;
+    }
+
+    Rotation(x, y, z) {
+
+      this.rotation = new Gamestack.Vector(x, y, z);
+
+      this.frames.forEach(function($frame) {
+
+        $frame.Rotation(x, y, z);
+
+      });
+
+      return this;
+
+    }
+
+    Src(src, options = {}) {
+
+      if (typeof src == 'string') {
+
+        console.log('setting GameImage with string:' + src);
+        this.src = src;
+        this.image = new Gamestack.GameImage(src);
+
+      } else if (src instanceof GameImage) {
+        console.log('Animation(): args are an instance of GameImage');
+
+        this.image = src;
+      } else if (src instanceof HTMLImageElement) {
+        console.log('Animation(): args was an instance of HTMLImageElement');
+
+        this.image = new Gamestack.GameImage(src);
+      }
+
+      if (!options.frameBounds)
+        this.init_singleFrame();
+
+      return this;
+
+    }
+
+    Size(x, y, z) {
+
+      this.size = new Gamestack.Vector(x, y, z);
+
+      this.frames.forEach(function(f) {
+
+        f.size = new Gamestack.Vector(x, y, z);
+
+      });
+
+      return this;
+    }
+
+    Image(src) {
+
+      if (typeof(src) == 'string') {
+
+        console.log('setting GameImage with string:' + src);
+        this.src = src;
+        this.image = new Gamestack.GameImage(src);
+
+      } else if (src instanceof Gamestack.GameImage) {
+        console.log('Animation(): args are an instance of GameImage');
+
+        this.image = src;
+      } else if (src instanceof HTMLImageElement) {
+        console.log('Animation(): args was an instance of HTMLImageElement');
+
+        this.image = new Gamestack.GameImage(src);
+      }
+
+      this.init_singleFrame();
+
+
+      return this;
+
+    }
+
 
     /**
-     *
-     * Creates an instance of Animation with one or more Frames.
-     *
-     * <iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/Animation.html'> </iframe>
-     *
-     * @param   {string=} [src] the src-image-path for this Animation
-     * @returns {Animation} an Animation object
-     *
-     * @example
-     *
-     * //constructor call: Creates a single-frame Animation from src
-     * var singleFrameAnime = new Animation('directory/myFile.png');
-     *
-     * @example
-     * //constructor call with chainable function-calls: Creates multi-frame Animation from src, then sets properties with chainable-function-calls.
-     * var multiFrameAnime = new Gamestack.Animation('../images/characters/full/spaceman1.png') //constructor is called
-     * .FrameSize(130, 130)
-     * .FrameBounds(new Gamestack.Vector(9, 0), new Gamestack.Vector(23, 0), new Gamestack.Vector(23, 0))
-     * .Seesaw() //The Animation will play back-and-forth repeatedly (cycle through frames forwards, then backwards and so on.
-     * .Duration(900); //Animation lasts 900 millis OR just under 1 second
-     *
-     *  @design
-     *
-     * //single-responsibility : to define a list of frames, then progress that list of frames with a 'selected_frame' property
-     * var singleFrameAnime = new Animation('directory/myFile.png');
-     */
+     * sets this Animation to a single-frame-animation, from existing image
+     * @function
+     * @memberof Animation
+     **********/
 
-    class Animation {
+    init_singleFrame() {
 
-        constructor(src={}) {
+      var __inst = this;
 
-            var args = typeof(src) == 'object' ? src : {};
+      this.image.domElement.onload = function() {
+        if (!__inst.__isInit)
+          __inst.FrameSize(__inst.image.domElement.width, __inst.image.domElement.height)
+          .FrameBounds(new Gamestack.Vector(0, 0), new Gamestack.Vector(0, 0));
 
-            //Gamestack.Modifiers.informable(this, args);
+        __inst.run();
 
-            if (typeof src == 'string') {
-                this.Src(src, args.frameBounds);
-            }
-            else if(args instanceof Gamestack.GameImage)
-            {
-                console.log('Animation(): args are an instance of GameImage');
+      };
 
-                this.image = args;
-            }
-            else if(args instanceof HTMLImageElement)
-            {
-                console.log('Animation(): args was an instance of HTMLImageElement');
+      Gamestack.log('Animation():set single-frame animation');
 
-                this.image = new Gamestack.GameImage(args);
-            }
+      return this;
 
-            else if(args instanceof Gamestack.Animation)
-            {
-
-                this.image = args.image;
-
-            }
-            else if(typeof(args)=='object' && args.src)
-            {
-                this.src = args.src;
-                this.image = new Gamestack.GameImage(args.src);
-            }
-
-
-                /**
-                 * @property {Vector} frameSize the frameSize of the Animation
-                 * @memberof Animation
-                 **********/
-
-            this.frameSize = this.frameSize || new Gamestack.Vector(args.frameSize || new Gamestack.Vector(0, 0));
-
-
-
-            if (args.frameBounds && args.frameBounds.min && args.frameBounds.max) {
-
-              /**
-               * @property {VectorFrameBounds} frameBounds the frameBounds of the Animation, has three Vectors
-               * @memberof Animation
-               **********/
-
-                this.frameBounds = new Gamestack.VectorFrameBounds(args.frameBounds.min, args.frameBounds.max, args.frameBounds.termPoint);
-
-            }
-            else {
-
-                this.frameBounds = new Gamestack.VectorFrameBounds(new Gamestack.Vector(0, 0, 0), new Gamestack.Vector(0, 0, 0), new Gamestack.Vector(0, 0, 0));
-
-            }
-
-            this.frameOffset = this.getArg(args, 'frameOffset', new Gamestack.Vector(0, 0, 0));
-
-            this.apply2DFrames();
-
-            this.flipX = this.getArg(args, 'flipX', false);
-
-            this.cix = 0;
-
-            /**
-             * @property {Frame} selected_frame the selected_frame of the Animation, a Gamestack.Frame
-             * @memberof Animation
-             **********/
-
-            this.selected_frame = this.frames[0] || false;
-
-            this.timer = 0;
-
-            this.duration = args.duration || 2000;
-
-            this.seesaw_mode = args.seesaw_mode || false;
-
-            this.reverse_frames = args.reverse_frames || false;
-
-            this.run_ext = args.run_ext || [];
-
-            this.complete_ext = args.complete_ext || [];
-
-           // this.colorMap = this.createColorMap(5);
-
-        }
-
-        Src(src, options={}){
-
-          if (typeof src == 'string') {
-
-              console.log('setting GameImage with string:' + src);
-              this.src = src;
-              this.image = new Gamestack.GameImage(src);
-
-          }
-          else if(src instanceof GameImage)
-          {
-              console.log('Animation(): args are an instance of GameImage');
-
-              this.image = src;
-          }
-          else if(src instanceof HTMLImageElement)
-          {
-              console.log('Animation(): args was an instance of HTMLImageElement');
-
-              this.image = new Gamestack.GameImage(src);
-          }
-
-          if(!options.frameBounds)
-          this.init_singleFrame();
-
-          return this;
-
-        }
-
-        Image(src){
-
-          if (typeof(src) == 'string') {
-
-              console.log('setting GameImage with string:' + src);
-              this.src = src;
-              this.image = new Gamestack.GameImage(src);
-
-          }
-          else if(src instanceof Gamestack.GameImage)
-          {
-              console.log('Animation(): args are an instance of GameImage');
-
-              this.image = src;
-          }
-          else if(src instanceof HTMLImageElement)
-          {
-              console.log('Animation(): args was an instance of HTMLImageElement');
-
-              this.image = new Gamestack.GameImage(src);
-          }
-
-          this.init_singleFrame();
-
-
-          return this;
-
-        }
-
-
-        /**
-         * sets this Animation to a single-frame-animation, from existing image
-         * @function
-         * @memberof Animation
-         **********/
-
-        init_singleFrame() {
-
-            var __inst = this;
-
-            this.image.domElement.onload = function () {
-                if(!__inst.__isInit)
-                __inst.FrameSize(__inst.image.domElement.width, __inst.image.domElement.height)
-                    .FrameBounds(new Gamestack.Vector(0, 0), new Gamestack.Vector(0, 0));
-
-                __inst.run();
-
-            };
-
-            Gamestack.log('Animation():set single-frame animation');
-
-            return this;
-
-        }
-
-        /*****
-         * Overridable / Extendable functions
-         * -allows stacking of external object-function calls
-         ******/
-
-
-        /**
-         * Provides a function to be called whenever this Animation starts. Function should run every time the Animation reaches frame-index 0
-         *
-         * @function
-         * @params {Function} call the function to be called on start
-         * @memberof Animation
-         **********/
-
-        onRun(call) {
-
-            if (this.run_ext.indexOf(call) == -1) {
-                this.run_ext.push(call.bind(this));
-            }
-        }
-
-
-        /**
-         * Provides a function to be called whenever this Animation completes. Function should run every time the Animation reaches it's last frame-index.
-         *
-         * @function
-         * @params {Function} call the function to be called on complete
-         * @memberof Animation
-         **********/
-
-        onComplete(call) {
-
-            if (this.complete_ext.indexOf(call) == -1) {
-                this.complete_ext.push(call.bind(this));
-            }
-        }
-
-        call_on_run() {
-            //call any function extension that is present
-            for (var x = 0; x < this.run_ext.length; x++) {
-                this.run_ext[x](this);
-            }
-        }
-
-        call_on_complete() {
-            //call any function extension that is present
-            for (var x = 0; x < this.complete_ext.length; x++) {
-                this.complete_ext[x](this);
-            }
-        }
-
-
-        FrameSize(w, h)
-        {
-            this.frameSize = new Gamestack.Vector(w, h);
-
-            this.__isInit = true;
-
-            this.run();
-
-            return this;
-
-        }
-
-        Hang(){
-
-          this._hang = true;
-          return this;
-
-        }
-
-        FrameBounds(minVector, maxVector, termVector)
-        {
-            this.frameBounds = new Gamestack.VectorFrameBounds(minVector, maxVector, termVector);
-
-            this.__isInit = true;
-
-            this.run();
-
-            return this;
-        }
-
-        FrameOffset(x, y){
-          this.frameOffset = new Gamestack.Vector(x, y);
-          return this;
-        }
-
-        Seesaw()
-        {
-            if(!this.seesaw_mode)
-            {
-                this.seesaw_mode = true;
-            }
-
-            return this;
-        }
-
-        Duration(millis)
-        {
-            this.duration = millis;
-
-            return this;
-        }
-
-        /**
-         * Reverses all frames of the animation. Frames are then expected to run backwards.
-         *
-         * @function
-         * @memberof Animation
-         **********/
-
-         ReverseFrames() {
-
-            this.reverse_frames = true;
-            return this;
-        }
-
-        /**
-         * Declares the animation a a single frame / full-image.
-         *
-         * @function
-         * @param {Vector} frameSize optional size param
-         * @memberof Animation
-         **********/
-
-        SingleFrame() {
-
-            this.__frametype = 'single';
-
-            this.frameSize = new Gamestack.Vector(this.image.domElement.width, this.image.domElement.height);
-
-            this.frameBounds = false;
-
-            this.selected_frame = new Gamestack.Frame().Image(this.image).Size(this.frameSize);
-
-            this.frames = [];
-
-            this.frames[0] = this.selected_frame;
-
-            return this;
-
-        }
-
-        getArg(args, key, fallback) {
-
-            if (args.hasOwnProperty(key)) {
-
-                return args[key];
-
-            }
-            else {
-                return fallback;
-
-            }
-        }
-
-        init(){
-
-            this.apply2DFrames();
-            return this;
-        }
-
-
-
-        apply2DFrames() {
-
-            this.frames = [];
-
-            var fcount = 0;
-
-            var quitLoop = false;
-
-            for (let y = this.frameBounds.min.y; y <= this.frameBounds.max.y; y++) {
-
-                for (let x = this.frameBounds.min.x; x <= this.frameBounds.max.x; x++) {
-
-                    let framePos = {
-                        x: x * this.frameSize.x + this.frameOffset.x,
-                        y: y * this.frameSize.y + this.frameOffset.y
-                    };
-
-                    var f = new Gamestack.Frame().Image(this.image).Size(this.frameSize).Position(framePos);
-
-
-                    this.frames.push(f);
-
-                    if (x >= this.frameBounds.termPoint.x && y >= this.frameBounds.termPoint.y) {
-
-                        quitLoop = true;
-
-                        break;
-                    }
-
-                    fcount += 1;
-
-                    if (quitLoop)
-                        break;
-
-                }
-
-            }
-
-            this.frames[0] = this.selected_frame = this.frames[0] || new Gamestack.Frame().Image(this.image).Size(this.frameSize);
-
-            if (this.seesaw_mode) {
-
-               // console.log('Animation: applying seesaw');
-
-                var frames_reversed = this.frames.slice().reverse();
-
-                this.frames.pop();
-
-                this.frames = this.frames.concat(frames_reversed);
-
-            }
-            if (this.reverse_frames) {
-                this.frames.reverse();
-            }
-        }
-
-        scaleOf(sized_Object)
-        {
-
-          var s = Larva.getPreferredPropertyByKey(sized_Object, 'size', 'argument had nested size variable. Using this instead.');
-
-          return s.div(this.frameSize);
-
-        }
-
-        init_colorMap()
-        {
-            Larva.info('init_colorMap()');
-
-            if(!Larva.allDefined([this.image, this.image.domElement]))
-                return [];
-
-            this.canvasObject = this.canvasObject || new Gamestack.OffscreenCanvasRendering(this.image);
-
-            this.colorMap = this.colorMap || this.ColoredPixelGrid();
-
-            return this.colorMap;
-        }
-
-
-        ColoredPixelGrid()
-        {
-
-            I('ColoredPixelGrid()');
-
-            var image = this.image.domElement,
-
-                ctx = this.canvasObject.ctx,
-
-                grid = [],
-
-                frameSizeDiv = this.selected_frame.frameSize.div(12).round();
-
-            for (var x = 0; x <= image.width; x+= frameSizeDiv.x) {
-                for (var y = 0; y <= image.height; y+= frameSizeDiv.y) {
-                    // Fetch pixel at current position
-                    var pixel = ctx.getImageData(x, y, 1, 1);
-                    // Check that opacity is above zero
-                    if (pixel.data[3] != 0) {
-
-                        var vector = new Gamestack.Vector(x, y),
-
-                            gridObject = {
-
-                                position:vector,
-
-                                size:frameSizeDiv
-                            };
-
-                        grid.push(gridObject);
-                    }
-                }
-            }
-
-            return grid;
-        }
-
-
-        /**
-         * Returns the existing ColorMap for this animation.
-         *
-         * @function
-         * @memberof Animation
-         **********/
-
-        getCurrentPixelMap()
-        {
-
-            Larva.info('getCurrentPixelMap()');
-
-            var map = [];
-
-            var frame = this.selected_frame;
-
-            let __inst = this;
-
-           this.colorMap = this.init_colorMap();
-
-            for(var x in this.colorMap)
-            {
-                var c = this.colorMap[x];
-
-                if(Gamestack.Collision.boxesCollide(frame.framePos, frame.frameSize, c.position, c.size))
-                {
-
-                    map.push(c);
-
-                }
-
-            }
-
-            return map;
-
-        }
-
-        /**
-         * Sets the frame to a specific array-index.
-         *
-         * @function
-         * @param {number} ix the frame-index to apply.
-         * @memberof Animation
-         **********/
-
-        setFrame(ix)
-        {
-                this.selected_frame = this.frames[ix];
-        }
-
-        update() {
-
-          if(this._hang && this.cix >= this.frames.length - 1)
-          {
-            this.cix = this.frames.length - 1
-          }
-
-            this.selected_frame = this.frames[Math.round(this.cix) % this.frames.length];
-        }
-
-        reset() {
-
-            this.apply2DFrames();
-
-            this.cix = 0;
-        }
-
-        /**
-         * Applies a continuous animation. Use this in parent-sprite's update if continuous animation is required.
-         * Also works as a single call at any time during game-update.
-         *
-         * @function
-         * @memberof Animation
-         **********/
-
-        run() {
-
-
-
-            if (this.__frametype == 'single') {
-                return 0;
-            }
-
-            this.apply2DFrames();
-
-            //update once:
-            this.update();
-
-            if (this.cix == 0) {
-
-                this.engage();
-
-            }
-        }
-
-        /**
-         * animate():: same as run()
-         *
-         * @function
-         * @memberof Animation
-         **********/
-
-        animate() {
-
-
-
-            if (this.__frametype == 'single') {
-                return 0;
-            }
-
-            this.apply2DFrames();
-
-            //update once:
-            this.update();
-
-            if (this.cix == 0) {
-
-                this.engage();
-
-            }
-        }
-
-        /**
-         * Engages, or updates the animation for a one full frame-cycle.
-         *
-         * @function
-         * @param {number} duration the number of milliseconds the animation should take.
-         * @memberof Animation
-         **********/
-
-        engage(duration) {
-
-            this.call_on_run();
-
-            duration = duration || this.duration || this.frames.length * 20;
-
-            if (this.__frametype == 'single') {
-                return 0;
-            }
-
-
-            let __inst = this;
-
-            //we have a target
-            this.tween = new TWEEN.Tween(this)
-                .easing(__inst.curve || TWEEN.Easing.Linear.None)
-
-                .to({cix: __inst.frames.length - 1}, duration)
-                .onUpdate(function () {
-                    //console.log(objects[0].position.x,objects[0].position.y);
-
-                    //   __inst.cix = Math.ceil(__inst.cix);
-
-                    __inst.update();
-
-                })
-                .onComplete(function () {
-                    //console.log(objects[0].position.x, objects[0].position.y);
-
-                    __inst.cix = 0;
-
-                    __inst.call_on_complete();
-
-                    __inst.isComplete = true;
-
-                });
-
-
-            if(this.cix == 0)
-            this.tween.start();
-
-            if(this.cix >= this.frames.length && !this._hang)
-            {
-              this.cix = 0;
-            }
-
-
-        }
     }
-    ;
 
-    /** @memberof Gamestack */
+    /*****
+     * Overridable / Extendable functions
+     * -allows stacking of external object-function calls
+     ******/
 
-    Gamestack.Animation = Animation;
 
-    Gamestack.Animation.continuous = Gamestack.Animation.run; //'continuous is an alternate reference to 'run'.'
+    /**
+     * Provides a function to be called whenever this Animation starts. Function should run every time the Animation reaches frame-index 0
+     *
+     * @function
+     * @params {Function} call the function to be called on start
+     * @memberof Animation
+     **********/
 
-    Gamestack.Animation.continue = Gamestack.Animation.run; //'continue is an alternate reference to 'run'.'
+    onRun(call) {
 
-    Gamestack.Animation.animate = Gamestack.Animation.run; //'animate is an alternate reference to 'run'.'
+      if (this.run_ext.indexOf(call) == -1) {
+        this.run_ext.push(call.bind(this));
+      }
+    }
+
+
+    /**
+     * Provides a function to be called whenever this Animation completes. Function should run every time the Animation reaches it's last frame-index.
+     *
+     * @function
+     * @params {Function} call the function to be called on complete
+     * @memberof Animation
+     **********/
+
+    onComplete(call) {
+
+      if (this.complete_ext.indexOf(call) == -1) {
+        this.complete_ext.push(call.bind(this));
+      }
+    }
+
+    call_on_run() {
+      //call any function extension that is present
+      for (var x = 0; x < this.run_ext.length; x++) {
+        this.run_ext[x](this);
+      }
+    }
+
+    call_on_complete() {
+      //call any function extension that is present
+      for (var x = 0; x < this.complete_ext.length; x++) {
+        this.complete_ext[x](this);
+      }
+    }
+
+
+    Visible(v) {
+      this.visible = v;
+      return this;
+    }
+
+
+    FrameSize(w, h) {
+      this.frameSize = new Gamestack.Vector(w, h);
+
+      this.__isInit = true;
+
+      this.run();
+
+      return this;
+
+    }
+
+    Hang() {
+
+      this._hang = true;
+      return this;
+
+    }
+
+    FrameBounds(minVector, maxVector, termVector) {
+      this.frameBounds = new Gamestack.VectorFrameBounds(minVector, maxVector, termVector);
+
+      this.__isInit = true;
+
+      this.run();
+
+      return this;
+    }
+
+    FrameOffset(x, y) {
+      this.frameOffset = new Gamestack.Vector(x, y);
+      return this;
+    }
+
+    Seesaw() {
+      if (!this.seesaw_mode) {
+        this.seesaw_mode = true;
+      }
+
+      return this;
+    }
+
+    Duration(millis) {
+      this.duration = millis;
+
+      return this;
+    }
+
+    /**
+     * Reverses all frames of the animation. Frames are then expected to run backwards.
+     *
+     * @function
+     * @memberof Animation
+     **********/
+
+    ReverseFrames() {
+
+      this.reverse_frames = true;
+      return this;
+    }
+
+    /**
+     * Declares the animation a a single frame / full-image.
+     *
+     * @function
+     * @param {Vector} frameSize optional size param
+     * @memberof Animation
+     **********/
+
+    SingleFrame() {
+
+      this.__frametype = 'single';
+
+      this.frameSize = new Gamestack.Vector(this.image.domElement.width, this.image.domElement.height);
+
+      this.frameBounds = false;
+
+      this.selected_frame = new Gamestack.Frame().Image(this.image).FrameSize(this.frameSize).Size(this.frameSize);
+
+      this.frames = [];
+
+      this.frames[0] = this.selected_frame;
+
+      return this;
+
+    }
+
+    getArg(args, key, fallback) {
+
+      if (args.hasOwnProperty(key)) {
+
+        return args[key];
+
+      } else {
+        return fallback;
+
+      }
+    }
+
+    init() {
+
+
+      this.apply2DFrames();
+      return this;
+    }
+
+
+    apply2DFrames() {
+
+      console.log('Running apply2DFrames(): --' + this.name);
+
+      this.frames = [];
+
+      if (!this.size) {
+        this.Size(this.frameSize.x, this.frameSize.y);
+      }
+
+
+      var fcount = 0;
+
+      var quitLoop = false;
+
+      for (let y = this.frameBounds.min.y; y <= this.frameBounds.max.y; y++) {
+
+        for (let x = this.frameBounds.min.x; x <= this.frameBounds.max.x; x++) {
+
+          let framePos = {
+            x: x * this.frameSize.x + this.frameOffset.x,
+            y: y * this.frameSize.y + this.frameOffset.y
+          };
+
+          var f = new Gamestack.Frame().Image(this.image).FrameSize(this.frameSize).Origin(this.origin).Size(this.size || this.frameSize).Position(this.position || framePos);
+
+
+          this.frames.push(f);
+
+          if (x >= this.frameBounds.termPoint.x && y >= this.frameBounds.termPoint.y) {
+
+            quitLoop = true;
+
+            break;
+          }
+
+          fcount += 1;
+
+          if (quitLoop)
+            break;
+
+        }
+
+      }
+
+      this.frames[0] = this.selected_frame = this.frames[0] || new Gamestack.Frame().Image(this.image).FrameSize(this.frameSize).Size(this.frameSize);
+
+      if (this.seesaw_mode) {
+
+        // console.log('Animation: applying seesaw');
+
+        var frames_reversed = this.frames.slice().reverse();
+
+        this.frames.pop();
+
+        this.frames = this.frames.concat(frames_reversed);
+
+      }
+      if (this.reverse_frames) {
+        this.frames.reverse();
+      }
+    }
+
+    scaleOf(sized_Object) {
+
+      var s = Larva.getPreferredPropertyByKey(sized_Object, 'size', 'argument had nested size variable. Using this instead.');
+
+      return s.div(this.frameSize);
+
+    }
+
+    init_colorMap() {
+      Larva.info('init_colorMap()');
+
+      if (!Larva.allDefined([this.image, this.image.domElement]))
+        return [];
+
+      this.canvasObject = this.canvasObject || new Gamestack.OffscreenCanvasRendering(this.image);
+
+      this.colorMap = this.colorMap || this.ColoredPixelGrid();
+
+      return this.colorMap;
+    }
+
+
+    ColoredPixelGrid() {
+
+      I('ColoredPixelGrid()');
+
+      var image = this.image.domElement,
+
+        ctx = this.canvasObject.ctx,
+
+        grid = [],
+
+        frameSizeDiv = this.selected_frame.frameSize.div(12).round();
+
+      for (var x = 0; x <= image.width; x += frameSizeDiv.x) {
+        for (var y = 0; y <= image.height; y += frameSizeDiv.y) {
+          // Fetch pixel at current position
+          var pixel = ctx.getImageData(x, y, 1, 1);
+          // Check that opacity is above zero
+          if (pixel.data[3] != 0) {
+
+            var vector = new Gamestack.Vector(x, y),
+
+              gridObject = {
+
+                position: vector,
+
+                size: frameSizeDiv
+              };
+
+            grid.push(gridObject);
+          }
+        }
+      }
+
+      return grid;
+    }
+
+
+    /**
+     * Returns the existing ColorMap for this animation.
+     *
+     * @function
+     * @memberof Animation
+     **********/
+
+    getCurrentPixelMap() {
+
+      Larva.info('getCurrentPixelMap()');
+
+      var map = [];
+
+      var frame = this.selected_frame;
+
+      let __inst = this;
+
+      this.colorMap = this.init_colorMap();
+
+      for (var x in this.colorMap) {
+        var c = this.colorMap[x];
+
+        if (Gamestack.Collision.boxesCollide(frame.framePos, frame.frameSize, c.position, c.size)) {
+
+          map.push(c);
+
+        }
+
+      }
+
+      return map;
+
+    }
+
+    /**
+     * Sets the frame to a specific array-index.
+     *
+     * @function
+     * @param {number} ix the frame-index to apply.
+     * @memberof Animation
+     **********/
+
+    setFrame(ix) {
+      this.selected_frame = this.frames[ix];
+    }
+
+    update() {
+
+      if (this._hang && this.cix >= this.frames.length - 1) {
+        this.cix = this.frames.length - 1
+      }
+
+      this.selected_frame = this.frames[Math.round(this.cix) % this.frames.length];
+    }
+
+    reset() {
+
+      this.apply2DFrames();
+
+      this.cix = 0;
+    }
+
+    /**
+     * Applies a continuous animation. Use this in parent-sprite's update if continuous animation is required.
+     * Also works as a single call at any time during game-update.
+     *
+     * @function
+     * @memberof Animation
+     **********/
+
+    run() {
+
+
+      if (this.__frametype == 'single') {
+        return 0;
+      }
+
+      this.apply2DFrames();
+
+      //update once:
+      this.update();
+
+      if (this.cix == 0) {
+
+        this.engage();
+
+      }
+    }
+
+    /**
+     * animate():: same as run()
+     *
+     * @function
+     * @memberof Animation
+     **********/
+
+    animate() {
+
+
+      if (this.__frametype == 'single') {
+        return 0;
+      }
+
+      this.apply2DFrames();
+
+      //update once:
+      this.update();
+
+      if (this.cix == 0) {
+
+        this.engage();
+
+      }
+    }
+
+    /**
+     * Engages, or updates the animation for a one full frame-cycle.
+     *
+     * @function
+     * @param {number} duration the number of milliseconds the animation should take.
+     * @memberof Animation
+     **********/
+
+    engage(duration) {
+
+      this.call_on_run();
+
+      duration = duration || this.duration || this.frames.length * 20;
+
+      if (this.__frametype == 'single') {
+        return 0;
+      }
+
+
+      let __inst = this;
+
+      //we have a target
+      this.tween = new TWEEN.Tween(this)
+        .easing(__inst.curve || TWEEN.Easing.Linear.None)
+
+        .to({
+          cix: __inst.frames.length - 1
+        }, duration)
+        .onUpdate(function() {
+          //console.log(objects[0].position.x,objects[0].position.y);
+
+          //   __inst.cix = Math.ceil(__inst.cix);
+
+          __inst.update();
+
+        })
+        .onComplete(function() {
+          //console.log(objects[0].position.x, objects[0].position.y);
+
+          __inst.cix = 0;
+
+          __inst.call_on_complete();
+
+          __inst.isComplete = true;
+
+        });
+
+
+      if (this.cix == 0)
+        this.tween.start();
+
+      if (this.cix >= this.frames.length && !this._hang) {
+        this.cix = 0;
+      }
+
+
+    }
+  };
+
+  /** @memberof Gamestack */
+
+  Gamestack.Animation = Animation;
+
+  Gamestack.Animation.continuous = Gamestack.Animation.run; //'continuous is an alternate reference to 'run'.'
+
+  Gamestack.Animation.continue = Gamestack.Animation.run; //'continue is an alternate reference to 'run'.'
+
+  Gamestack.Animation.animate = Gamestack.Animation.run; //'animate is an alternate reference to 'run'.'
 
 })();
 ;
 
 
-class Construct3D{
+function calc3DPointTo2DPoint(vectorOne) {
 
-constructor(name, value){
-  this.name = name;
-  this.value = value;
-  this.message=  'just-testing';
+  var vector = new THREE.Vector3();
+
+  vector.set(vectorOne.x, vectorOne.y, vectorOne.z);
+
+  vector.project(Gamestack.threejs.camera);
+
+  var result = new Object();
+  result.x = Math.round(vector.x * (renderer.domElement.width / 2));
+  result.y = Math.round(vector.y * (renderer.domElement.height / 2));
+
+  return result;
+
 }
 
+Gamestack.Object2D3D = function(arg1, arg2){
+
+    this.screenSize2D = function(){
+      var renderer = Gamestack.threejs.renderer;
+      return {x:renderer.domElement.width, y:renderer.domElement.height}
+    };
+
+    this.mesh = new THREE.Mesh(arg1, arg2);
+
+    this.mesh.get2DPosition = function() {
+
+      var renderer = Gamestack.threejs.renderer,
+        camera = Gamestack.threejs.camera;
+
+        var scene = Gamestack.threejs.scene;
+
+      scene.updateMatrixWorld(true);
+      this.position.setFromMatrixPosition(this.matrixWorld );
+
+      var vector = calc3DPointTo2DPoint(this.position);
+
+      return vector;
+
+    };
+
+    this.mesh.get2DSize = function(){
+
+      var renderer = Gamestack.threejs.renderer,
+        camera = Gamestack.threejs.camera;
+
+        var scene = Gamestack.threejs.scene;
+
+      var widthHalf = 0.5 * renderer.context.canvas.width;
+      var heightHalf = 0.5 * renderer.context.canvas.height;
+
+      scene.updateMatrixWorld();
+
+      var box = new THREE.Box3().setFromObject(this);
+
+      var vector = calc3DPointTo2DPoint(box.min);
+
+      return vector;
+
+    };
+
+    this.mesh.getImageData = function(){
+
+      var canvas = Gamestack.threejs.renderer.domElement;
+
+              var renderer = Gamestack.threejs.renderer,
+                camera = Gamestack.threejs.camera;
+
+                var scene = Gamestack.threejs.scene;
+
+              renderer.render(scene, camera);
+
+      var position = this.get2DPosition(),
+        size = this.get2DSize();
+
+      var gl = canvas.getContext('webgl');
+
+      console.log(size);
+
+      console.log(position);
+
+      size.x = Math.abs(size.x);
+
+      size.y = Math.abs(size.y);
+
+      var posX = position.x,
+      posY =position.y;
+
+      var ScreenSize = THREE.screenSize2D();
+
+      var pixels = new Uint8Array(size.x * 2 * size.y * 2 * 4);
+      gl.readPixels((ScreenSize.x / 2) - size.x, (ScreenSize.y / 2) - size.y, size.x * 2, size.y * 2, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+
+      return pixels;
+
+    };
+
+
+
+    return this.mesh;
+
+};
+
+
+
+class Animation3D{
+
+
+  constructor(){
+
+
+  }
 }
 
 
-
-Gamestack.Construct3D = Construct3D;
-;/**
+Gamestack.Animation3D = Animation3D;
+;;/**
  * Creates a new Sprite.
  *
  * <info-bit>Gamestack.Sprite is a container for 2D Animations.
@@ -6697,9 +6955,18 @@ class Sprite extends Scriptable {
 
      var sprite = this;
 
-     var frame;
+     var frame = false, frameList = [];
 
      if (sprite.active) {
+
+       if(sprite.selected_animation instanceof Array && sprite.selected_animation.length >= 1)
+       {
+         sprite.selected_animation.forEach(function(anime){
+
+            frameList.push(anime.selected_frame);
+
+         });
+       }
 
        if (sprite.selected_animation instanceof Object && sprite.selected_animation.hasOwnProperty('selected_frame')) {
 
@@ -6707,10 +6974,8 @@ class Sprite extends Scriptable {
 
        } else {
 
-         // console.error('Sprite is missing arguments');
-         //delay the draw
 
-         return;
+
 
        }
 
@@ -6779,14 +7044,45 @@ class Sprite extends Scriptable {
 
        } else {
 
-         if (!sprite.selected_animation || !sprite.selected_animation.selected_frame.image.domElement)
-           return;
+         if(frameList.length >= 1)
+         {
 
-         if (frame.image.domElement instanceof HTMLImageElement) {
+            frameList.forEach(function(frame){
 
-           Gamestack.Canvas.draw_image_frame(frame.image.domElement, frame.framePos, frame.frameSize, new Gamestack.Vector2D(Math.round(x + (realWidth / 2)), Math.round(y + (realHeight / 2))), new Gamestack.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin);
+              var realWidth = frame.size.x;
+              var realHeight = frame.size.y;
+
+              var x = frame.position.x, y = frame.position.y;
+
+
+
+              if(frame.rotation && frame.rotation.x)
+              {
+                rotation = frame.rotation.x;
+              }
+
+              if(frame.origin)
+              {
+                origin = frame.origin;
+                  console.log('drawing with origin:' + origin.x + ':' + origin.y);
+              }
+
+              if(frame && frame.image)
+              Gamestack.Canvas.draw_image_frame(frame.image.domElement, frame.framePos, frame.frameSize, new Gamestack.Vector2D(Math.round(x + (realWidth / 2)), Math.round(y + (realHeight / 2))), new Gamestack.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin);
+
+            });
 
          }
+         else{
+
+                    if (frame.image.domElement instanceof HTMLImageElement) {
+
+                      Gamestack.Canvas.draw_image_frame(frame.image.domElement, frame.framePos, frame.frameSize, new Gamestack.Vector2D(Math.round(x + (realWidth / 2)), Math.round(y + (realHeight / 2))), new Gamestack.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin);
+
+                    }
+
+         }
+
        }
      }
 
@@ -6840,6 +7136,10 @@ class Sprite extends Scriptable {
     }
 
     return this;
+  }
+
+  FromSourceImage(src) {
+    return new this.constructor(src);
   }
 
   /**************************************************************
@@ -8738,7 +9038,7 @@ class Attachment {
     Gamestack.GravityForce = GravityForce;
 
 })();
-;;;;;class Player extends Sprite
+;;;class Player extends Sprite
 {
   constructor()
   {
@@ -9557,8 +9857,23 @@ class Terrain extends Gamestack.Sprite
 
         return this;
     }
-    onCollide() // Gamestack.Terrain instance should have an onCollide() function
+    onCollide(callback) // Gamestack.Terrain instance should have an onCollide() function
     {
+
+      this.collideables.forEach(function(sprite){
+
+        if(sprite.onUpdate)
+        {
+
+          sprite.onUpdate(function(){
+
+            
+
+          });
+
+        }
+
+      });
 
     }
 
@@ -9842,6 +10157,7 @@ Gamestack.FeatureInject = function(constructor, args) {
       for (var z in GClassFeatures)
         if (GClassFeatures[z] && GClassFeatures[z].featureSymbols.hasKey(props[y])) {
 
+
           Gamestack.FeatureInjectors[x][props[y]](Gamestack[z].prototype, args);
 
         }
@@ -9904,6 +10220,24 @@ class DataFunctions {
     };
   }
 }
+
+
+class BoneFunctions{
+
+  constructor(){
+
+  }
+
+  anchored(obj)
+  {
+    obj.Origin = function(x, y, z){
+      this.origin = new Gamestack.Vector(x, y, z);
+      return this;
+    }
+  }
+
+}
+
 
 
 /***************************
@@ -10234,6 +10568,8 @@ class VectorFunctions {
 Gamestack.FeatureInjectors.CssFeatures = new CssFeatures();
 
 Gamestack.FeatureInjectors.VectorFunctions = new VectorFunctions();
+
+Gamestack.FeatureInjectors.BoneFunctions = new BoneFunctions();
 
 Gamestack.FeatureInjectors.DataFunctions = new DataFunctions();
 ;let Larva = {

@@ -53,9 +53,11 @@ let ObjectFeatureMap = { //className / must have named function properties when 
 
   Elipse:['@spatial'],
 
+  Frame:['@spatial'],
+
   Background: ['@spatial',  '@data'],
 
-  Animation: ['@framedriven', '@effectdriven','@posable',  '@data'],
+  Animation: ['@anchored', '@framedriven', '@effectdriven', '@data'],
 
   Line2d:['@spatial', '@pointarrayflippable', '@selftransposable',  '@data'],
 

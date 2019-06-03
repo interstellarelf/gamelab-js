@@ -320,9 +320,18 @@ class Sprite extends Scriptable {
 
      var sprite = this;
 
-     var frame;
+     var frame = false, frameList = [];
 
      if (sprite.active) {
+
+       if(sprite.selected_animation instanceof Array && sprite.selected_animation.length >= 1)
+       {
+         sprite.selected_animation.forEach(function(anime){
+
+            frameList.push(anime.selected_frame);
+
+         });
+       }
 
        if (sprite.selected_animation instanceof Object && sprite.selected_animation.hasOwnProperty('selected_frame')) {
 
@@ -330,10 +339,8 @@ class Sprite extends Scriptable {
 
        } else {
 
-         // console.error('Sprite is missing arguments');
-         //delay the draw
 
-         return;
+
 
        }
 
@@ -402,14 +409,45 @@ class Sprite extends Scriptable {
 
        } else {
 
-         if (!sprite.selected_animation || !sprite.selected_animation.selected_frame.image.domElement)
-           return;
+         if(frameList.length >= 1)
+         {
 
-         if (frame.image.domElement instanceof HTMLImageElement) {
+            frameList.forEach(function(frame){
 
-           Gamestack.Canvas.draw_image_frame(frame.image.domElement, frame.framePos, frame.frameSize, new Gamestack.Vector2D(Math.round(x + (realWidth / 2)), Math.round(y + (realHeight / 2))), new Gamestack.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin);
+              var realWidth = frame.size.x;
+              var realHeight = frame.size.y;
+
+              var x = frame.position.x, y = frame.position.y;
+
+
+
+              if(frame.rotation && frame.rotation.x)
+              {
+                rotation = frame.rotation.x;
+              }
+
+              if(frame.origin)
+              {
+                origin = frame.origin;
+                  console.log('drawing with origin:' + origin.x + ':' + origin.y);
+              }
+
+              if(frame && frame.image)
+              Gamestack.Canvas.draw_image_frame(frame.image.domElement, frame.framePos, frame.frameSize, new Gamestack.Vector2D(Math.round(x + (realWidth / 2)), Math.round(y + (realHeight / 2))), new Gamestack.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin);
+
+            });
 
          }
+         else{
+
+                    if (frame.image.domElement instanceof HTMLImageElement) {
+
+                      Gamestack.Canvas.draw_image_frame(frame.image.domElement, frame.framePos, frame.frameSize, new Gamestack.Vector2D(Math.round(x + (realWidth / 2)), Math.round(y + (realHeight / 2))), new Gamestack.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin);
+
+                    }
+
+         }
+
        }
      }
 
@@ -463,6 +501,10 @@ class Sprite extends Scriptable {
     }
 
     return this;
+  }
+
+  FromSourceImage(src) {
+    return new this.constructor(src);
   }
 
   /**************************************************************

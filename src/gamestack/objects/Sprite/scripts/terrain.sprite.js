@@ -26,8 +26,23 @@ class Terrain extends Gamestack.Sprite
 
         return this;
     }
-    onCollide() // Gamestack.Terrain instance should have an onCollide() function
+    onCollide(callback) // Gamestack.Terrain instance should have an onCollide() function
     {
+
+      this.collideables.forEach(function(sprite){
+
+        if(sprite.onUpdate)
+        {
+
+          sprite.onUpdate(function(){
+
+            
+
+          });
+
+        }
+
+      });
 
     }
 

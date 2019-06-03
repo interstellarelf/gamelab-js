@@ -83,6 +83,7 @@ Gamestack.FeatureInject = function(constructor, args) {
       for (var z in GClassFeatures)
         if (GClassFeatures[z] && GClassFeatures[z].featureSymbols.hasKey(props[y])) {
 
+
           Gamestack.FeatureInjectors[x][props[y]](Gamestack[z].prototype, args);
 
         }
@@ -145,6 +146,24 @@ class DataFunctions {
     };
   }
 }
+
+
+class BoneFunctions{
+
+  constructor(){
+
+  }
+
+  anchored(obj)
+  {
+    obj.Origin = function(x, y, z){
+      this.origin = new Gamestack.Vector(x, y, z);
+      return this;
+    }
+  }
+
+}
+
 
 
 /***************************
@@ -475,5 +494,7 @@ class VectorFunctions {
 Gamestack.FeatureInjectors.CssFeatures = new CssFeatures();
 
 Gamestack.FeatureInjectors.VectorFunctions = new VectorFunctions();
+
+Gamestack.FeatureInjectors.BoneFunctions = new BoneFunctions();
 
 Gamestack.FeatureInjectors.DataFunctions = new DataFunctions();

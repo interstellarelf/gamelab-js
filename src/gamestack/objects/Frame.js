@@ -20,6 +20,7 @@
         constructor() {
             var __inst = this;
             this.framePos = new Gamestack.Vector(0, 0);
+            this.origin = new Gamestack.Vector(0, 0);
         }
 
         Image(src) {
@@ -37,22 +38,16 @@
 
         }
 
-        Size(s) {
-
-            this.size = new Gamestack.Vector(s, s, s);
-
-            this.frameSize = new Gamestack.Vector(s, s, s);
-
-            return this;
-
+        Origin(x, y, z)
+        {
+          this.origin = new Gamestack.Vector(x, y, z);
+          return this;
         }
 
-        Position(p) {
-            this.position = new Gamestack.Vector(p, p, p);
-
-            this.framePos = new Gamestack.Vector(p, p, p);
-
-            return this;
+        Rotation(x, y, z)
+        {
+          this.rotation = new Gamestack.Vector(x, y, z);
+          return this;
         }
 
         FramePos(p) {
@@ -61,6 +56,12 @@
             this.framePos = new Gamestack.Vector(p, p, p);
 
             return this;
+        }
+
+        FrameSize(x, y, z)
+        {
+          this.frameSize = new Gamestack.Vector(x, y, z);
+          return this;
         }
 
         StoreOffscreen(){

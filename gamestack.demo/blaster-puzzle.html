@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+
+    <title>Blaster Puzzle</title>
+
+    <script src="../res/libraries/three.js"></script>
+
+    <script src="res/js/renderers/Projector.js"></script>
+
+    <script src="../dist/gamestack/gamestack.js"></script>
+
+    <script src="res/scripts/gamestack.terrain.js"></script>
+
+    <!-- spritebox-example.css style -->
+    <link rel="stylesheet" href="../res/styles/spritebox-example.css">
+
+    <style>
+
+      #threejs-window {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+      div.hidden {
+        visibility: initial;
+      }
+    </style>
+
+  </head>
+  <body>
+
+    <header>
+      <img src="../res/images/spritebox-logo.png" alt="" id="logo">
+      <span class="title">Blaster Puzzle</span>
+    </header>
+
+    <div id="threejs-window" class="hidden"></div>
+
+    <script>
+
+      var Assets = {
+
+        Enemies:[]
+
+      };
+
+
+      Assets.Enemies.push(new Gamestack.Sprite('res/images/shapes/triangle.png'));
+
+
+      function Quadrant(key){
+        //return empty object / DEV-TODO
+
+                  var api = {};
+
+                  api.CreateSprite = function(){
+                    var sprite = new Gamestack.Sprite('res/images/snap-rectangle.png');
+
+                    sprite.onLoad(function(){
+
+                        var size_int = gameWindow.size.x <= gameWindow.size.y ?
+                        Math.round(gameWindow.size.x / 3) : Math.round(gameWindow.size.y / 3);
+
+                        this.Size(size_int, size_int);
+
+                        switch(key)
+                        {
+
+                          case 'Top':
+                                  this.position.x = (gameWindow.size.x / 2) - (size_int / 2);
+
+                                  this.position.y = gameWindow.size.y  / 2 - this.size.y / 2 - this.size.y + 2;
+
+
+                          break;
+
+                          case 'Left':
+
+                                this.Position(gameWindow.size.x  / 2 - this.size.x / 2 - this.size.x + 2, (gameWindow.size.y / 2) - (size_int / 2));
+
+                          break;
+
+                          case 'Bottom':
+                                this.position.x = (gameWindow.size.x / 2) - (size_int / 2);
+                                this.position.y = gameWindow.size.y  / 2 + this.size.y / 2;
+
+                          break;
+
+                          case 'Right':
+                                this.position.y = (gameWindow.size.y / 2) - (size_int / 2);
+                                this.Position((gameWindow.size.x / 2) + this.size.x / 2 - 3, this.position.y);
+                          break;
+
+
+
+                        }
+
+
+                    });
+
+                    gameWindow.add(sprite);
+
+                    return sprite;
+                  };
+
+                  api.members=[];
+
+                  api.superSprite = api.CreateSprite();
+
+                  api.addSubSprite = function(sprite){
+                    gameWindow.add(sprite);
+                    this.members.push(sprite);
+                    return sprite;
+                  };
+
+
+                  api.add = function(object){
+                      object.position = object.position.add(this.superSprite.position);
+                      gameWindow.add(object);
+                  };
+
+
+        return api;
+      };
+
+
+
+      var gameWindow = new Gamestack.GameWindow();
+
+      var Game = {
+
+        size:{},
+
+        centerRegion:{},
+
+        quadrants:{},
+
+        init:function(){
+
+          this.quadrants = {
+
+              Top:new Quadrant('Top'),
+
+              Left:new Quadrant('Left'),
+
+              Bottom:new Quadrant('Bottom'),
+
+              Right:new Quadrant('Right')
+
+            };
+
+
+          Game.size = new Gamestack.Vector(gameWindow.size.x, gameWindow.size.y);
+
+
+          this.centerRegion = new Gamestack.Sprite('res/images/snap-rectangle.png');
+
+          this.centerRegion.onLoad(function(){
+
+            var size_int = gameWindow.size.x <= gameWindow.size.y ?
+            Math.round(gameWindow.size.x / 3) : Math.round(gameWindow.size.y / 3);
+
+
+              this.Size(size_int, size_int);
+
+                                          this.position.x = (gameWindow.size.x / 2) - (size_int / 2);
+
+                                          this.position.y = (gameWindow.size.y / 2) - (size_int / 2);
+
+          });
+
+          this.outerHexagonSprite = new Gamestack.Sprite('res/images/hexagon.png');
+
+          this.outerHexagonSprite.onLoad(function(){
+
+            var size_int = gameWindow.size.x <= gameWindow.size.y ?
+            Math.floor(gameWindow.size.x / 3) : Math.floor(gameWindow.size.y / 3);
+
+
+              this.Size(Math.floor(size_int * 3), Math.floor(size_int * 3));
+
+                                          this.position.x = Math.ceil((gameWindow.size.x / 2) - (this.size.x / 2));
+
+                                          this.position.y = (gameWindow.size.y / 2) - (this.size.x / 2);
+
+          });
+
+          this.player = new Gamestack.Sprite('res/images/shapes/triangle.png');
+
+          this.player.onLoad(function(){
+
+            this.anime.frameBounds = new Gamestack.VectorFrameBounds(new Gamestack.Vector(0, 0), new Gamestack.Vector(0, 0));
+
+            this.anime.frameSize = new Gamestack.Vector(28, 28);
+
+            this.Size(25, 25);
+
+            var pos = new Gamestack.Vector(gameWindow.size.div(2));
+
+            pos.x -= this.size.x / 2;
+            pos.y -= this.size.y / 2;
+
+            this.Position(pos);
+
+
+
+          });
+
+          this.player.onUpdate(function(){
+
+              this.selected_animation.run();
+
+          });
+
+
+
+          gameWindow.add(this.player);
+
+          gameWindow.add(this.centerRegion);
+
+          gameWindow.add(  this.outerHexagonSprite);
+
+        }
+
+        ,
+
+        update:function(){
+
+          this.ticker = this.ticker || 0;
+
+          this.ticker += 1;
+
+
+          if(this.ticker % 200 == 0)
+          {
+
+              this.quadrants.Top.add(new Gamestack.Sprite().FromData(Assets.Enemies[0]));
+
+          }
+
+
+        }
+
+
+      };
+
+      gameWindow.onBeforeDraw(function(){
+
+        Game.update();
+
+      });
+
+
+      gameWindow.animate();
+
+      setTimeout(function(){
+
+        Game.init();
+
+      });
+
+    </script>
+
+  </body>
+</html>

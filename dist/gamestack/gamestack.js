@@ -1585,9 +1585,11 @@ var EventInterfaceMap = { //className / must have named functions whyen carrying
 
   Elipse: ['@spatial'],
 
+  Frame: ['@spatial'],
+
   Background: ['@spatial', '@data'],
 
-  Animation: ['@framedriven', '@effectdriven', '@posable', '@data'],
+  Animation: ['@anchored', '@framedriven', '@effectdriven', '@data'],
 
   Line2d: ['@spatial', '@pointarrayflippable', '@selftransposable', '@data'],
 
@@ -1676,6 +1678,84 @@ var UIObjectPrefabs = {
   Sprite: ['Side-Scroll-Player', 'Collider', 'Spaceship', 'Robot']
 
 };
+;
+var Bone = function () {
+  function Bone(parent, size) {
+    _classCallCheck(this, Bone);
+
+    this.size = size || new Gamestack.Vector(0, 0);
+
+    if (typeof parent == 'Object' && parent.id) this.parent_id = parent.id;
+
+    this.parent = parent;
+
+    this.size = size;
+
+    //every frame of the parent object gets same size::
+
+    if (parent.Size) {
+      parent.Size(size.x, size.y, size.z);
+    }
+  }
+
+  _createClass(Bone, [{
+    key: "Origin",
+    value: function Origin(x, y, z) {
+
+      this.origin = new Gamestack.Vector(x, y, z);
+
+      this.parent.Origin(x, y, z);
+      return this;
+    }
+  }, {
+    key: "Size",
+    value: function Size(x, y, z) {
+
+      this.size = new Gamestack.Vector(x, y, z);
+
+      this.parent.Size(x, y, z);
+    }
+  }, {
+    key: "Rotation",
+    value: function Rotation(x, y, z) {
+      this.rotation = new Gamestack.Vector(x, y, z);
+      this.parent.Rotation(this.rotation);
+      return this;
+    }
+  }, {
+    key: "onPosition",
+    value: function onPosition(callback) {
+
+      callback = callback.bind(this);
+
+      this.parent.onRun(function () {
+
+        callback();
+      });
+      return this;
+    }
+  }]);
+
+  return Bone;
+}();
+
+var BoneState = function BoneState(boneList) {
+  _classCallCheck(this, BoneState);
+
+  var states = [];
+
+  boneList.forEach(function (bone) {
+
+    states.push({
+      offset: new Gamestack.Vector(),
+      rotation: new Gamestack.Vector(),
+      size: new Gamestack.Vector()
+    });
+  });
+};
+
+Gamestack.BoneState = BoneState;
+Gamestack.Bone = Bone;
 ;(function () {
   console.log('Camera class... creating');
 
@@ -2709,6 +2789,74 @@ var Elipse = function () {
 Gamestack.Elipse = Elipse;
 ;
 
+var SpatialPattern = function () {
+  function SpatialPattern(src, unitSize) {
+    _classCallCheck(this, SpatialPattern);
+
+    this.objects = [];
+    this.basicGridChunk = new Gamestack.Sprite(src).Size(unitSize, unitSize);
+  }
+
+  _createClass(SpatialPattern, [{
+    key: "StepFunction",
+    value: function StepFunction(call) {
+      this.call = call || function () {};
+      return this;
+    }
+  }, {
+    key: "add",
+    value: function add(sprite) {
+      this.objects.push(sprite);
+    }
+  }, {
+    key: "Min",
+    value: function Min(m1, m2) {
+      this.min = new Gamestack.Vector(m1, m2);
+      return this;
+    }
+  }, {
+    key: "Max",
+    value: function Max(m1, m2) {
+      this.max = new Gamestack.Vector(m1, m2);
+      return this;
+    }
+  }, {
+    key: "Fill",
+    value: function Fill(callback) {
+
+      for (var x = this.min.x; x < this.max.x; x++) {
+
+        for (var y = this.min.y; y < this.max.y; y++) {
+
+          if (this.call(x, y)) {
+
+            var chunk = new Gamestack.Sprite().FromData(this.basicGridChunk);
+
+            chunk.target_x = x;
+            chunk.target_y = y;
+
+            chunk.onLoad(function () {
+
+              //  this.Size();
+
+              this.Position(this.target_x, this.target_y);
+            });
+
+            this.add(chunk);
+          }
+        }
+      }
+
+      callback(this.objects);
+    }
+  }]);
+
+  return SpatialPattern;
+}();
+
+Gamestack.SpatialPattern = SpatialPattern;
+;
+
 var Trigonometry = {
 
   rotate_from_xy: function rotate_from_xy(cx, cy, x, y, angle) {
@@ -3263,19 +3411,18 @@ var GammaFunctions = {};
 
       point.z = 0;
 
-      return point;
+      return new Gamestack.Vector(point);
     }
   };
 
   Gamestack.VectorMath = VectorMath;
 })();
-;
-/**
- * Creates a new WebGl --an experimental class for 3D-objects via THREE.js --requires THREE.js be included
- * @param   {Object} canvas the canvas element.
+; /**
+  * Creates a new WebGl --an experimental class for 3D-objects via THREE.js --requires THREE.js be included
+  * @param   {Object} canvas the canvas element.
   * @param   {Object} drawables the drawable objects to be drawn.
- * @returns {WebGL} a 2d/3d game-window object
- * */
+  * @returns {WebGL} a 2d/3d game-window object
+  * */
 
 var WebGL = function () {
   function WebGL() {
@@ -3296,14 +3443,23 @@ var WebGL = function () {
 
     var camera = new THREE.PerspectiveCamera();
 
-    var container = document.querySelector('#game-window');
+    var container = document.querySelector('#threejs-window');
 
     this.renderer = new THREE.WebGLRenderer();
-    this.renderer.setSize(container.clientWidth, container.clientHeight);
 
-    this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000); //was 1000 last arg
 
+    this.scene = new THREE.Scene();
+
+    this.renderer.setSize(container.clientWidth, container.clientHeight);
+
+    Gamestack.threejs = {};
+
+    Gamestack.threejs.renderer = this.renderer;
+
+    Gamestack.threejs.camera = this.camera;
+
+    Gamestack.threejs.scene = this.scene;
 
     container.append(this.renderer.domElement);
 
@@ -3323,8 +3479,6 @@ var WebGL = function () {
     var __inst = this;
 
     this.update_ext = [];
-
-    Gamestack.game_windows.push(this);
 
     window.onerror = function () {
 
@@ -3371,52 +3525,6 @@ var WebGL = function () {
     value: function center() {
 
       return new Gamestack.Vector(Math.round(this.canvas.width / 2), Math.round(this.canvas.height / 2));
-    }
-
-    /**
-     * creates an array of gridUnits
-     *
-     * @function
-     * @memberof WebGL
-     **********/
-
-  }, {
-    key: "GridStyle",
-    value: function GridStyle(total_x, total_y, w, h, srcImage_Path) {
-
-      if (!(this.grid instanceof Array)) {
-        this.grid = [];
-      }
-
-      function GridUnit(x, y, w, h, srcImage_Path) {
-
-        var size = new Gamestack.Vector(w, h),
-            position = new Gamestack.Vector(x, y);
-
-        var sprite;
-
-        if (srcImage_Path) {
-          sprite = new Gamestack.Sprite(srcImage_Path);
-          sprite.Size(size);
-          sprite.Pos(position);
-
-          Gamestack.game_windows[0].add(sprite);
-        }
-
-        return {
-          size: size,
-          position: position
-        };
-      };
-
-      for (var y = 0; y < total_y; y++) {
-
-        for (var x = 0; x < total_x; x++) {
-
-          this.grid.push(new GridUnit(x * w, y * h, w, h, srcImage_Path));
-        }
-      }
-      return this;
     }
   }, {
     key: "getCanvas",
@@ -3715,12 +3823,8 @@ var WebGL = function () {
 
       if (window.TWEEN) TWEEN.update(time);
 
-      __inst.update();
-
       console.log('Rendering');
       this.renderer.render(this.scene, this.camera);
-
-      this.draw();
 
       if (Gamestack.__stats) {
         Gamestack.__stats.end();
@@ -4565,6 +4669,7 @@ for (var x in ColorStrings) {
 
       var __inst = this;
       this.framePos = new Gamestack.Vector(0, 0);
+      this.origin = new Gamestack.Vector(0, 0);
     }
 
     _createClass(Frame, [{
@@ -4584,22 +4689,15 @@ for (var x in ColorStrings) {
         };
       }
     }, {
-      key: "Size",
-      value: function Size(s) {
-
-        this.size = new Gamestack.Vector(s, s, s);
-
-        this.frameSize = new Gamestack.Vector(s, s, s);
-
+      key: "Origin",
+      value: function Origin(x, y, z) {
+        this.origin = new Gamestack.Vector(x, y, z);
         return this;
       }
     }, {
-      key: "Position",
-      value: function Position(p) {
-        this.position = new Gamestack.Vector(p, p, p);
-
-        this.framePos = new Gamestack.Vector(p, p, p);
-
+      key: "Rotation",
+      value: function Rotation(x, y, z) {
+        this.rotation = new Gamestack.Vector(x, y, z);
         return this;
       }
     }, {
@@ -4609,6 +4707,12 @@ for (var x in ColorStrings) {
 
         this.framePos = new Gamestack.Vector(p, p, p);
 
+        return this;
+      }
+    }, {
+      key: "FrameSize",
+      value: function FrameSize(x, y, z) {
+        this.frameSize = new Gamestack.Vector(x, y, z);
         return this;
       }
     }, {
@@ -5538,6 +5642,8 @@ var Three //dependency: THREE.js
         this.image = new Gamestack.GameImage(args.src);
       }
 
+      this.visible = args.visible || false;
+
       /**
        * @property {Vector} frameSize the frameSize of the Animation
        * @memberof Animation
@@ -5557,6 +5663,8 @@ var Three //dependency: THREE.js
 
         this.frameBounds = new Gamestack.VectorFrameBounds(new Gamestack.Vector(0, 0, 0), new Gamestack.Vector(0, 0, 0), new Gamestack.Vector(0, 0, 0));
       }
+
+      this.origin = new Gamestack.Vector(0, 0, 0);
 
       this.frameOffset = this.getArg(args, 'frameOffset', new Gamestack.Vector(0, 0, 0));
 
@@ -5589,6 +5697,60 @@ var Three //dependency: THREE.js
     }
 
     _createClass(Animation, [{
+      key: "Origin",
+      value: function Origin(x, y, z) {
+
+        this.origin = new Gamestack.Vector(x, y, z);
+
+        this.frames.forEach(function ($f) {
+
+          $f.origin = new Gamestack.Vector(x, y, z);
+        });
+
+        if (this.selected_frame) {
+          this.selected_frame.origin = new Gamestack.Vector(x, y, z);
+        }
+
+        return this;
+      }
+    }, {
+      key: "Position",
+      value: function Position(x, y, z) {
+        this.position = new Gamestack.Vector(x, y, z);
+
+        this.frames.forEach(function ($f) {
+
+          $f.position = new Gamestack.Vector(x, y, z);
+        });
+
+        return this;
+      }
+    }, {
+      key: "Bone",
+      value: function Bone(b) {
+        this.bone = b;
+        return this;
+      }
+    }, {
+      key: "ParentBone",
+      value: function ParentBone(b) {
+        this.parentBone = b;
+        return this;
+      }
+    }, {
+      key: "Rotation",
+      value: function Rotation(x, y, z) {
+
+        this.rotation = new Gamestack.Vector(x, y, z);
+
+        this.frames.forEach(function ($frame) {
+
+          $frame.Rotation(x, y, z);
+        });
+
+        return this;
+      }
+    }, {
       key: "Src",
       value: function Src(src) {
         var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -5610,6 +5772,19 @@ var Three //dependency: THREE.js
         }
 
         if (!options.frameBounds) this.init_singleFrame();
+
+        return this;
+      }
+    }, {
+      key: "Size",
+      value: function Size(x, y, z) {
+
+        this.size = new Gamestack.Vector(x, y, z);
+
+        this.frames.forEach(function (f) {
+
+          f.size = new Gamestack.Vector(x, y, z);
+        });
 
         return this;
       }
@@ -5715,6 +5890,12 @@ var Three //dependency: THREE.js
         }
       }
     }, {
+      key: "Visible",
+      value: function Visible(v) {
+        this.visible = v;
+        return this;
+      }
+    }, {
       key: "FrameSize",
       value: function FrameSize(w, h) {
         this.frameSize = new Gamestack.Vector(w, h);
@@ -5799,7 +5980,7 @@ var Three //dependency: THREE.js
 
         this.frameBounds = false;
 
-        this.selected_frame = new Gamestack.Frame().Image(this.image).Size(this.frameSize);
+        this.selected_frame = new Gamestack.Frame().Image(this.image).FrameSize(this.frameSize).Size(this.frameSize);
 
         this.frames = [];
 
@@ -5829,7 +6010,13 @@ var Three //dependency: THREE.js
       key: "apply2DFrames",
       value: function apply2DFrames() {
 
+        console.log('Running apply2DFrames(): --' + this.name);
+
         this.frames = [];
+
+        if (!this.size) {
+          this.Size(this.frameSize.x, this.frameSize.y);
+        }
 
         var fcount = 0;
 
@@ -5844,7 +6031,7 @@ var Three //dependency: THREE.js
               y: y * this.frameSize.y + this.frameOffset.y
             };
 
-            var f = new Gamestack.Frame().Image(this.image).Size(this.frameSize).Position(framePos);
+            var f = new Gamestack.Frame().Image(this.image).FrameSize(this.frameSize).Origin(this.origin).Size(this.size || this.frameSize).Position(this.position || framePos);
 
             this.frames.push(f);
 
@@ -5861,7 +6048,7 @@ var Three //dependency: THREE.js
           }
         }
 
-        this.frames[0] = this.selected_frame = this.frames[0] || new Gamestack.Frame().Image(this.image).Size(this.frameSize);
+        this.frames[0] = this.selected_frame = this.frames[0] || new Gamestack.Frame().Image(this.image).FrameSize(this.frameSize).Size(this.frameSize);
 
         if (this.seesaw_mode) {
 
@@ -6073,7 +6260,9 @@ var Three //dependency: THREE.js
         var __inst = this;
 
         //we have a target
-        this.tween = new TWEEN.Tween(this).easing(__inst.curve || TWEEN.Easing.Linear.None).to({ cix: __inst.frames.length - 1 }, duration).onUpdate(function () {
+        this.tween = new TWEEN.Tween(this).easing(__inst.curve || TWEEN.Easing.Linear.None).to({
+          cix: __inst.frames.length - 1
+        }, duration).onUpdate(function () {
           //console.log(objects[0].position.x,objects[0].position.y);
 
           //   __inst.cix = Math.ceil(__inst.cix);
@@ -6114,32 +6303,123 @@ var Three //dependency: THREE.js
 })();
 ;
 
-var Construct3D = function Construct3D(name, value) {
-  _classCallCheck(this, Construct3D);
+function calc3DPointTo2DPoint(vectorOne) {
 
-  this.name = name;
-  this.value = value;
-  this.message = 'just-testing';
+  var vector = new THREE.Vector3();
+
+  vector.set(vectorOne.x, vectorOne.y, vectorOne.z);
+
+  vector.project(Gamestack.threejs.camera);
+
+  var result = new Object();
+  result.x = Math.round(vector.x * (renderer.domElement.width / 2));
+  result.y = Math.round(vector.y * (renderer.domElement.height / 2));
+
+  return result;
+}
+
+Gamestack.Object2D3D = function (arg1, arg2) {
+
+  this.screenSize2D = function () {
+    var renderer = Gamestack.threejs.renderer;
+    return { x: renderer.domElement.width, y: renderer.domElement.height };
+  };
+
+  this.mesh = new THREE.Mesh(arg1, arg2);
+
+  this.mesh.get2DPosition = function () {
+
+    var renderer = Gamestack.threejs.renderer,
+        camera = Gamestack.threejs.camera;
+
+    var scene = Gamestack.threejs.scene;
+
+    scene.updateMatrixWorld(true);
+    this.position.setFromMatrixPosition(this.matrixWorld);
+
+    var vector = calc3DPointTo2DPoint(this.position);
+
+    return vector;
+  };
+
+  this.mesh.get2DSize = function () {
+
+    var renderer = Gamestack.threejs.renderer,
+        camera = Gamestack.threejs.camera;
+
+    var scene = Gamestack.threejs.scene;
+
+    var widthHalf = 0.5 * renderer.context.canvas.width;
+    var heightHalf = 0.5 * renderer.context.canvas.height;
+
+    scene.updateMatrixWorld();
+
+    var box = new THREE.Box3().setFromObject(this);
+
+    var vector = calc3DPointTo2DPoint(box.min);
+
+    return vector;
+  };
+
+  this.mesh.getImageData = function () {
+
+    var canvas = Gamestack.threejs.renderer.domElement;
+
+    var renderer = Gamestack.threejs.renderer,
+        camera = Gamestack.threejs.camera;
+
+    var scene = Gamestack.threejs.scene;
+
+    renderer.render(scene, camera);
+
+    var position = this.get2DPosition(),
+        size = this.get2DSize();
+
+    var gl = canvas.getContext('webgl');
+
+    console.log(size);
+
+    console.log(position);
+
+    size.x = Math.abs(size.x);
+
+    size.y = Math.abs(size.y);
+
+    var posX = position.x,
+        posY = position.y;
+
+    var ScreenSize = THREE.screenSize2D();
+
+    var pixels = new Uint8Array(size.x * 2 * size.y * 2 * 4);
+    gl.readPixels(ScreenSize.x / 2 - size.x, ScreenSize.y / 2 - size.y, size.x * 2, size.y * 2, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+
+    return pixels;
+  };
+
+  return this.mesh;
 };
 
-Gamestack.Construct3D = Construct3D;
-; /**
-  * Creates a new Sprite.
-  *
-  * <info-bit>Gamestack.Sprite is a container for 2D Animations.
-  * -apply Sprite class to create a 2D game-object.
-  *
-  * Sprites hold reference to their-own Animations and Sounds.</info-bit>
-  * <iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/Sprite.html'> </iframe>
-  
-  * @param   {string} src the srcPath for the image of the Sprite
-  * @param   {number} scale=1.0 the scale to be applied to size of each animation-frame
-  *
-  * @returns {Sprite} a Gamestack.Sprite object
-  *
-  *
-  *
-  */
+var Animation3D = function Animation3D() {
+  _classCallCheck(this, Animation3D);
+};
+
+Gamestack.Animation3D = Animation3D;
+;; /**
+   * Creates a new Sprite.
+   *
+   * <info-bit>Gamestack.Sprite is a container for 2D Animations.
+   * -apply Sprite class to create a 2D game-object.
+   *
+   * Sprites hold reference to their-own Animations and Sounds.</info-bit>
+   * <iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/Sprite.html'> </iframe>
+    * @param   {string} src the srcPath for the image of the Sprite
+   * @param   {number} scale=1.0 the scale to be applied to size of each animation-frame
+   *
+   * @returns {Sprite} a Gamestack.Sprite object
+   *
+   *
+   *
+   */
 
 var Sprite = function (_Scriptable2) {
   _inherits(Sprite, _Scriptable2);
@@ -6441,20 +6721,22 @@ var Sprite = function (_Scriptable2) {
 
       var sprite = this;
 
-      var frame;
+      var frame = false,
+          frameList = [];
 
       if (sprite.active) {
+
+        if (sprite.selected_animation instanceof Array && sprite.selected_animation.length >= 1) {
+          sprite.selected_animation.forEach(function (anime) {
+
+            frameList.push(anime.selected_frame);
+          });
+        }
 
         if (sprite.selected_animation instanceof Object && sprite.selected_animation.hasOwnProperty('selected_frame')) {
 
           frame = sprite.selected_animation.selected_frame;
-        } else {
-
-          // console.error('Sprite is missing arguments');
-          //delay the draw
-
-          return;
-        }
+        } else {}
 
         var p = sprite.position;
 
@@ -6513,11 +6795,33 @@ var Sprite = function (_Scriptable2) {
           ctx.putImageData(frame.image.data, x, y, 0, 0, sprite.size.x, sprite.size.y);
         } else {
 
-          if (!sprite.selected_animation || !sprite.selected_animation.selected_frame.image.domElement) return;
+          if (frameList.length >= 1) {
 
-          if (frame.image.domElement instanceof HTMLImageElement) {
+            frameList.forEach(function (frame) {
 
-            Gamestack.Canvas.draw_image_frame(frame.image.domElement, frame.framePos, frame.frameSize, new Gamestack.Vector2D(Math.round(x + realWidth / 2), Math.round(y + realHeight / 2)), new Gamestack.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin);
+              var realWidth = frame.size.x;
+              var realHeight = frame.size.y;
+
+              var x = frame.position.x,
+                  y = frame.position.y;
+
+              if (frame.rotation && frame.rotation.x) {
+                rotation = frame.rotation.x;
+              }
+
+              if (frame.origin) {
+                origin = frame.origin;
+                console.log('drawing with origin:' + origin.x + ':' + origin.y);
+              }
+
+              if (frame && frame.image) Gamestack.Canvas.draw_image_frame(frame.image.domElement, frame.framePos, frame.frameSize, new Gamestack.Vector2D(Math.round(x + realWidth / 2), Math.round(y + realHeight / 2)), new Gamestack.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin);
+            });
+          } else {
+
+            if (frame.image.domElement instanceof HTMLImageElement) {
+
+              Gamestack.Canvas.draw_image_frame(frame.image.domElement, frame.framePos, frame.frameSize, new Gamestack.Vector2D(Math.round(x + realWidth / 2), Math.round(y + realHeight / 2)), new Gamestack.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin);
+            }
           }
         }
       }
@@ -6564,6 +6868,11 @@ var Sprite = function (_Scriptable2) {
       }
 
       return this;
+    }
+  }, {
+    key: "FromSourceImage",
+    value: function FromSourceImage(src) {
+      return new this.constructor(src);
     }
 
     /**************************************************************
@@ -8391,7 +8700,7 @@ var Attachment = function Attachment() {
 
   Gamestack.GravityForce = GravityForce;
 })();
-;;;;;
+;;;
 var Player = function (_Sprite) {
   _inherits(Player, _Sprite);
 
@@ -9122,8 +9431,17 @@ Gamestack.Projectile = Projectile;;
       }
     }, {
       key: "onCollide",
-      value: function onCollide() // Gamestack.Terrain instance should have an onCollide() function
-      {}
+      value: function onCollide(callback) // Gamestack.Terrain instance should have an onCollide() function
+      {
+
+        this.collideables.forEach(function (sprite) {
+
+          if (sprite.onUpdate) {
+
+            sprite.onUpdate(function () {});
+          }
+        });
+      }
     }]);
 
     return Terrain;
@@ -9482,6 +9800,24 @@ var DataFunctions = function () {
   return DataFunctions;
 }();
 
+var BoneFunctions = function () {
+  function BoneFunctions() {
+    _classCallCheck(this, BoneFunctions);
+  }
+
+  _createClass(BoneFunctions, [{
+    key: "anchored",
+    value: function anchored(obj) {
+      obj.Origin = function (x, y, z) {
+        this.origin = new Gamestack.Vector(x, y, z);
+        return this;
+      };
+    }
+  }]);
+
+  return BoneFunctions;
+}();
+
 /***************************
 GeometryFeatures:
   A functional dependency injector
@@ -9773,6 +10109,8 @@ var VectorFunctions = function () {
 Gamestack.FeatureInjectors.CssFeatures = new CssFeatures();
 
 Gamestack.FeatureInjectors.VectorFunctions = new VectorFunctions();
+
+Gamestack.FeatureInjectors.BoneFunctions = new BoneFunctions();
 
 Gamestack.FeatureInjectors.DataFunctions = new DataFunctions();
 ;var Larva = {

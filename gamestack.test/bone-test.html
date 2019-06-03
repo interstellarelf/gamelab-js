@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+
+    <title>Bone Test</title>
+
+    <script src="../dist/gamestack/gamestack.js"></script>
+
+    <!-- spritebox-example.css style -->
+    <link rel="stylesheet" href="../res/styles/spritebox-example.css">
+
+    <style>
+
+      #threejs-window {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+      div.hidden {
+        visibility: initial;
+      }
+    </style>
+
+  </head>
+  <body>
+
+    <header>
+      <img src="../res/images/spritebox-logo.png" alt="" id="logo">
+      <span class="title">Terrain-Test</span>
+    </header>
+
+    <script>
+      var gameWindow = new Gamestack.GameWindow();
+
+      var robot = {};
+
+      var SpiderBot = {
+
+        centerSprite: {},
+
+        load: function () {
+
+          this.centerSprite = new Gamestack.Sprite('res/images/robot/center.png')
+
+          this.centerSprite.onLoad(function () {
+
+            this.Size(Math.round(526 / 2), Math.round(695 / 2));
+
+            this.left_leg = new Gamestack.Sprite('res/images/robot/leg-a.png');
+
+            this.left_leg.onUpdate(function () {
+
+              this.animations.forEach(function ($anime) {
+
+                if ($anime.visible) {
+                  console.log('engaging::' + $anime.name);
+
+                  $anime.engage(40);
+
+                }
+
+              });
+
+            });
+
+            this.left_leg.loadBones = function (bones, animations) {
+
+              for (var x = 0; x < bones.length; x++) {
+                //each bone.position is equal to parentBone.position + parentBone.size * parentBone.rotation any alteration of parentBone.rotation.x causes repositioning of bone.position
+
+                if (x == 0) {} else {
+
+                  var parentBone = bones[x - 1],
+                    currentBone = bones[x];
+
+                  var parentAnime = animations[x - 1],
+                    currentAnime = animations[x];
+
+                  var $R = $R || 0;
+
+                  currentBone.onPosition(function () {
+
+                    var x = parentAnime.position.x,
+
+                      y = parentAnime.position.y;
+
+                    var pos = new Gamestack.Vector(x, y);
+
+                    console.log('R::' + parentBone.rotation.x);
+
+                    //    this.Rotation(this.rotation.x + 1);
+                    this.Rotation(parentBone.rotation.x);
+
+                    var rotational_value = parentBone.rotation.x % 180;
+
+                    if(parentBone.rotation.x >= 180)
+                    {
+
+
+
+                    }
+
+                    var positionDiff = Gamestack.VectorMath.rotatePointsXY(0, Math.round(parentBone.size.y * 0.76), parentBone.rotation.x * 1);
+
+                    currentAnime.Position(pos.add(positionDiff));
+
+                    //    this.position = new Gamestack.Vector(pos);
+
+                  });
+
+                }
+              }
+            };
+
+            this.Position(200, 200);
+
+            this.left_leg.onLoad(function () {
+
+              this.animations[0] = new Gamestack.Animation('res/images/robot/leg-a.png').Visible(true);
+              this.animations[1] = new Gamestack.Animation('res/images/robot/leg-b.png').Visible(true);
+
+              this.animations[0].name = 'upper-leg';
+
+              this.animations[1].name = 'lower-leg';
+
+              //TODO set bones=[] in Sprite() constructor
+              this.bones = [];
+
+              this.bones[0] = new Gamestack.Bone(this.animations[0], new Gamestack.Vector(101, 223)).Rotation(0);
+              this.bones[1] = new Gamestack.Bone(this.animations[1], new Gamestack.Vector(117, 290)).Rotation(0);
+
+              //this.bones[0].Rotation(200);
+
+              this.animations[0].Position(200, 200);
+
+              //  this.loadBones(this.bones, this.animations);
+
+              this.bones[0].onPosition(function () {
+
+                console.log('Position::bone-1::');
+
+                    this.Origin(0, 0);
+
+                this.rotation.x += 1;
+
+                this.Rotation(this.rotation.x);
+
+              });
+
+              this.bones[1].onPosition(function () {
+
+                this.Origin(this.size.x / 2, this.size.x / 2);
+
+                this.rotation.x += 1;
+
+                this.Rotation(this.rotation.x);
+
+              });
+
+              this.animations[0].frames.forEach(function (f) {
+
+                alert('1 frame @' + f.position.x + ':' + f.position.y);
+              });
+
+              console.log('frameSize::');
+              console.log(this.animations[0].frames[0].size);
+
+              console.log('position::');
+              console.log(this.animations[0].position);
+
+              this.Anime(this.animations);
+
+              this.loadBones(this.bones, this.animations);
+
+            });
+
+            gameWindow.add(this.left_leg);
+
+          });
+
+          gameWindow.add(this.centerSprite);
+
+        }
+
+      };
+
+      SpiderBot.load();
+
+      gameWindow.animate();
+    </script>
+
+  </body>
+</html>

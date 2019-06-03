@@ -1,8 +1,6 @@
-
 -----------------------------------------------------
 ![](images/gamestack-logo.png)
 -------------------------------------------------------------------
-
 -----------------------------------------------------
 ![](images/gamestack-banner.png)
 -------------------------------------------------------------------
@@ -16,8 +14,5 @@
  -  framerate + memory tracking
  -  html + javascript examples + documentation
 
-#### Examples: [Gamestack.js main-page, examples and documentation](../main.html)
 
-#### Licensing: [Gamestack.js main-page, examples and documentation](../main.html)
-
-Gamestack.js currently open-source under the MIT License.
+This project is open-source under the MIT License.

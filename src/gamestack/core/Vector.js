@@ -369,7 +369,7 @@
 
       point.z = 0;
 
-      return point
+      return new Gamestack.Vector(point);
     }
 
   }
