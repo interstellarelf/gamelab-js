@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8">
     <title>Space Game Demo</title>
-    <script src="../dist/gamestack/gamestack.js"></script>
+    <script src="../dist/gamelab/gamelab.js"></script>
     <script src="../dist/domfx/domfx.js"></script>
     <!-- spritebox-example.css style -->
     <link rel="stylesheet" href="../res/styles/spritebox-example.css">
   </head>
   <body>
     <header>
-      <img src="../res/images/gamestack-logo.png" alt="" id="logo">
+      <img src="../res/images/gamelab-logo.png" alt="" id="logo">
       <span class="title">Game-Sprites-01</span>
     </header>
     <script>
@@ -21,12 +21,12 @@
 
       var player;
 
-      Gamestack.ready(function () {
+      Gamelab.ready(function () {
 
-        Gamestack.settings.errorLimit = 300000;
+        Gamelab.settings.errorLimit = 300000;
 
-        var $G = Gamestack,
-          Background = Gamestack.Background;
+        var $G = Gamelab,
+          Background = Gamelab.Background;
 
         var backgroundStars = [],
           meteorites = [],
@@ -40,7 +40,7 @@
 
         document.body.addEventListener('mousemove', function (evt) {
 
-          var position = new Gamestack.Vector(evt.clientX - player.size.div(2).x, evt.clientY - player.size.div(2).y),
+          var position = new Gamelab.Vector(evt.clientX - player.size.div(2).x, evt.clientY - player.size.div(2).y),
 
             diff = position.sub(player.position);
 
@@ -76,50 +76,50 @@
 
           sounds: {
 
-            shot: new Gamestack.Sound("res/sounds/shot.mp3"),
+            shot: new Gamelab.Sound("res/sounds/shot.mp3"),
 
-            powerup1: new Gamestack.Sound("res/sounds/powerup-1.mp3"),
+            powerup1: new Gamelab.Sound("res/sounds/powerup-1.mp3"),
 
-            powerup2: new Gamestack.Sound("res/sounds/powerup-1.mp3"),
+            powerup2: new Gamelab.Sound("res/sounds/powerup-1.mp3"),
 
-            crash1: new Gamestack.Sound("res/sounds/crash-1.mp3"),
+            crash1: new Gamelab.Sound("res/sounds/crash-1.mp3"),
 
-            crash2: new Gamestack.Sound("res/sounds/crash-2.mp3"),
+            crash2: new Gamelab.Sound("res/sounds/crash-2.mp3"),
 
-            ambient1: new Gamestack.Sound("res/sounds/ambient/ambient-1.mp3").volume(0.7),
+            ambient1: new Gamelab.Sound("res/sounds/ambient/ambient-1.mp3").volume(0.7),
 
-            ambient2: new Gamestack.Sound("res/sounds/ambient/ambient-2.mp3").volume(0.7)
+            ambient2: new Gamelab.Sound("res/sounds/ambient/ambient-2.mp3").volume(0.7)
 
           },
 
           weapon_animations: {
 
-            normal_bullet: new Gamestack.Animation().Src("res/images/shots/shot_red.png").FrameSize(new Gamestack.Vector(65, 65, 0)).FrameBounds(new Gamestack.Vector(0, 0), new Gamestack.Vector(11, 0))
+            normal_bullet: new Gamelab.Animation().Src("res/images/shots/shot_red.png").FrameSize(new Gamelab.Vector(65, 65, 0)).FrameBounds(new Gamelab.Vector(0, 0), new Gamelab.Vector(11, 0))
 
           },
 
           powerups: {
 
-            speedPower: new Gamestack.Animation("res/images/powers/green-orb.png").FrameSize(new Gamestack.Vector(65, 65, 0)).FrameBounds(new Gamestack.Vector(0, 0), new Gamestack.Vector(11, 0)),
+            speedPower: new Gamelab.Animation("res/images/powers/green-orb.png").FrameSize(new Gamelab.Vector(65, 65, 0)).FrameBounds(new Gamelab.Vector(0, 0), new Gamelab.Vector(11, 0)),
 
-            shotPower: new Gamestack.Animation("res/images/powers/orange-orb.png").FrameSize(new Gamestack.Vector(65, 65, 0)).FrameBounds(new Gamestack.Vector(0, 0), new Gamestack.Vector(11, 0))
+            shotPower: new Gamelab.Animation("res/images/powers/orange-orb.png").FrameSize(new Gamelab.Vector(65, 65, 0)).FrameBounds(new Gamelab.Vector(0, 0), new Gamelab.Vector(11, 0))
           },
 
           damage_animations: {
 
-            explosion1: new Gamestack.Animation("res/images/explosions/explosion.png").FrameSize(new Gamestack.Vector(128, 128, 0)).FrameBounds(new Gamestack.Vector(0, 0), new Gamestack.Vector(5, 4), new Gamestack.Vector(5, 4)),
+            explosion1: new Gamelab.Animation("res/images/explosions/explosion.png").FrameSize(new Gamelab.Vector(128, 128, 0)).FrameBounds(new Gamelab.Vector(0, 0), new Gamelab.Vector(5, 4), new Gamelab.Vector(5, 4)),
 
-            explosion_meteor: new Gamestack.Animation("res/images/explosions/dandelion-explosion.png").FrameSize(new Gamestack.Vector(256, 256, 0)).FrameBounds(new Gamestack.Vector(0, 0), new Gamestack.Vector(6, 5), new Gamestack.Vector(6, 5)),
+            explosion_meteor: new Gamelab.Animation("res/images/explosions/dandelion-explosion.png").FrameSize(new Gamelab.Vector(256, 256, 0)).FrameBounds(new Gamelab.Vector(0, 0), new Gamelab.Vector(6, 5), new Gamelab.Vector(6, 5)),
 
-            explosion_meteor_green: new Gamestack.Animation("res/images/explosions/green-blast.png").FrameSize(new Gamestack.Vector(256, 256, 0)).FrameBounds(new Gamestack.Vector(0, 0), new Gamestack.Vector(50, 0))
+            explosion_meteor_green: new Gamelab.Animation("res/images/explosions/green-blast.png").FrameSize(new Gamelab.Vector(256, 256, 0)).FrameBounds(new Gamelab.Vector(0, 0), new Gamelab.Vector(50, 0))
 
           }
         };
 
 
         //simplified references
-        var Sprite = Gamestack.Sprite;
-        Background = Gamestack.Background;
+        var Sprite = Gamelab.Sprite;
+        Background = Gamelab.Background;
 
         for (var x = 1; x <= 12; x++) {
 
@@ -153,7 +153,7 @@
             if (mod > 100 && this.ticker % 20 == 0) {
               var mix = Math.round(Math.random() * 12) + 1;
 
-              var meteor = new Gamestack.Sprite(meteorites[mix]);
+              var meteor = new Gamelab.Sprite(meteorites[mix]);
 
               meteor.speed.y = Math.round(Math.random() * 10) + 1;
 
@@ -165,21 +165,21 @@
 
               if (meteor.image && meteor.image.domElement) {
 
-                meteor.size = new Gamestack.Vector(meteor.image.domElement.width * sf, meteor.image.domElement.height * sf);
+                meteor.size = new Gamelab.Vector(meteor.image.domElement.width * sf, meteor.image.domElement.height * sf);
 
                 while (meteor.size.x >= gameWindow.canvas.width / 14) {
 
                   sf -= 0.05;
 
-                  meteor.size = new Gamestack.Vector(meteor.image.domElement.width * sf, meteor.image.domElement.height * sf).round();
+                  meteor.size = new Gamelab.Vector(meteor.image.domElement.width * sf, meteor.image.domElement.height * sf).round();
                 }
               } else {
-                meteor.size = new Gamestack.Vector(20, 20);
+                meteor.size = new Gamelab.Vector(20, 20);
               }
 
               meteor.noScroll = true;
 
-              meteor.position = new Gamestack.Vector(posX, posY);
+              meteor.position = new Gamelab.Vector(posX, posY);
 
               meteor.life = 750;
 
@@ -201,25 +201,25 @@
 
               else if (Math.random() * 30 <= 4) {
 
-                meteor.explosion_animation = new Gamestack.Animation(GameAssets.damage_animations.explosion_meteor_green);
+                meteor.explosion_animation = new Gamelab.Animation(GameAssets.damage_animations.explosion_meteor_green);
 
                 meteor.power = 'speed'; //speed shot power  process later
 
 
               } else {
 
-              meteor.explosion_animation = new Gamestack.Animation(GameAssets.damage_animations.explosion_meteor);
+              meteor.explosion_animation = new Gamelab.Animation(GameAssets.damage_animations.explosion_meteor);
 
               }
 
 
 
-                  var explosionSize = new Gamestack.Vector(200, 200, 0);
+                  var explosionSize = new Gamelab.Vector(200, 200, 0);
 
-                var centerExpVector = new Gamestack.Vector(meteor.position.add(meteor.size.div(2)).sub(explosionSize.div(2))); //use Gamestack.Vector mathematics to center the sprite;
+                var centerExpVector = new Gamelab.Vector(meteor.position.add(meteor.size.div(2)).sub(explosionSize.div(2))); //use Gamelab.Vector mathematics to center the sprite;
 
 
-              meteor.explosion = new Gamestack.Sprite().FromData({
+              meteor.explosion = new Gamelab.Sprite().FromData({
 
                 selected_animation: meteor.explosion_animation,
 
@@ -263,11 +263,11 @@
                 }
               };
 
-              new Gamestack.CollisionEvent().OnCollision(activeMeteors, player).Call(function (obj1, obj2) {
+              new Gamelab.CollisionEvent().OnCollision(activeMeteors, player).Call(function (obj1, obj2) {
 
                 if (obj1.active && !obj2.flickering) { //if 'alive'
 
-                  //var sound = sound || new Gamestack.Sound(GameAssets.sounds.crash1).volume(0.4); sound.play();
+                  //var sound = sound || new Gamelab.Sound(GameAssets.sounds.crash1).volume(0.4); sound.play();
 
                   obj2.health -= 20;
 
@@ -275,7 +275,7 @@
 
                   //  player.explode();
 
-              //      var text = new Gamestack.TextDisplay().FontSize('30px').Color('goldenrod').Top(0.5).Duration(3000).Text("Game Over");
+              //      var text = new Gamelab.TextDisplay().FontSize('30px').Color('goldenrod').Top(0.5).Duration(3000).Text("Game Over");
 
                 //    player.health_bar.update(0);
 
@@ -317,7 +317,7 @@
                 posY = -2000 + Math.round(gameWindow.camera.position.y * planet.scrollFactor);
               var sizeFloat = 0.1 + Math.random() * 0.9;
               planet.size = planet.size.mult(sizeFloat);
-              planet.position = new Gamestack.Vector(posX - planet.size.x / 2, posY - planet.size.y / 2);
+              planet.position = new Gamelab.Vector(posX - planet.size.x / 2, posY - planet.size.y / 2);
               gameWindow.add(planet, true);
               /*add to bottom-layer*/
 
@@ -331,7 +331,7 @@
               if (nebula) {
                 var posX = Math.random() * gameWindow.canvas.width,
                   posY = -2000 + Math.round(gameWindow.camera.position.y * nebula.scrollFactor);
-                nebula.position = new Gamestack.Vector(posX, posY);
+                nebula.position = new Gamelab.Vector(posX, posY);
                 gameWindow.add(nebula, true);
                 /*add to bottom-layer*/
               }
@@ -344,7 +344,7 @@
                 posY = -200 + Math.round(gameWindow.camera.position.y * star.scrollFactor),
                 size = Math.random() * 30 + 10;
               star.Size(size, size);
-              star.position = new Gamestack.Vector(posX, posY);
+              star.position = new Gamelab.Vector(posX, posY);
               gameWindow.add(star, true);
               /*add to bottom-layer*/
             }
@@ -355,7 +355,7 @@
 
         //declare some assets as Animation() and Sound() Instantiate a GameWindow
 
-        var gameWindow = new Gamestack.GameWindow();
+        var gameWindow = new Gamelab.GameWindow();
 
         gameWindow.canvas.style.background = 'black';
 
@@ -403,7 +403,7 @@
              * Instantiate Sprite()'s : player
              */
 
-        player = new Gamestack.Sprite("res/images/spaceship/spinship1.png");
+        player = new Gamelab.Sprite("res/images/spaceship/spinship1.png");
 
         player.name = "player";
 
@@ -411,7 +411,7 @@
 
         player.group = "player";
 
-        player.size = new Gamestack.Vector(90, 90, 0);
+        player.size = new Gamelab.Vector(90, 90, 0);
 
         player.stats = {
           health: 100
@@ -419,17 +419,17 @@
 
         player.onLoad(function () {
 
-          this.anime.FrameSize(new Gamestack.Vector(90, 90)).FrameBounds(new Gamestack.Vector(0, 0), new Gamestack.Vector(15, 0));
+          this.anime.FrameSize(new Gamelab.Vector(90, 90)).FrameBounds(new Gamelab.Vector(0, 0), new Gamelab.Vector(15, 0));
 
           player.anime.cix = 7; //The normal-state (cix= 'frame-index') for spaceship
 
-          player.explosion_animation = new Gamestack.Animation(GameAssets.damage_animations.explosion1);
+          player.explosion_animation = new Gamelab.Animation(GameAssets.damage_animations.explosion1);
 
           player.position.y = 0;
 
           player.position.x = 0;
 
-          player.padding = new Gamestack.Vector(0.4, 0.4);
+          player.padding = new Gamelab.Vector(0.4, 0.4);
 
           player.noScroll = true;
 
@@ -443,11 +443,11 @@
 
           if (this.active) {
 
-            var explosionSize = new Gamestack.Vector(200, 200, 0);
+            var explosionSize = new Gamelab.Vector(200, 200, 0);
 
             var __inst = this;
 
-            var centerExpVector = new Gamestack.Vector(this.position.add(this.size.div(2)).sub(explosionSize.div(2))); //use Gamestack.Vector mathematics to center the sprite;
+            var centerExpVector = new Gamelab.Vector(this.position.add(this.size.div(2)).sub(explosionSize.div(2))); //use Gamelab.Vector mathematics to center the sprite;
 
             var explosion = this.subsprite({
 
@@ -491,7 +491,7 @@
 
           if (this.active) {
 
-            var camPos = Gamestack.game_windows[0].camera.position;
+            var camPos = Gamelab.game_windows[0].camera.position;
 
             this.explosion.Position(this.position.add(this.size.div(2)).sub(this.explosion.size.div(2)));
 
@@ -514,7 +514,7 @@
               this.shatter(meteorites, 3);
 
             //play explosion sound
-            var sound = sound || new Gamestack.Sound(GameAssets.sounds.crash1).volume(0.1);
+            var sound = sound || new Gamelab.Sound(GameAssets.sounds.crash1).volume(0.1);
             sound.play();
 
 
@@ -522,13 +522,13 @@
 
             if (this.power == 'extra-shot') {
 
-              powerup = new Gamestack.Sprite().Name('extra-shot').Size(new Gamestack.Vector(30, 30, 0));
+              powerup = new Gamelab.Sprite().Name('extra-shot').Size(new Gamelab.Vector(30, 30, 0));
 
               powerup.Animation(GameAssets.powerups.shotPower);
 
             } else if (this.power == 'speed') {
 
-            powerup = new Gamestack.Sprite().Name('speed').Size(new Gamestack.Vector(30, 30, 0));
+            powerup = new Gamelab.Sprite().Name('speed').Size(new Gamelab.Vector(30, 30, 0));
 
               powerup.Animation(GameAssets.powerups.speedPower);
 
@@ -556,7 +556,7 @@
               gameWindow.add(powerup);
 
               //Collect powerup on collision
-              new Gamestack.CollisionEvent().OnCollision(player, powerup).Call(function (obj1, obj2) {
+              new Gamelab.CollisionEvent().OnCollision(player, powerup).Call(function (obj1, obj2) {
 
                 if (obj2.active) {
 
@@ -606,7 +606,7 @@
 
             for (var x = 0; x < totalPieces; x++) {
 
-              var spr = new Gamestack.Sprite(shardset[x % shardset.length]);
+              var spr = new Gamelab.Sprite(shardset[x % shardset.length]);
 
               spr.active = true;
 
@@ -614,9 +614,9 @@
 
               spr.scrollFactor = 0;
 
-              spr.speed = new Gamestack.Vector().rotationalSpeedPoint(Math.round(Math.random() * 360), Math.round(Math.random() * 5));
+              spr.speed = new Gamelab.Vector().rotationalSpeedPoint(Math.round(Math.random() * 360), Math.round(Math.random() * 5));
 
-              spr.speed = new Gamestack.Vector(spr.speed.add(this.speed.div(2)));
+              spr.speed = new Gamelab.Vector(spr.speed.add(this.speed.div(2)));
 
               spr.rot_speed.x = Math.random() * 5 + 1;
 
@@ -625,9 +625,9 @@
 
               var sizeRandomDiv = Math.round(Math.random() * (8 - 3)) + 3;
 
-              spr.size = new Gamestack.Vector(this.size.div(sizeRandomDiv));
+              spr.size = new Gamelab.Vector(this.size.div(sizeRandomDiv));
 
-              spr.position = new Gamestack.Vector(this.center().sub(spr.size.div(2)));
+              spr.position = new Gamelab.Vector(this.center().sub(spr.size.div(2)));
 
               // console.log('shatter piece');
 
@@ -671,7 +671,7 @@
         };
 
         //Gamepad input
-        new Gamestack.GamepadEvent().Gamepads(1).Keys('button_0').Call(function (pressed) {
+        new Gamelab.GamepadEvent().Gamepads(1).Keys('button_0').Call(function (pressed) {
 
           if (pressed)
             player.fire_weapon();
@@ -680,7 +680,7 @@
         );
 
         //Gamepad input
-        new Gamestack.GamepadEvent().Gamepads(1).Keys('stick_left').Call(function (x, y) {
+        new Gamelab.GamepadEvent().Gamepads(1).Keys('stick_left').Call(function (x, y) {
 
           //always runs if controller is plugged in
 
@@ -699,7 +699,7 @@
 
         });
 
-        new Gamestack.KeyboardEvent().Keys([
+        new Gamelab.KeyboardEvent().Keys([
           "UP",
           "DOWN",
           "LEFT",
@@ -818,7 +818,7 @@
         };
 
         //player death
-        var death = new Gamestack.BoolEvent().On(function () {
+        var death = new Gamelab.BoolEvent().On(function () {
           return player.health <= 0;
         }). //when health is less than or equal to zero...
         Call(function () {
@@ -844,12 +844,12 @@
 
           if (!player.normalWeaponLocked) {
 
-            var camPos = Gamestack.game_windows[0].camera.position;
+            var camPos = Gamelab.game_windows[0].camera.position;
 
             //Create a 'Shot': any number of bullets shot from source with rotational disp
 
             var basic_shot = new Shot(). //new Shot
-            Animation(GameAssets.weapon_animations.normal_bullet).Size(20). //Size Unit, also may pass Gamestack.Vector(x, y, z)
+            Animation(GameAssets.weapon_animations.normal_bullet).Size(20). //Size Unit, also may pass Gamelab.Vector(x, y, z)
             Velocity(this.Weapon.speed). //speed / velocity
             Rotation(-90) //rotation
             .Total(this.Weapon.totalPerShot) //total bullets
@@ -857,11 +857,11 @@
 
             basic_shot.life = 200;
 
-            var bulletPosition = player.center().sub(new Gamestack.Vector(10, 10)); //center the bullet
+            var bulletPosition = player.center().sub(new Gamelab.Vector(10, 10)); //center the bullet
 
             var shots = player.shoot(basic_shot.Position(bulletPosition));
 
-            new Gamestack.CollisionEvent().OnCollision(shots, activeMeteors).Call(function (obj1, obj2) {
+            new Gamelab.CollisionEvent().OnCollision(shots, activeMeteors).Call(function (obj1, obj2) {
 
               if (obj2.active) {
 

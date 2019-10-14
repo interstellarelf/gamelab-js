@@ -1,10 +1,9 @@
 {
-  "name": "gamestack-js",
+  "name": "gamelab-js",
   "version": "0.8.0",
   "description": "The javascript library for 2D games",
   "main": "main.js",
   "scripts": {
-    "start": "node server.js",
     "test": "karma start --single-run --browsers ChromeHeadless karma.conf.js"
   },
   "keywords": [

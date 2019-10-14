@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Particle</title>
+    <script src="../dist/gamelab/gamelab.js"></script>
+    <script src="./../res/libraries/dat.gui.js"></script>
+    <!-- spritebox-example.css style -->
+    <link rel="stylesheet" href="../res/styles/gamelab-example.css">
+  </head>
+  <body>
+    <header>
+      <img src="../res/images/gamelab-logo.png" alt="" id="logo">
+      <span class="title">Particle</span>
+    </header>
+    <script>
+
+      /***************
+      * Call gameWindow.start()
+      * *************/
+
+      var particle,
+        gameWindow;
+
+      datargs = {
+
+        sourcelists: {
+          a: [],
+          b: [],
+          c: [],
+          d: [],
+          e: []
+        },
+
+        path: {
+          selection: 'random',
+          size: {
+            x: 200,
+            y: 200
+          },
+          curve: 'linear'
+        },
+
+        birthrate: {
+          a: 8,
+          b: 8,
+          transition: 'random'
+        },
+
+        life: {
+          a: 30,
+          b: 30,
+          transition: 'random'
+        },
+
+        color: {
+          a: '#ffff00',
+          b: '#ff00ff',
+          transition: 'random'
+        },
+
+        speed: {
+          a: 2.0,
+          b: 0.2,
+          transition: 'linear'
+        },
+        scale: {
+          a: 0.8,
+          b: 0.1,
+          transition: 'linear'
+        },
+        angle: {
+          a: -105,
+          b: -65,
+          transition: 'random'
+        },
+        alpha: {
+          a: 1.0,
+          b: 0.1,
+          transition: 'linear'
+        }
+      };
+
+      var ParticleDemo;
+
+      Gamelab.ready(function () {
+
+        var controller = new dat.GUI();
+
+        //Create the game-window
+        gameWindow = new Gamelab.GameWindow().Background('black');
+
+        particle = new Gamelab.Particle(datargs, gameWindow).Src('./res/images/particles/white-ring.png').BirthRate(6, 8, 'random');
+
+        ParticleDemo = {
+          particle: particle,
+          shoot: function (datargs) {
+            this.particle.Position(300, 350);
+            this.particle.shoot()
+          }
+        };
+
+        var keysx = [
+            'life',
+            'color',
+            'speed',
+            'scale',
+            'angle',
+            'alpha'
+          ],
+
+          keysy = ['a', 'b', 'transition'];
+
+        controller.addSourceImageMulti = function (object, key, id) {
+          var main_li = document.createElement('li'),
+            div1 = document.createElement('div');
+
+          var div2 = document.createElement('div');
+          div2.classList.add('c');
+
+          var file_input = document.createElement('input');
+          file_input.type = 'file';
+          file_input.multiple = 'multi';
+
+          div2.appendChild(file_input);
+          div1.appendChild(div2);
+          main_li.appendChild(div1);
+          var ul = this.domElement.querySelectorAll('ul')[0];
+          ul.appendChild(main_li);
+        };
+
+        keysx.forEach(function (kx) {
+          var folder = controller.addFolder(kx);
+
+          if (kx == 'color') {
+
+            folder.addColor(datargs[kx], 'a');
+            folder.addColor(datargs[kx], 'b');
+
+            var ctrl = folder.add(datargs[kx], 'transition', [
+              'random',
+              'linear',
+              'quadratic',
+              'cubic',
+              'quintic',
+              'quartic'
+            ]);
+
+            ctrl.onChange(function (value) {
+              // Fires on every change, drag, keypress, etc. reset the colors for this object
+            });
+
+            return;
+          }
+
+          keysy.forEach(function (ky) {
+
+            if (!datargs[kx][ky]) {
+              return;
+            }
+
+            switch (ky) {
+              case 'transition':
+
+                var ctrl = folder.add(datargs[kx], ky, [
+                  'random',
+                  'linear',
+                  'quadratic',
+                  'cubic',
+                  'quintic',
+                  'quartic'
+                ]);
+
+                break;
+
+              case 'a':
+              case 'b':
+
+                var ctrl = folder.add(datargs[kx], ky);
+
+                if (kx == 'life') {
+                  ctrl.onChange(function (value) {
+                    particle.Life(value, value, 'random');
+                  });
+                }
+                break;
+
+              default:
+                var ctrl = folder.add(datargs[kx], ky);
+
+            }
+          });
+        });
+
+        //call fxn .addSourceImageMulti()
+        controller.addSourceImageMulti(datargs.sources, 'a');
+        controller.addSourceImageMulti(datargs.sources, 'b');
+        controller.addSourceImageMulti(datargs.sources, 'c');
+
+        var pathFolder = controller.addFolder('paths');
+
+        pathFolder.add(datargs.path, 'curve', ['linear', 'quadratic', 'cubic', 'quartic', 'quintic']);
+
+        var pathSizeFolder = pathFolder.addFolder('path-size');
+
+        pathSizeFolder.add(datargs.path.size, 'x');
+        pathSizeFolder.add(datargs.path.size, 'y');
+
+        setInterval(function () {
+          ParticleDemo.shoot();
+        }, 100);
+
+        //start gameWindow
+        gameWindow.start();
+
+      });
+    </script>
+
+  </body>
+</html>

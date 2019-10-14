@@ -578,7 +578,7 @@ var BarFill = function (_DomHtml3) {
 
 /**
  * Creates an instance of BarDisplay.
- * <info-bit>Gamestack.BarDisplay is an instantiable a health-bar;
+ * <info-bit>Gamelab.BarDisplay is an instantiable a health-bar;
  * Composed of one or more HTML/Dom objects;
  * Uses chainable function-calls.
  * See the code examples below.</info-bit>
@@ -589,7 +589,7 @@ var BarFill = function (_DomHtml3) {
  * @param   {BarDisplay= | Object=} barDisplayArgs the BarDisplay instance OR data to use when creating this instance of BarDisplay
 
  *
- *@returns {BarDisplay} an instance of Gamestack.BarDisplay
+ *@returns {BarDisplay} an instance of Gamelab.BarDisplay
  *
  * */
 
@@ -622,7 +622,7 @@ var BarDisplay = function (_DomHtml4) {
     }
 
     _this4.color = args.color || args.fill_color;
-    Gamestack.defSize();
+    Gamelab.defSize();
     _this4.CreateDom();
 
     return _this4;
@@ -734,26 +734,26 @@ var BarDisplay = function (_DomHtml4) {
   }, {
     key: "portion_top",
     value: function portion_top(v) {
-      this.fill.domElement.style.top = this.get_float_pixels(v || this.topFloat, Gamestack.HEIGHT);
-      this.bar.domElement.style.top = this.get_float_pixels(v || this.topFloat, Gamestack.HEIGHT);
+      this.fill.domElement.style.top = this.get_float_pixels(v || this.topFloat, Gamelab.HEIGHT);
+      this.bar.domElement.style.top = this.get_float_pixels(v || this.topFloat, Gamelab.HEIGHT);
     }
   }, {
     key: "portion_left",
     value: function portion_left(v) {
-      this.fill.domElement.style.left = this.get_float_pixels(v || this.leftFloat, Gamestack.WIDTH);
-      this.bar.domElement.style.left = this.get_float_pixels(v || this.leftFloat, Gamestack.WIDTH);
+      this.fill.domElement.style.left = this.get_float_pixels(v || this.leftFloat, Gamelab.WIDTH);
+      this.bar.domElement.style.left = this.get_float_pixels(v || this.leftFloat, Gamelab.WIDTH);
     }
   }, {
     key: "portion_width",
     value: function portion_width(w) {
-      this.fill.domElement.style.width = this.get_float_pixels(w || this.widthFloat, Gamestack.WIDTH);
-      this.bar.domElement.style.width = this.get_float_pixels(w || this.widthFloat, Gamestack.WIDTH);
+      this.fill.domElement.style.width = this.get_float_pixels(w || this.widthFloat, Gamelab.WIDTH);
+      this.bar.domElement.style.width = this.get_float_pixels(w || this.widthFloat, Gamelab.WIDTH);
     }
   }, {
     key: "portion_height",
     value: function portion_height(h) {
-      this.fill.domElement.style.height = this.get_float_pixels(h || this.heightFloat, Gamestack.HEIGHT);
-      this.bar.domElement.style.height = this.get_float_pixels(h || this.heightFloat, Gamestack.HEIGHT);
+      this.fill.domElement.style.height = this.get_float_pixels(h || this.heightFloat, Gamelab.HEIGHT);
+      this.bar.domElement.style.height = this.get_float_pixels(h || this.heightFloat, Gamelab.HEIGHT);
     }
   }, {
     key: "update",
@@ -1172,7 +1172,7 @@ var Table = function (_MagicDom5) {
 /**
  * Creates an instance of TextDisplay.
  *
- * <info-bit>Gamestack.TextDisplay shows text on-screen;
+ * <info-bit>Gamelab.TextDisplay shows text on-screen;
  * Composed of one or more HTML/Dom objects;
  * Uses chainable function-calls.
  * See the code examples below.</info-bit>
@@ -1183,7 +1183,7 @@ var Table = function (_MagicDom5) {
  * @param   {Text | Object=} textDisplayArg the textDisplay instance OR data to use when creating this instance of TextDisplay
 
  *
- *@returns {Text} an instance of Gamestack.TextDisplay
+ *@returns {Text} an instance of Gamelab.TextDisplay
  *
  * */
 
@@ -1390,7 +1390,7 @@ DomFx.TextBubble = TextBubble;
 ; /**
   * Creates an instance of ImStat:
   
-  * <info-bit>Gamestack.ImStat displays item-counts or stats on the screen.
+  * <info-bit>Gamelab.ImStat displays item-counts or stats on the screen.
   * Composed of one or more HTML/Dom objects;
   * Uses chainable function-calls.
   * See the code examples below.</info-bit>
@@ -1401,7 +1401,7 @@ DomFx.TextBubble = TextBubble;
   * @param   {ImageStat= | Object=} ImStatArgs the ImStat instance OR data to use when creating this instance of ImStat
   
   *
-  *@returns {ImageStat} an instance of Gamestack.ImStat
+  *@returns {ImageStat} an instance of Gamelab.ImStat
   *
   * */
 
@@ -1417,7 +1417,7 @@ var ImageStat = function (_DomHtml7) {
 
     _this14.src = args.src || "__NONE";
 
-    _this14.size = args.size || new Gamestack.Vector(50, 50);
+    _this14.size = args.size || new Gamelab.Vector(50, 50);
 
     _this14.text_id = DomFx.create_id();
 
@@ -1479,7 +1479,7 @@ var ImageStat = function (_DomHtml7) {
   }, {
     key: "Size",
     value: function Size(x, y) {
-      this.size = new Gamestack.Vector(x, y || x);
+      this.size = new Gamelab.Vector(x, y || x);
       this.img.style.width = this.size.x + 'px';
       this.img.style.height = 'auto';
 

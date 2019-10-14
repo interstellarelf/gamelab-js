@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Run + Gun Frog</title>
+    <script src="../dist/gamelab/gamelab.js"></script>
+    <!-- spritebox-example.css style -->
+    <link rel="stylesheet" href="../res/styles/gamelab-example.css">
+  </head>
+  <body>
+    <header>
+      <img src="../res/images/gamelab-logo.png" alt="" id="logo">
+      <span class="title">Run + Gun Frog</span>
+    </header>
+    <script>
+
+      //Create the game-window
+      var gameWindow = new Gamelab.GameWindow().Background('black');
+
+      var animations = {
+
+        idle: new Gamelab.Animation('res/images/sprites/run-gun-frog.png'),
+        run_gun_up: new Gamelab.Animation('res/images/sprites/run-gun-frog.png'),
+        run_gun_down: new Gamelab.Animation('res/images/sprites/run-gun-frog.png'),
+        run_gun: new Gamelab.Animation('res/images/sprites/run-gun-frog.png'),
+
+        gun_up: new Gamelab.Animation('res/images/sprites/run-gun-frog.png'),
+        gun_down: new Gamelab.Animation('res/images/sprites/run-gun-frog.png'),
+        gun: new Gamelab.Animation('res/images/sprites/run-gun-frog.png')
+
+      };
+
+      var $playerSprite;
+
+      function startGame(tiles) {
+
+        $playerSprite = new Gamelab.Sprite('res/images/sprites/run-gun-frog.png');
+
+        $playerSprite.controls = {
+          ticker: 0,
+          gun_button: false
+        };
+
+        $playerSprite.guns = {
+          firering: new Gamelab.Particle({}, gameWindow).Src('./res/images/particles/white-ring.png').Life(20, 20, 'random').BirthRate(1, 1, 'random')
+        };
+
+        $playerSprite.guns.firering.sound = new Gamelab.SoundList([
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3',
+          './res/sounds/shot.mp3'
+        ]);
+
+        $playerSprite.guns.firering.center_position_right = new Gamelab.Vector(168, 55);
+        $playerSprite.guns.firering.center_position_left = new Gamelab.Vector(16, 55);
+        $playerSprite.guns.firering.center_position_top_right = new Gamelab.Vector(155, 0);
+        $playerSprite.guns.firering.center_position_top_left = new Gamelab.Vector(19, 0);
+
+        $playerSprite.guns.firering.center_position_bottom_right = new Gamelab.Vector(143, 102);
+        $playerSprite.guns.firering.center_position_bottom_left = new Gamelab.Vector(41, 102);
+
+        $playerSprite.animeBusy = function () {
+          return this.controls.gun_button;
+        };
+
+        $playerSprite.cubic_jump = function (height = 200, totalSteps) {
+
+          var CubicIn = Twix.Curves.Cubic.In;
+
+          var step = 1.0 / totalSteps,
+            vpoints = [],
+            tracker = 0;
+
+          for (var x = 0; x <= 1.0; x += step) {
+            var pct = CubicIn(x);
+            vpoints.push((pct * height));
+          }
+
+          this.jumpPoints = vpoints;
+          this.inJump = true;
+        };
+
+        $playerSprite.shoot = function () {
+
+          if (this.controls.ticker % 10 == 0) {
+            $playerSprite.guns.firering.sound.play();
+          }
+
+          this.controls.ticker += 1;
+
+          //apply center pos
+          if (!this.flipX)
+            this.guns.firering.Pos(this.position.add($playerSprite.guns.firering.center_position_right));
+          else {
+            this.guns.firering.Pos(this.position.add($playerSprite.guns.firering.center_position_left));
+          }
+
+          this.guns.firering.FlipX(this.flipX).OffsetAllByX(this.speed.x);
+
+          if (this.selected_animation == animations.idle) {
+            this.selected_animation = animations.gun;
+          }
+
+          if (this.selected_animation == animations.gun || this.selected_animation == animations.run_gun) {
+
+            if (this.flipX) {
+              this.guns.firering.Angle(-2, 2, 'random');
+              this.guns.firering.Pos(this.position.add($playerSprite.guns.firering.center_position_left));
+            } else {
+              this.guns.firering.Angle(-2, 2, 'random');
+              this.guns.firering.Pos(this.position.add($playerSprite.guns.firering.center_position_right));
+            }
+          }
+
+          if (this.selected_animation == animations.run_gun_up || this.selected_animation == animations.gun_up) {
+
+            if (this.flipX) {
+              this.guns.firering.Angle(27, 29, 'random');
+              this.guns.firering.Pos(this.position.add($playerSprite.guns.firering.center_position_top_left));
+            } else {
+              this.guns.firering.Angle(-27, -29, 'random');
+              this.guns.firering.Pos(this.position.add($playerSprite.guns.firering.center_position_top_right));
+            }
+          }
+
+          if (this.selected_animation == animations.run_gun_down || this.selected_animation == animations.gun_down) {
+
+            if (this.flipX) {
+              this.guns.firering.Angle(-45, -45, 'random');
+              this.guns.firering.Pos(this.position.add($playerSprite.guns.firering.center_position_bottom_left));
+            } else {
+              this.guns.firering.Angle(45, 45, 'random');
+              this.guns.firering.Pos(this.position.add($playerSprite.guns.firering.center_position_bottom_right));
+            }
+          }
+
+          this.guns.firering.shoot();
+
+        };
+
+        $playerSprite.onUpdate(function () {
+
+          if (this.inJump) {
+
+            if (this.jumpPoints.length >= 1) {
+              this.position.y = this.jumpPoints.pop();
+            } else {
+              this.inJump = false;
+            }
+
+          }
+
+        });
+
+        new Gamelab.CollisionEvent().OnCollision([$playerSprite], tiles).Call(function (obj1, obj2) {
+
+          if (obj2.active) {}
+
+        });
+
+        gameWindow.add(new Gamelab.GravityForce({subjects: [$playerSprite], topClastics: tiles, max: 9.0, accel: 0.4}));
+
+        for (var x in animations) {
+
+          animations[x].key_name = x;
+
+          animations[x].onLoad(function (anime) {
+
+            if (this.key_name == 'idle') {
+              this.FrameSize(200, 160);
+              this.FrameOffset(90, 0).FrameBounds(new Gamelab.Vector(0, 0), new Gamelab.Vector(0, 0), new Gamelab.Vector(0, 0));
+              this.Size(200, 160);
+            }
+
+            if (this.key_name == 'run_gun_up') {
+              this.FrameSize(200, 160);
+              this.FrameOffset(90, 0).FrameBounds(new Gamelab.Vector(1, 0), new Gamelab.Vector(4, 0), new Gamelab.Vector(4, 0))
+              this.Size(200, 160);
+              this.Position(0, -5);
+            }
+
+            if (this.key_name == 'gun_up') {
+              this.FrameSize(200, 160);
+              this.FrameOffset(90, 0).FrameBounds(new Gamelab.Vector(1, 0), new Gamelab.Vector(1, 0), new Gamelab.Vector(1, 0))
+              this.Size(200, 160);
+              this.Position(0, -5);
+            }
+
+            if (this.key_name == 'run_gun_down') {
+              this.FrameSize(200, 160);
+              this.FrameOffset(90, 0).FrameBounds(new Gamelab.Vector(1, 2), new Gamelab.Vector(4, 2), new Gamelab.Vector(4, 2))
+              this.Size(200, 160);
+              this.Position(3, 16);
+            }
+
+            if (this.key_name == 'gun_down') {
+              this.FrameSize(200, 160);
+              this.FrameOffset(90, 0).FrameBounds(new Gamelab.Vector(1, 2), new Gamelab.Vector(1, 2), new Gamelab.Vector(1, 2))
+              this.Size(200, 160);
+              this.Position(3, 16);
+            }
+
+            if (this.key_name == 'run_gun') {
+              this.FrameSize(200, 160);
+              this.FrameOffset(90, 0).FrameBounds(new Gamelab.Vector(1, 1), new Gamelab.Vector(4, 1), new Gamelab.Vector(4, 1))
+              this.Size(200, 160);
+              this.Position(0, 9);
+            }
+
+            if (this.key_name == 'gun') {
+              this.FrameSize(200, 160);
+              this.FrameOffset(90, 0).FrameBounds(new Gamelab.Vector(1, 1), new Gamelab.Vector(1, 1), new Gamelab.Vector(1, 1))
+              this.Size(200, 160);
+              this.Position(0, 9);
+            }
+
+            console.info(this);
+          });
+
+          $playerSprite.animations.push(animations[x]);
+        }
+
+        $playerSprite.onLoad(function () {
+
+          this.selected_animation = animations.idle;
+
+          console.info(this.selected_animation);
+
+          this.onUpdate(function () {
+            this.Size(this.selected_animation.selected_frame.size);
+            //console.log('updating');
+            if (this.selected_animation) {
+              //  console.log('GOT ANIME');
+              this.selected_animation.engage(300);
+            }
+
+          });
+
+        });
+
+        gameWindow.add($playerSprite);
+
+      };
+
+      //Gamepad input
+      new Gamelab.GamepadEvent().Gamepads(1).Keys('button_1').Call(function (pressed) {
+
+        if (pressed) {
+          $playerSprite.controls.gun_button = true;
+          $playerSprite.shoot();
+        } else {
+          $playerSprite.controls.gun_button = false;
+        }
+
+      });
+
+      //Gamepad input
+      new Gamelab.GamepadEvent().Gamepads(1).Keys('stick_left').Call(function (x, y) {
+
+        //always runs if controller is plugged in
+
+        if (Math.abs(x) >= 0.2) {
+          console.log('stick_1 was moved at > 0.5x');
+        } else {}
+
+        var roundX = Math.round(x * 100) / 100,
+          roundY = Math.round(y * 100) / 100;
+
+        $playerSprite.speed.x = roundX * 7.0;
+
+        if (y >= 0.2) {
+          console.log('stick_1 was moved at >= 0.2x');
+          $playerSprite.selected_animation = animations.run_gun_down;
+        } else if (y <= -0.2) {
+          console.log('stick_1 was moved at <= -0.2x');
+          $playerSprite.selected_animation = animations.run_gun_up;
+        } else if (Math.abs(x) >= 0.1 || $playerSprite.controls.gun_button) {
+          $playerSprite.selected_animation = animations.run_gun;
+
+        } else if (!$playerSprite.animeBusy()) {
+          $playerSprite.selected_animation = animations.idle;
+        }
+
+        if (Math.abs(x) >= 0.1) {
+
+          $playerSprite.flipX = x > 0
+            ? false
+            : true;
+
+        }
+
+      });
+
+      Gamelab.ready(function () {
+
+        var level = new Gamelab.Module().load('res/scripts/run-gun/level-01.js', function (construct) {
+
+          var tiles = new construct();
+
+          startGame(tiles);
+
+        });
+
+      });
+
+      //start gameWindow
+      gameWindow.start();
+    </script>
+
+  </body>
+</html>

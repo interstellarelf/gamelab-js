@@ -7,7 +7,7 @@
  **/
 
 /**
- * Main module-object; references all Gamestack classes.
+ * Main module-object; references all Gamelab classes.
  * */
 
 
@@ -28,8 +28,8 @@ console.dev = function(tag, object) {
       }
   }
 
-  if (Gamestack.DEV)
-    console.info('gamestack::', tag, {
+  if (Gamelab.DEV)
+    console.info('gamelab::', tag, {
       data_type: psuedoType,
       object: object
     });
@@ -47,8 +47,8 @@ let repeat = function(f, duration) {
   setInterval(f, duration);
 }
 
-//Gamestack: the main module object:
-let Gamestack_Module = function() {
+//Gamelab: the main module object:
+let Gamelab_Module = function() {
 
   var module = {
 
@@ -108,7 +108,7 @@ let Gamestack_Module = function() {
 
       });
 
-      console.info('Gamestack.all():', all_objects);
+      console.info('Gamelab.all():', all_objects);
 
       return all_objects;
 
@@ -116,7 +116,7 @@ let Gamestack_Module = function() {
 
     init: function() {
 
-      this.testSquare = new Gamestack.Sprite();
+      this.testSquare = new Gamelab.Sprite();
 
     },
 
@@ -177,7 +177,7 @@ let Gamestack_Module = function() {
 
     info: function(m) {
 
-      if (Gamestack.DEBUG) {
+      if (Gamelab.DEBUG) {
         console.info('Info:' + m);
       }
     },
@@ -185,8 +185,8 @@ let Gamestack_Module = function() {
 
     log: function(m) {
 
-      if (Gamestack.DEBUG) {
-        console.log('Gamestack:' + m);
+      if (Gamelab.DEBUG) {
+        console.log('Gamelab:' + m);
       }
     },
 
@@ -209,11 +209,11 @@ let Gamestack_Module = function() {
       },
 
       spriteBoxesCollide(obj1, obj2, gw) {
-        gw = gw || Gamestack.game_windows[0];
+        gw = gw || Gamelab.game_windows[0];
 
-        var camPos = new Gamestack.Vector(0, 0, 0);
+        var camPos = new Gamelab.Vector(0, 0, 0);
 
-        obj1.padding = obj1.padding || new Gamestack.Vector(0, 0, 0);
+        obj1.padding = obj1.padding || new Gamelab.Vector(0, 0, 0);
 
         var paddingX = Math.round(obj1.padding.x * obj1.size.x),
 
@@ -235,11 +235,11 @@ let Gamestack_Module = function() {
       },
 
       spriteBoxesCollideTop(obj1, obj2, gw) {
-        gw = gw || Gamestack.game_windows[0];
+        gw = gw || Gamelab.game_windows[0];
 
-        var camPos = new Gamestack.Vector(0, 0, 0);
+        var camPos = new Gamelab.Vector(0, 0, 0);
 
-        obj1.padding = obj1.padding || new Gamestack.Vector(0, 0, 0);
+        obj1.padding = obj1.padding || new Gamelab.Vector(0, 0, 0);
 
         var paddingX = Math.round(obj1.padding.x * obj1.size.x),
 
@@ -268,9 +268,9 @@ let Gamestack_Module = function() {
        * */
 
       pixelsCollide(sourceSprite, targetSprite, gw) {
-        gw = gw || Gamestack.game_windows[0];
+        gw = gw || Gamelab.game_windows[0];
 
-        var camPos = new Gamestack.Vector(0, 0, 0);
+        var camPos = new Gamelab.Vector(0, 0, 0);
 
         /* Box model detection, return true on collision */
         function hitBox(source, target) {
@@ -348,7 +348,7 @@ let Gamestack_Module = function() {
       // console.log(parent);
 
       if (parent) {
-        console.log('Gamestack:EXTENDING EVENTS:' + extendedKey + ":" + extendorKey);
+        console.log('Gamelab:EXTENDING EVENTS:' + extendedKey + ":" + extendorKey);
 
         if (parent.onRun) //Any extendable object has an onRun ... OR
         {
@@ -368,11 +368,11 @@ let Gamestack_Module = function() {
 
     removeOffscreenObjects: function(gw) {
 
-      gw = gw || Gamestack.game_windows[0];
+      gw = gw || Gamelab.game_windows[0];
 
-      Gamestack.each(Gamestack.all_objects, function(ix, item) {
+      Gamelab.each(Gamelab.all_objects, function(ix, item) {
 
-        if (item instanceof Gamestack.Sprite && item.onScreen() == false && !item.__keepAlive && !item.keepAlive) {
+        if (item instanceof Gamelab.Sprite && item.onScreen() == false && !item.__keepAlive && !item.keepAlive) {
 
           gw.remove(item);
 
@@ -382,11 +382,11 @@ let Gamestack_Module = function() {
 
     removeDeadObjects: function(gw) {
 
-      gw = gw || Gamestack.game_windows[0];
+      gw = gw || Gamelab.game_windows[0];
 
-      Gamestack.each(Gamestack.all_objects, function(ix, item) {
+      Gamelab.each(Gamelab.all_objects, function(ix, item) {
 
-        if (item instanceof Gamestack.Sprite && item.isDead()) {
+        if (item instanceof Gamelab.Sprite && item.isDead()) {
 
           // console.log('removing:' + item.image.domElement.src);
           gw.remove(item);
@@ -402,7 +402,7 @@ let Gamestack_Module = function() {
 
     assignAll: function(object, args, keys) {
 
-      __gamestackInstance.each(keys, function(ix, item) {
+      __gamelabInstance.each(keys, function(ix, item) {
 
         object[ix] = args[ix];
 
@@ -531,7 +531,7 @@ let Gamestack_Module = function() {
 
       var __inst = this;
 
-      this.each(Gamestack.all(), function(ix, item) {
+      this.each(Gamelab.all(), function(ix, item) {
 
         if (constructor_name == '*' || item.constructor.name == constructor_name) {
 
@@ -554,7 +554,7 @@ let Gamestack_Module = function() {
 
 };
 
-let GamestackApi = {
+let GamelabApi = {
   get: function() {
 
 
@@ -564,7 +564,7 @@ let GamestackApi = {
     //TODO decycle the object before saving
 
     if (!object.id) {
-      object.id = Gamestack.create_id();
+      object.id = Gamelab.create_id();
 
     }
 
@@ -579,7 +579,7 @@ let GamestackApi = {
 };
 
 
-class GSO //Gamestack-Overrideable
+class GSO //Gamelab-Overrideable
 {
   constructor(args = {}) {
 
@@ -631,16 +631,16 @@ class GSO //Gamestack-Overrideable
 
 }
 
-let Gamestack = Gamestack_Module();
+let Gamelab = Gamelab_Module();
 
 
-Gamestack.DEV = true;
+Gamelab.DEV = true;
 
 
 if (typeof module !== 'undefined' && module.exports) {
 
   //This library is being instaniated via require() aka node.js require or similar library loader
-  module.exports = Gamestack;
+  module.exports = Gamelab;
 
 } else {
 
@@ -662,7 +662,7 @@ function jstr(obj) {
 
 };
 
-Gamestack.jstr = jstr;
+Gamelab.jstr = jstr;
 
 /**********
  * $Q : Selector Function
@@ -796,11 +796,11 @@ function $Q(selector) {
 
       getParts(cparts);
 
-      query = Gamestack.select(__targetClassName, __targetName, __targetGroup);
+      query = Gamelab.select(__targetClassName, __targetName, __targetGroup);
 
     } else if (selector == '*') {
 
-      query = Gamestack.all();
+      query = Gamelab.all();
 
     }
 
@@ -831,7 +831,7 @@ function $Q(selector) {
       var boolTrigger = evt_key,
         boolCall = selectorObject,
 
-        boolEvent = new Gamestack.BoolEvent().On(boolTrigger).Call(boolCall);
+        boolEvent = new Gamelab.BoolEvent().On(boolTrigger).Call(boolCall);
 
     }
 
@@ -891,7 +891,7 @@ function $Q(selector) {
 
       var button_mode = evt_profile.evt_key.indexOf('button') >= 0;
 
-      Gamestack.GamepadAdapter.on(evt_profile.evt_key, 0, function(x, y) {
+      Gamelab.GamepadAdapter.on(evt_profile.evt_key, 0, function(x, y) {
 
         callback(x, y);
 
@@ -1003,7 +1003,7 @@ function $Q(selector) {
         console.log(e);
       }
 
-      console.info('Gamestack:Processing condition with:' + condition);
+      console.info('Gamelab:Processing condition with:' + condition);
 
       switch (condition) {
 
@@ -1226,17 +1226,17 @@ $Q.test_selector_method = function() { //leftover method of hand-testing
 };
 
 
-Gamestack.$Q = $Q;
+Gamelab.$Q = $Q;
 
-Gamestack.query = $Q;
+Gamelab.query = $Q;
 
 
 /********************
- * Gamestack.InputSystem
+ * Gamelab.InputSystem
  * Various Keyboard + mouse Input Events
  ********************/
 
-Gamestack.InputSystem = {
+Gamelab.InputSystem = {
 
   //PC input events
 
@@ -1286,7 +1286,7 @@ Gamestack.InputSystem = {
 
     evt_key = this.keyReplace(evt_key);
 
-    Gamestack.InputSystem.keymap[evt_key] = {
+    Gamelab.InputSystem.keymap[evt_key] = {
 
       down: false,
 
@@ -1295,7 +1295,7 @@ Gamestack.InputSystem = {
       }
     };
 
-    return Gamestack.InputSystem.keymap[evt_key];
+    return Gamelab.InputSystem.keymap[evt_key];
 
   },
 
@@ -1304,9 +1304,9 @@ Gamestack.InputSystem = {
     evt_key = evt_key.toLowerCase();
 
     //each event-group has object-type
-    Gamestack.InputSystem.events[evt_key] = Gamestack.InputSystem.events[evt_key] || [];
+    Gamelab.InputSystem.events[evt_key] = Gamelab.InputSystem.events[evt_key] || [];
 
-    Gamestack.InputSystem.events[evt_key].push({
+    Gamelab.InputSystem.events[evt_key].push({
 
       down: downCall,
 
@@ -1322,7 +1322,7 @@ Gamestack.InputSystem = {
 
     window.setInterval(function() {
 
-      Gamestack.each(Gamestack.InputSystem.keymap, function(im, kmapItem) {
+      Gamelab.each(Gamelab.InputSystem.keymap, function(im, kmapItem) {
 
         if (kmapItem.down == true) {
 
@@ -1340,7 +1340,7 @@ Gamestack.InputSystem = {
 
       var gs_key_string = 'key_' + String.fromCharCode(e.keyCode),
 
-        evt_object = Gamestack.InputSystem['keymap'][gs_key_string] || Gamestack.InputSystem['keymap'][gs_key_string.toLowerCase()];
+        evt_object = Gamelab.InputSystem['keymap'][gs_key_string] || Gamelab.InputSystem['keymap'][gs_key_string.toLowerCase()];
 
       if (evt_object) {
         evt_object.down = e.type == 'keydown';
@@ -1371,7 +1371,7 @@ Gamestack.InputSystem = {
       };
     }
 
-    let InputSystem = Gamestack.InputSystem;
+    let InputSystem = Gamelab.InputSystem;
 
     function mouseMoving(event, c) {
 
@@ -1380,7 +1380,7 @@ Gamestack.InputSystem = {
       MOUSE.setPosition(pos.x, pos.y);
 
       if (InputSystem.events['mousemove']) {
-        Gamestack.each(InputSystem.events['mousemove'], function(ix, el) {
+        Gamelab.each(InputSystem.events['mousemove'], function(ix, el) {
 
           el.down(pos.x, pos.y);
 
@@ -1396,7 +1396,7 @@ Gamestack.InputSystem = {
 
         var pos = MOUSE.Position;
 
-        Gamestack.each(InputSystem.events['mousepos'], function(ix, el) {
+        Gamelab.each(InputSystem.events['mousepos'], function(ix, el) {
 
           el.down(pos.x, pos.y);
 
@@ -1413,16 +1413,16 @@ Gamestack.InputSystem = {
         mouseMoving(e, c);
       }
 
-      console.info('Gamestack-lib-code:main.js: InputSystem applying mousemove');
+      console.info('Gamelab-lib-code:main.js: InputSystem applying mousemove');
 
       document.addEventListener("mousemove", applyMouseMove);
 
       c.onmousedown = function(e) {
-        //    alert(JSON.stringify(Gamestack.InputSystem, true, 2));
+        //    alert(JSON.stringify(Gamelab.InputSystem, true, 2));
 
         var value = e.which;
         var pos = getMousePos(e, c);
-        var InputSystem = Gamestack.InputSystem;
+        var InputSystem = Gamelab.InputSystem;
 
         e.preventDefault();
 
@@ -1433,7 +1433,7 @@ Gamestack.InputSystem = {
 
               if (InputSystem.events[x] instanceof Array && x == 'leftclick') {
 
-                Gamestack.each(InputSystem.events[x], function(ix, el) {
+                Gamelab.each(InputSystem.events[x], function(ix, el) {
 
                   el.down(pos.x, pos.y);
                 });
@@ -1444,11 +1444,11 @@ Gamestack.InputSystem = {
           case 2:
             // alert('Middle Mouse button pressed.');
 
-            for (var x in Gamestack.InputSystem.events) {
+            for (var x in Gamelab.InputSystem.events) {
 
               if (InputSystem.events[x] instanceof Array && x == 'middleclick') {
 
-                Gamestack.each(InputSystem.events[x], function(ix, el) {
+                Gamelab.each(InputSystem.events[x], function(ix, el) {
 
                   el.down(pos.x, pos.y);
                 });
@@ -1459,13 +1459,13 @@ Gamestack.InputSystem = {
             //  alert('Right Mouse button pressed.');
 
 
-            for (var x in Gamestack.InputSystem.events) {
+            for (var x in Gamelab.InputSystem.events) {
 
 
               if (InputSystem.events[x] instanceof Array && x == 'rightclick') {
 
 
-                Gamestack.each(InputSystem.events[x], function(ix, el) {
+                Gamelab.each(InputSystem.events[x], function(ix, el) {
 
                   el.down(pos.x, pos.y);
                 });
@@ -1491,11 +1491,11 @@ Gamestack.InputSystem = {
 
       c.onmouseup = function(e) {
 
-        //    alert(JSON.stringify(Gamestack.InputSystem, true, 2));
+        //    alert(JSON.stringify(Gamelab.InputSystem, true, 2));
 
         var value = e.which;
         var pos = getMousePos(e, c);
-        var InputSystem = Gamestack.InputSystem;
+        var InputSystem = Gamelab.InputSystem;
 
 
         e.preventDefault();
@@ -1509,7 +1509,7 @@ Gamestack.InputSystem = {
               if (InputSystem.events[x] instanceof Array && x == 'leftclick') {
 
 
-                Gamestack.each(InputSystem.events[x], function(ix, el) {
+                Gamelab.each(InputSystem.events[x], function(ix, el) {
 
                   el.up(pos.x, pos.y);
                 });
@@ -1523,13 +1523,13 @@ Gamestack.InputSystem = {
             // alert('Middle Mouse button pressed.');
 
 
-            for (var x in Gamestack.InputSystem.events) {
+            for (var x in Gamelab.InputSystem.events) {
 
 
               if (InputSystem.events[x] instanceof Array && x == 'middleclick') {
 
 
-                Gamestack.each(InputSystem.events[x], function(ix, el) {
+                Gamelab.each(InputSystem.events[x], function(ix, el) {
 
                   el.up(pos.x, pos.y);
                 });
@@ -1542,13 +1542,13 @@ Gamestack.InputSystem = {
             //  alert('Right Mouse button pressed.');
 
 
-            for (var x in Gamestack.InputSystem.events) {
+            for (var x in Gamelab.InputSystem.events) {
 
 
               if (InputSystem.events[x] instanceof Array && x == 'rightclick') {
 
 
-                Gamestack.each(InputSystem.events[x], function(ix, el) {
+                Gamelab.each(InputSystem.events[x], function(ix, el) {
 
                   el.up(pos.x, pos.y);
                 });
@@ -1583,11 +1583,11 @@ Gamestack.InputSystem = {
 
 document.addEventListener('DOMContentLoaded', function() {
 
-  Gamestack.callReady();
+  Gamelab.callReady();
 
 });
 
-Gamestack.file_system = {
+Gamelab.file_system = {
 
   localizedSource: function(src, hostUrl) {
 
@@ -1626,28 +1626,28 @@ Gamestack.file_system = {
     if (typeof(gw) == 'function' || !gw) {
       callback = gw || callback || function() {};
 
-      gw = Gamestack.game_windows[0];
+      gw = Gamelab.game_windows[0];
     }
 
     $.each(data.sprites, function(ix, xitem) {
 
       if (typeof(xitem.src) == 'string') {
 
-        xitem.src = Gamestack.file_system.localizedSource(xitem.src);
+        xitem.src = Gamelab.file_system.localizedSource(xitem.src);
       }
 
-      __gamestackInstance.each(xitem, function(iy, yitem) {
+      __gamelabInstance.each(xitem, function(iy, yitem) {
 
         if (yitem.src) {
 
-          yitem.src = Gamestack.file_system.localizedSource(yitem.src);
+          yitem.src = Gamelab.file_system.localizedSource(yitem.src);
 
         }
 
-        __gamestackInstance.each(yitem, function(iz, zitem) {
+        __gamelabInstance.each(yitem, function(iz, zitem) {
 
           if (zitem.src) {
-            zitem.src = Gamestack.file_system.localizedSource(zitem.src);
+            zitem.src = Gamelab.file_system.localizedSource(zitem.src);
 
           }
 
@@ -1657,7 +1657,7 @@ Gamestack.file_system = {
 
       });
 
-      xitem = new Gamestack.Sprite(xitem);
+      xitem = new Gamelab.Sprite(xitem);
 
       gw.add(xitem);
       //sprite.image = sprite.selected_animation.image;
@@ -1679,7 +1679,7 @@ Gamestack.file_system = {
     if (typeof(gw) == 'function' || !gw) {
       callback = gw || callback || function() {};
 
-      gw = Gamestack.game_windows[0];
+      gw = Gamelab.game_windows[0];
     }
 
     this.loadJSON(filepath, function(data) {
@@ -1690,21 +1690,21 @@ Gamestack.file_system = {
 
         if (typeof(xitem.src) == 'string') {
 
-          xitem.src = Gamestack.file_system.localizedSource(xitem.src);
+          xitem.src = Gamelab.file_system.localizedSource(xitem.src);
         }
 
-        __gamestackInstance.each(xitem, function(iy, yitem) {
+        __gamelabInstance.each(xitem, function(iy, yitem) {
 
           if (yitem.src) {
 
-            yitem.src = Gamestack.file_system.localizedSource(yitem.src);
+            yitem.src = Gamelab.file_system.localizedSource(yitem.src);
 
           }
 
-          __gamestackInstance.each(yitem, function(iz, zitem) {
+          __gamelabInstance.each(yitem, function(iz, zitem) {
 
             if (zitem.src) {
-              zitem.src = Gamestack.file_system.localizedSource(zitem.src);
+              zitem.src = Gamelab.file_system.localizedSource(zitem.src);
 
             }
 
@@ -1714,7 +1714,7 @@ Gamestack.file_system = {
 
         });
 
-        xitem = new Gamestack.Sprite(xitem);
+        xitem = new Gamelab.Sprite(xitem);
 
         gw.add(xitem);
         //sprite.image = sprite.selected_animation.image;
@@ -1739,9 +1739,9 @@ Gamestack.file_system = {
 };
 
 
-Gamestack.ready(function(lib) {
+Gamelab.ready(function(lib) {
 
-  Gamestack.log('Gamestack: library is ready');
+  Gamelab.log('Gamelab: library is ready');
 
 });
 
@@ -1751,11 +1751,11 @@ Gamestack.ready(function(lib) {
 let Screen = {
 
   size: function() {
-    return new Gamestack.Vector(Gamestack.WIDTH, Gamestack.HEIGHT);
+    return new Gamelab.Vector(Gamelab.WIDTH, Gamelab.HEIGHT);
   },
 
   center: function() {
-    return new Gamestack.Vector(Gamestack.WIDTH / 2, Gamestack.HEIGHT / 2).round();
+    return new Gamelab.Vector(Gamelab.WIDTH / 2, Gamelab.HEIGHT / 2).round();
   }
 
 };
@@ -1824,7 +1824,7 @@ let ObjectFeatureMap = { //className / must have named function properties when 
 
 };
 
-Gamestack.ObjectFeatureMap = ObjectFeatureMap;
+Gamelab.ObjectFeatureMap = ObjectFeatureMap;
 
 
 let InputIFM = {
@@ -1969,12 +1969,12 @@ class SymbolSlicer
             z = 0;
         }
 
-      this.position = new Gamestack.Vector(x, y, z);
+      this.position = new Gamelab.Vector(x, y, z);
     }
 
 }
 
-Gamestack.Camera = Camera;
+Gamelab.Camera = Camera;
 
 })();
 ;
@@ -2011,7 +2011,7 @@ Gamestack.Camera = Camera;
     easeInOutQuintic: function (t) { return t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t }
 }
 
-Gamestack.Curves = Curves;
+Gamelab.Curves = Curves;
 
 var inOutCurves = {
 
@@ -2028,8 +2028,8 @@ var inOutCurves = {
     };
 
 
-Gamestack.Curves.Smooth = inOutCurves;
-Gamestack.Curves.InOut = inOutCurves;
+Gamelab.Curves.Smooth = inOutCurves;
+Gamelab.Curves.InOut = inOutCurves;
 
 
 })();
@@ -2042,7 +2042,7 @@ class Game
     }
 }
 
-Gamestack.Game = Game;
+Gamelab.Game = Game;
 
 ;
   /**
@@ -2051,7 +2051,7 @@ Gamestack.Game = Game;
    * <iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/GameWindow.html'> </iframe>
    * @param   {Object} canvas the canvas element for this gameWindow. --GameWindow's if not supplied, the constructor will create a full-screen canvas, if a canvas.
     * @param   {Object} drawables the drawable objects to be drawn. --Drawables can also be added after constructor call.
-   * @returns {GameWindow} a Gamestack.GameWindow object
+   * @returns {GameWindow} a Gamelab.GameWindow object
    * */
 
   class GameWindow {
@@ -2059,7 +2059,7 @@ Gamestack.Game = Game;
 
       this.drawables = drawables;
 
-      this.bool_events = Gamestack.bool_events || [];
+      this.bool_events = Gamelab.bool_events || [];
 
       this.canvas = canvas || false;
 
@@ -2078,11 +2078,11 @@ Gamestack.Game = Game;
 
       document.body.style.height = "100%";
 
-      this.camera = new Gamestack.Camera();
+      this.camera = new Gamelab.Camera();
 
       this.camera.target = false;
 
-      Gamestack.camera = this.camera;
+      Gamelab.camera = this.camera;
 
       var __inst = this;
 
@@ -2101,17 +2101,17 @@ Gamestack.Game = Game;
 
       this.ctx = this.canvas.getContext('2d');
 
-      Gamestack.game_windows.push(this);
+      Gamelab.game_windows.push(this);
 
 
       window.onerror = function(){
 
-        Gamestack.errors += 1;
+        Gamelab.errors += 1;
 
         console.log('Canvas Error --');
 
-        if (Gamestack.errors > Gamestack.settings.errorLimit) {
-          Gamestack.stopDraw = true;
+        if (Gamelab.errors > Gamelab.settings.errorLimit) {
+          Gamelab.stopDraw = true;
 
         var call = call ||  window.setTimeout(function(){
 
@@ -2119,7 +2119,7 @@ Gamestack.Game = Game;
           {
             window.clearTimeout(call);
           }
-            console.log('%cDraw stopped at errorLimit:' + Gamestack.settings.errorLimit, 'color:darkorange;');
+            console.log('%cDraw stopped at errorLimit:' + Gamelab.settings.errorLimit, 'color:darkorange;');
 
           }, 200);
 
@@ -2153,7 +2153,7 @@ Gamestack.Game = Game;
 
     center() {
 
-      return new Gamestack.Vector(Math.round(this.canvas.width / 2), Math.round(this.canvas.height / 2));
+      return new Gamelab.Vector(Math.round(this.canvas.width / 2), Math.round(this.canvas.height / 2));
 
     }
 
@@ -2182,18 +2182,18 @@ Gamestack.Game = Game;
 
        function GridUnit(x, y, w, h, srcImage_Path){
 
-         var size = new Gamestack.Vector(w, h),
-         position = new Gamestack.Vector(x, y);
+         var size = new Gamelab.Vector(w, h),
+         position = new Gamelab.Vector(x, y);
 
          var sprite;
 
          if(srcImage_Path)
          {
-           sprite = new Gamestack.Sprite(srcImage_Path);
+           sprite = new Gamelab.Sprite(srcImage_Path);
            sprite.Size(size);
            sprite.Pos(position);
 
-           Gamestack.game_windows[0].add(sprite);
+           Gamelab.game_windows[0].add(sprite);
          }
 
          return {
@@ -2245,7 +2245,7 @@ Gamestack.Game = Game;
 
     update() {
 
-      Gamestack.each(this.drawables, function(ix, item) {
+      Gamelab.each(this.drawables, function(ix, item) {
 
         if (item && typeof(item.def_update) == 'function') {
 
@@ -2272,7 +2272,7 @@ Gamestack.Game = Game;
 
       });
 
-      Gamestack.each(this.bool_events, function(ix, item) {
+      Gamelab.each(this.bool_events, function(ix, item) {
 
         if (item && item.bool()) {
           item.callback();
@@ -2294,7 +2294,7 @@ Gamestack.Game = Game;
         this.before_draw_ext();
       }
 
-      Gamestack.each(this.drawables, function(ix, item) {
+      Gamelab.each(this.drawables, function(ix, item) {
 
         if(typeof item.draw == 'function')
         {
@@ -2384,15 +2384,15 @@ Gamestack.Game = Game;
         c.setAttribute('height', h)
       };
 
-      Gamestack.WIDTH = w;
+      Gamelab.WIDTH = w;
 
-      Gamestack.HEIGHT = h;
+      Gamelab.HEIGHT = h;
 
       this.canvas.width = w;
 
       this.canvas.height = h;
 
-      this.size = new Gamestack.Vector(w, h);
+      this.size = new Gamelab.Vector(w, h);
 
       this.isAbsoluteSize = isAbsoluteSize || false;
 
@@ -2425,7 +2425,7 @@ Gamestack.Game = Game;
       if(!(typeof layer == 'number' && layer >= 0))
       layer = this.drawables.length;
 
-      var offset = new Gamestack.Vector(0, 0);
+      var offset = new Gamelab.Vector(0, 0);
 
       if(options.position)
       offset = options.position;
@@ -2436,13 +2436,13 @@ Gamestack.Game = Game;
 
       var __inst = this;
 
-      if (obj instanceof Gamestack.Camera) {
+      if (obj instanceof Gamelab.Camera) {
 
         this.camera = obj;
 
-      } else if (obj instanceof Gamestack.GSEvent) {
+      } else if (obj instanceof Gamelab.GSEvent) {
 
-        if (Gamestack.__running) {
+        if (Gamelab.__running) {
 
           return console.error('Events can only be added before Gamstack.animate() is called::aka before the main update / loop begins');
         } else {
@@ -2520,7 +2520,7 @@ Gamestack.Game = Game;
         this.__statsMB.update();
       }
 
-      Gamestack.isAtPlay = true;
+      Gamelab.isAtPlay = true;
 
       if (window.TWEEN)
         TWEEN.update(time);
@@ -2589,7 +2589,7 @@ Gamestack.Game = Game;
     }
   }
 
-  Gamestack.GameWindow = GameWindow;
+  Gamelab.GameWindow = GameWindow;
 ;
 
 console.info('Module class :: keep as public');
@@ -2628,13 +2628,13 @@ class Module{
 
 };
 
-Gamestack.Module = Module;
+Gamelab.Module = Module;
 ;
 
 /**
  * Creates an instance of Rectangle.
- * @param   {Gamestack.Vector} min the minimum vector point (x,y)
- * @param   {Gamestack.Vector} max the maximum vector point (x,y)
+ * @param   {Gamelab.Vector} min the minimum vector point (x,y)
+ * @param   {Gamelab.Vector} max the maximum vector point (x,y)
  *
  * @returns {Rectangle} a Rectangle object
  */
@@ -2643,8 +2643,8 @@ class Rectangle {
 
     constructor(min, max) {
 
-        this.min = new Gamestack.Vector(min);
-        this.max = new Gamestack.Vector(max);
+        this.min = new Gamelab.Vector(min);
+        this.max = new Gamelab.Vector(max);
 
     }
     toLine()
@@ -2659,9 +2659,9 @@ class Rectangle {
 
 let VectorBounds = Rectangle;
 
-Gamestack.VectorBounds =VectorBounds;
+Gamelab.VectorBounds =VectorBounds;
 
-Gamestack.Rectangle = Rectangle;
+Gamelab.Rectangle = Rectangle;
 
 /**
  * Takes the min and max vectors plus termPoint ('termination-point'), returns VectorFrameBounds
@@ -2669,7 +2669,7 @@ Gamestack.Rectangle = Rectangle;
  * @param   {Vector} min the minimum vector point (x,y)
  * @param   {Vector} max the maximum vector point (x,y)
  * @param   {Vector=} termPoint the optional termination vector point (x,y) : defaults to the value of 'max'
- * -While a min and max Gamestack.Vector(x,y) will describe the grid-size of Animation frames,
+ * -While a min and max Gamelab.Vector(x,y) will describe the grid-size of Animation frames,
  * the termPoint will indicate the last frame on-grid for this set of frames --Animation may stop early on the 'grid')
  * @returns {VectorFrameBounds} a VectorFrameBounds object
  */
@@ -2680,7 +2680,7 @@ class VectorFrameBounds extends Rectangle {
 
         super(min, max);
 
-        this.termPoint = termPoint || new Gamestack.Vector(this.max.x, this.max.y, this.max.z);
+        this.termPoint = termPoint || new Gamelab.Vector(this.max.x, this.max.y, this.max.z);
 
     }
 
@@ -2688,7 +2688,7 @@ class VectorFrameBounds extends Rectangle {
 }
 ;
 
-Gamestack.VectorFrameBounds = VectorFrameBounds;
+Gamelab.VectorFrameBounds = VectorFrameBounds;
 
 
 
@@ -2710,20 +2710,20 @@ var GeoMath = {
 
 }
 
-Gamestack.GeoMath = GeoMath;
+Gamelab.GeoMath = GeoMath;
 ;
 
 /**
  * Renderable : consistent base-type for graphic-objects
  * @param   {Object} args the object of arguments
- * @returns {Renderable} a Gamestack.Renderable object.
+ * @returns {Renderable} a Gamelab.Renderable object.
  * */
 
 class Renderable
 {
     constructor(args={})
     {
-      //  Gamestack.FeatureInject(this, args);
+      //  Gamelab.FeatureInject(this, args);
     }
 }
 
@@ -2731,7 +2731,7 @@ class Renderable
 /**
  * A game-image object based on HTMLImage element. Creates GameImage, attaches gameImage.domElement --an instance of HTMLImageElement
  * @param   {string} src the sourcePath of the image-file.
- * @returns {GameImage} a Gamestack.GameImage object.
+ * @returns {GameImage} a Gamelab.GameImage object.
  * */
 
 class GameImage extends Renderable {
@@ -2762,7 +2762,7 @@ class GameImage extends Renderable {
     }
 };
 
-Gamestack.GameImage = GameImage;
+Gamelab.GameImage = GameImage;
 ;
 
 console.info('Scriptable class :: keep as public');
@@ -2811,7 +2811,7 @@ class Script{
 
 };
 
-Gamestack.Script = Script;
+Gamelab.Script = Script;
 
 
 class Scriptable{
@@ -2861,16 +2861,16 @@ class Scriptable{
 
 };
 
-Gamestack.Scriptable = Scriptable;
+Gamelab.Scriptable = Scriptable;
 ;
 
 
 class Elipse{
 
   constructor(pos, size){
-    this.position = new Gamestack.Vector(0, 0, 0);
-    this.size = new Gamestack.Vector(0, 0, 0);
-    this.rotation = new Gamestack.Vector(0, 0, 0);
+    this.position = new Gamelab.Vector(0, 0, 0);
+    this.size = new Gamelab.Vector(0, 0, 0);
+    this.rotation = new Gamelab.Vector(0, 0, 0);
     this.Pos(pos);
     this.Size(size);
   }
@@ -2878,12 +2878,12 @@ class Elipse{
   draw(){
               var halfX = (this.size.x / 2);
               var halfY = (this.size.y / 2);
-              Gamestack.Canvas.arc(this.position, new Gamestack.Vector(halfX, halfY));
+              Gamelab.Canvas.arc(this.position, new Gamelab.Vector(halfX, halfY));
   }
 
 }
 
-Gamestack.Elipse = Elipse;
+Gamelab.Elipse = Elipse;
 ;
 
 var Trigonometry = {
@@ -2894,7 +2894,7 @@ var Trigonometry = {
           sin = Math.sin(radians),
           nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
           ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
-      return new Gamestack.Vector(nx, ny);
+      return new Gamelab.Vector(nx, ny);
   },
 
   find_point_on_circle:function(x, y, radius, degrees){
@@ -2903,8 +2903,8 @@ var Trigonometry = {
 };
 
 
-Gamestack.Trig = Trigonometry;
-Gamestack.Trigonometry = Trigonometry;
+Gamelab.Trig = Trigonometry;
+Gamelab.Trigonometry = Trigonometry;
 ;
 
 
@@ -3045,11 +3045,11 @@ SpecialFunctions.Floor = () => {};
 
 SpecialFunctions.Sign = () => {};
 
-Gamestack.core = Gamestack.core || {};
+Gamelab.core = Gamelab.core || {};
 
-Gamestack.core.XYFunctions = {};
+Gamelab.core.XYFunctions = {};
 
-Gamestack.core.XYFunctions.SpecialFunctions = SpecialFunctions;
+Gamelab.core.XYFunctions.SpecialFunctions = SpecialFunctions;
 
 
 
@@ -3136,7 +3136,7 @@ const GammaFunctions = {};
         };
       };
 
-      return new Gamestack.Vector(this.x - v.x, this.y - v.y, this.z - v.z);
+      return new Gamelab.Vector(this.x - v.x, this.y - v.y, this.z - v.z);
 
     }
 
@@ -3157,7 +3157,7 @@ const GammaFunctions = {};
         };
       };
 
-      return new Gamestack.Vector(this.x + v.x, this.y + v.y, this.z + v.z);
+      return new Gamelab.Vector(this.x + v.x, this.y + v.y, this.z + v.z);
 
     }
 
@@ -3178,7 +3178,7 @@ const GammaFunctions = {};
         };
       };
 
-      return new Gamestack.Vector(this.x * v.x, this.y * v.y, this.z * v.z);
+      return new Gamelab.Vector(this.x * v.x, this.y * v.y, this.z * v.z);
 
     }
 
@@ -3192,7 +3192,7 @@ const GammaFunctions = {};
 
     abs() {
 
-      return new Gamestack.Vector(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));
+      return new Gamelab.Vector(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));
 
     }
 
@@ -3213,7 +3213,7 @@ const GammaFunctions = {};
         };
       };
 
-      return new Gamestack.Vector(this.x / v.x, this.y / v.y, this.z / v.z);
+      return new Gamelab.Vector(this.x / v.x, this.y / v.y, this.z / v.z);
     }
 
     /**
@@ -3221,11 +3221,11 @@ const GammaFunctions = {};
      *
      * @function
      * @memberof Vector
-     * @returns {Vector} a Gamestack.Vector object
+     * @returns {Vector} a Gamelab.Vector object
      **********/
 
     round() {
-      return new Gamestack.Vector(Math.round(this.x), Math.round(this.y), Math.round(this.z));
+      return new Gamelab.Vector(Math.round(this.x), Math.round(this.y), Math.round(this.z));
 
     }
 
@@ -3234,11 +3234,11 @@ const GammaFunctions = {};
      *
      * @function
      * @memberof Vector
-     * @returns {Vector} a Gamestack.Vector object
+     * @returns {Vector} a Gamelab.Vector object
      **********/
 
     floor() {
-      return new Gamestack.Vector(Math.floor(this.x), Math.floor(this.y), Math.floor(this.z));
+      return new Gamelab.Vector(Math.floor(this.x), Math.floor(this.y), Math.floor(this.z));
 
     }
 
@@ -3247,11 +3247,11 @@ const GammaFunctions = {};
      *
      * @function
      * @memberof Vector
-     * @returns {Vector} a Gamestack.Vector object
+     * @returns {Vector} a Gamelab.Vector object
      **********/
 
     ceil() {
-      return new Gamestack.Vector(Math.ceil(this.x), Math.ceil(this.y), Math.ceil(this.z));
+      return new Gamelab.Vector(Math.ceil(this.x), Math.ceil(this.y), Math.ceil(this.z));
 
     }
 
@@ -3260,11 +3260,11 @@ const GammaFunctions = {};
      *
      * @function
      * @memberof Vector
-     * @returns {Vector} a Gamestack.Vector object
+     * @returns {Vector} a Gamelab.Vector object
      **********/
 
     neg() {
-      return new Gamestack.Vector(-this.x, -this.y, -this.z);
+      return new Gamelab.Vector(-this.x, -this.y, -this.z);
     }
 
     /**
@@ -3344,7 +3344,7 @@ const GammaFunctions = {};
         r = rotation.x;
       }
 
-      return new Gamestack.Vector(Math.cos((r) * 3.14 / 180) * speed, Math.sin((r) * 3.14 / 180) * speed);
+      return new Gamelab.Vector(Math.cos((r) * 3.14 / 180) * speed, Math.sin((r) * 3.14 / 180) * speed);
 
     }
 
@@ -3405,15 +3405,15 @@ const GammaFunctions = {};
     Vector2 = Vector,
     Rotation = Vector;
 
-  Gamestack.Vector = Vector;
+  Gamelab.Vector = Vector;
 
   //synonymous w/ Vector::
-  Gamestack.Vector2d = Vector;
-  Gamestack.Vector2D = Vector;
-  Gamestack.Rotation = Vector;
-  Gamestack.Pos = Vector;
-  Gamestack.Position = Vector;
-  Gamestack.Size = Vector;
+  Gamelab.Vector2d = Vector;
+  Gamelab.Vector2D = Vector;
+  Gamelab.Rotation = Vector;
+  Gamelab.Pos = Vector;
+  Gamelab.Position = Vector;
+  Gamelab.Size = Vector;
 
   //The above are a list of synonymous expressions for Vector. All of these do the same thing in this library (store and manipulate x,y,z values)
 
@@ -3434,7 +3434,7 @@ const GammaFunctions = {};
 
   }
 
-  Gamestack.VectorMath = VectorMath;
+  Gamelab.VectorMath = VectorMath;
 
 })();
 ;
@@ -3444,7 +3444,7 @@ const GammaFunctions = {};
    * <iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/GameWindow.html'> </iframe>
    * @param   {Object} canvas the canvas element for this gameWindow. --GameWindow's if not supplied, the constructor will create a full-screen canvas, if a canvas.
     * @param   {Object} drawables the drawable objects to be drawn. --Drawables can also be added after constructor call.
-   * @returns {GameWindow} a Gamestack.GameWindow object
+   * @returns {GameWindow} a Gamelab.GameWindow object
    * */
 
   class WebGL {
@@ -3486,7 +3486,7 @@ const GammaFunctions = {};
 
             this.drawables = drawables;
 
-            this.bool_events = Gamestack.bool_events || [];
+            this.bool_events = Gamelab.bool_events || [];
 
             this.canvas = this.renderer.domElement;
 
@@ -3496,16 +3496,16 @@ const GammaFunctions = {};
 
       this.update_ext = [];
 
-      Gamestack.game_windows.push(this);
+      Gamelab.game_windows.push(this);
 
       window.onerror = function(){
 
-        Gamestack.errors += 1;
+        Gamelab.errors += 1;
 
         console.log('Canvas Error --');
 
-        if (Gamestack.errors > Gamestack.settings.errorLimit) {
-          Gamestack.stopDraw = true;
+        if (Gamelab.errors > Gamelab.settings.errorLimit) {
+          Gamelab.stopDraw = true;
 
         var call = call ||  window.setTimeout(function(){
 
@@ -3513,7 +3513,7 @@ const GammaFunctions = {};
           {
             window.clearTimeout(call);
           }
-            console.log('%cDraw stopped at errorLimit:' + Gamestack.settings.errorLimit, 'color:darkorange;');
+            console.log('%cDraw stopped at errorLimit:' + Gamelab.settings.errorLimit, 'color:darkorange;');
 
           }, 200);
 
@@ -3547,7 +3547,7 @@ const GammaFunctions = {};
 
     center() {
 
-      return new Gamestack.Vector(Math.round(this.canvas.width / 2), Math.round(this.canvas.height / 2));
+      return new Gamelab.Vector(Math.round(this.canvas.width / 2), Math.round(this.canvas.height / 2));
 
     }
 
@@ -3569,18 +3569,18 @@ const GammaFunctions = {};
 
        function GridUnit(x, y, w, h, srcImage_Path){
 
-         var size = new Gamestack.Vector(w, h),
-         position = new Gamestack.Vector(x, y);
+         var size = new Gamelab.Vector(w, h),
+         position = new Gamelab.Vector(x, y);
 
          var sprite;
 
          if(srcImage_Path)
          {
-           sprite = new Gamestack.Sprite(srcImage_Path);
+           sprite = new Gamelab.Sprite(srcImage_Path);
            sprite.Size(size);
            sprite.Pos(position);
 
-           Gamestack.game_windows[0].add(sprite);
+           Gamelab.game_windows[0].add(sprite);
          }
 
          return {
@@ -3632,7 +3632,7 @@ const GammaFunctions = {};
 
     update() {
 
-      Gamestack.each(this.drawables, function(ix, item) {
+      Gamelab.each(this.drawables, function(ix, item) {
 
         if (item && typeof(item.def_update) == 'function') {
 
@@ -3659,7 +3659,7 @@ const GammaFunctions = {};
 
       });
 
-      Gamestack.each(this.bool_events, function(ix, item) {
+      Gamelab.each(this.bool_events, function(ix, item) {
 
         if (item && item.bool()) {
           item.callback();
@@ -3681,7 +3681,7 @@ const GammaFunctions = {};
         this.before_draw_ext();
       }
 
-      Gamestack.each(this.drawables, function(ix, item) {
+      Gamelab.each(this.drawables, function(ix, item) {
 
         if(typeof item.draw == 'function')
         {
@@ -3771,15 +3771,15 @@ const GammaFunctions = {};
         c.setAttribute('height', h)
       };
 
-      Gamestack.WIDTH = w;
+      Gamelab.WIDTH = w;
 
-      Gamestack.HEIGHT = h;
+      Gamelab.HEIGHT = h;
 
       this.canvas.width = w;
 
       this.canvas.height = h;
 
-      this.size = new Gamestack.Vector(w, h);
+      this.size = new Gamelab.Vector(w, h);
 
       this.isAbsoluteSize = isAbsoluteSize || false;
 
@@ -3812,7 +3812,7 @@ const GammaFunctions = {};
       if(!(typeof layer == 'number' && layer >= 0))
       layer = this.drawables.length;
 
-      var offset = new Gamestack.Vector(0, 0);
+      var offset = new Gamelab.Vector(0, 0);
 
       if(options.position)
       offset = options.position;
@@ -3823,13 +3823,13 @@ const GammaFunctions = {};
 
       var __inst = this;
 
-      if (obj instanceof Gamestack.Camera) {
+      if (obj instanceof Gamelab.Camera) {
 
         this.camera = obj;
 
-      } else if (obj instanceof Gamestack.GSEvent) {
+      } else if (obj instanceof Gamelab.GSEvent) {
 
-        if (Gamestack.__running) {
+        if (Gamelab.__running) {
 
           return console.error('Events can only be added before Gamstack.animate() is called::aka before the main update / loop begins');
         } else {
@@ -3901,13 +3901,13 @@ const GammaFunctions = {};
       });
 
 
-      if (Gamestack.__stats) {
-        Gamestack.__stats.begin();
-        Gamestack.__statsMS.begin();
-        Gamestack.__statsMB.update();
+      if (Gamelab.__stats) {
+        Gamelab.__stats.begin();
+        Gamelab.__statsMS.begin();
+        Gamelab.__statsMB.update();
       }
 
-      Gamestack.isAtPlay = true;
+      Gamelab.isAtPlay = true;
 
       if (window.TWEEN)
         TWEEN.update(time);
@@ -3919,9 +3919,9 @@ const GammaFunctions = {};
 
       this.draw();
 
-      if (Gamestack.__stats) {
-        Gamestack.__stats.end();
-        Gamestack.__statsMS.end();
+      if (Gamelab.__stats) {
+        Gamelab.__stats.end();
+        Gamelab.__statsMS.end();
       }
 
     }
@@ -3939,47 +3939,47 @@ const GammaFunctions = {};
       if (typeof(Stats) == 'function') //Stats library exists
       {
         //basic stat animation
-        Gamestack.__stats = new Stats();
-        Gamestack.__stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+        Gamelab.__stats = new Stats();
+        Gamelab.__stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
 
-        Gamestack.__stats.dom.style.left = '10%';
+        Gamelab.__stats.dom.style.left = '10%';
 
-        Gamestack.__stats.dom.setAttribute('class', 'stat');
+        Gamelab.__stats.dom.setAttribute('class', 'stat');
 
-        this.canvas.parentNode.appendChild(Gamestack.__stats.dom);
-
-        //basic stat animation
-        Gamestack.__statsMS = new Stats();
-        Gamestack.__statsMS.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
-
-        Gamestack.__statsMS.dom.style.left = '10%';
-
-        Gamestack.__statsMS.dom.style.marginLeft = '90px';
-
-        Gamestack.__statsMS.dom.setAttribute('class', 'stat');
-
-        this.canvas.parentNode.appendChild(Gamestack.__statsMS.dom);
+        this.canvas.parentNode.appendChild(Gamelab.__stats.dom);
 
         //basic stat animation
-        Gamestack.__statsMB = new Stats();
-        Gamestack.__statsMB.showPanel(2); // 0: fps, 1: ms, 2: mb, 3+: custom
+        Gamelab.__statsMS = new Stats();
+        Gamelab.__statsMS.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
 
-        Gamestack.__statsMB.dom.style.left = '10%';
+        Gamelab.__statsMS.dom.style.left = '10%';
 
-        Gamestack.__statsMB.dom.setAttribute('class', 'stat');
+        Gamelab.__statsMS.dom.style.marginLeft = '90px';
 
-        Gamestack.__statsMB.dom.style.marginLeft = '180px';
+        Gamelab.__statsMS.dom.setAttribute('class', 'stat');
 
-        this.canvas.parentNode.appendChild(Gamestack.__statsMB.dom);
+        this.canvas.parentNode.appendChild(Gamelab.__statsMS.dom);
+
+        //basic stat animation
+        Gamelab.__statsMB = new Stats();
+        Gamelab.__statsMB.showPanel(2); // 0: fps, 1: ms, 2: mb, 3+: custom
+
+        Gamelab.__statsMB.dom.style.left = '10%';
+
+        Gamelab.__statsMB.dom.setAttribute('class', 'stat');
+
+        Gamelab.__statsMB.dom.style.marginLeft = '180px';
+
+        this.canvas.parentNode.appendChild(Gamelab.__statsMB.dom);
       }
 
       this.animate();
     }
   }
 
-  Gamestack.WebGL = WebGL;
+  Gamelab.WebGL = WebGL;
 
-  Gamestack.WebGl = WebGL;
+  Gamelab.WebGl = WebGL;
 ;class RGBAColor {
   constructor(r=0, g=0, b=0, a=0) {
     this.r = r;
@@ -4003,7 +4003,7 @@ const GammaFunctions = {};
           console.log('Processing Match::' + jstr(match));
 
 
-        return new Gamestack.RGBAColor(
+        return new Gamelab.RGBAColor(
             parseInt(match[1], 10),
             parseInt(match[2], 10),
             parseInt(match[3], 10),
@@ -4016,7 +4016,7 @@ const GammaFunctions = {};
 
   fromData(data)
   {
-    return new Gamestack.RGBAColor(
+    return new Gamelab.RGBAColor(
         parseInt(data[0], 10),
         parseInt(data[1], 10),
         parseInt(data[2], 10),
@@ -4062,7 +4062,7 @@ const GammaFunctions = {};
 };
 
 
-Gamestack.RGBAColor = RGBAColor;
+Gamelab.RGBAColor = RGBAColor;
 
 
 var ColorStrings = {
@@ -4246,16 +4246,16 @@ var ColorStrings = {
 
 var RE_RGB = /^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/;
 
-Gamestack.Colors = {};
+Gamelab.Colors = {};
 
-Gamestack.PixelMapColors = {};
+Gamelab.PixelMapColors = {};
 
 
 for(var x in ColorStrings)
 {
   if(ColorStrings.hasOwnProperty(x))
   {
-      Gamestack.Colors[x] = new Gamestack.RGBAColor().fromString(x);
+      Gamelab.Colors[x] = new Gamelab.RGBAColor().fromString(x);
   }
 }
 ;(function() {
@@ -4265,7 +4265,7 @@ for(var x in ColorStrings)
 
     constructor(args = {}) {
 
-      //  Gamestack.Modifiers.informable(this, args);
+      //  Gamelab.Modifiers.informable(this, args);
 
     }
   }
@@ -4278,7 +4278,7 @@ for(var x in ColorStrings)
       this.Callback(callback);
     }
     Callback(cb) {
-      Gamestack.InputSystem.extend('mousemove', function(x, y) {
+      Gamelab.InputSystem.extend('mousemove', function(x, y) {
 
         cb(x, y);
 
@@ -4286,7 +4286,7 @@ for(var x in ColorStrings)
     }
   };
 
-  Gamestack.MouseMoveEvent = MouseMoveEvent;
+  Gamelab.MouseMoveEvent = MouseMoveEvent;
 
   class MousePosEvent {
     constructor(callback) {
@@ -4295,7 +4295,7 @@ for(var x in ColorStrings)
       this.Callback(callback);
     }
     Callback(cb) {
-      Gamestack.InputSystem.extend('mousepos', function(x, y) {
+      Gamelab.InputSystem.extend('mousepos', function(x, y) {
 
         cb(x, y);
 
@@ -4303,7 +4303,7 @@ for(var x in ColorStrings)
     }
   };
 
-  Gamestack.MousePosEvent = MousePosEvent;
+  Gamelab.MousePosEvent = MousePosEvent;
 
 
   class MouseLeftClickEvent {
@@ -4314,7 +4314,7 @@ for(var x in ColorStrings)
     }
     Callback(cb) {
 
-      Gamestack.InputSystem.extend('leftclick', function(x, y) {
+      Gamelab.InputSystem.extend('leftclick', function(x, y) {
 
         cb(x, y);
 
@@ -4322,7 +4322,7 @@ for(var x in ColorStrings)
     }
   };
 
-  Gamestack.MouseLeftClickEvent = MouseLeftClickEvent;
+  Gamelab.MouseLeftClickEvent = MouseLeftClickEvent;
 
 
   class MouseRightClickEvent {
@@ -4333,7 +4333,7 @@ for(var x in ColorStrings)
     }
     Callback(cb) {
 
-      Gamestack.InputSystem.extend('rightclick', function(x, y) {
+      Gamelab.InputSystem.extend('rightclick', function(x, y) {
 
         cb(x, y);
 
@@ -4342,7 +4342,7 @@ for(var x in ColorStrings)
   };
 
 
-  Gamestack.MouseRightClickEvent = MouseRightClickEvent;
+  Gamelab.MouseRightClickEvent = MouseRightClickEvent;
 
 
   function GSEventLink(extendedObject, extendedKey, extendor, extendorKey) {
@@ -4357,7 +4357,7 @@ for(var x in ColorStrings)
 
   /**
    * Creates an instance of InputEvent
-   * <info-bit> Gamestack.InputEvent runs a callback function when a specified input is triggered</info-bit>
+   * <info-bit> Gamelab.InputEvent runs a callback function when a specified input is triggered</info-bit>
    *
    * <tip is="p">Instead of calling
    *
@@ -4367,7 +4367,7 @@ for(var x in ColorStrings)
    * @param   {number} args.stickix the controller-stick-index to be applied
    * @param   {Array} args.keys array of strings for keys to be applied
    * @param   {Function} args.callback the function to call when InputEvent is triggered
-   * @returns {Gamestack.InputEvent} a Gamestack.InputEvent object
+   * @returns {Gamelab.InputEvent} a Gamelab.InputEvent object
    */
 
 
@@ -4396,9 +4396,9 @@ for(var x in ColorStrings)
 
       if (keyboardKeys instanceof Array) {
 
-        Gamestack.each(keyboardKeys, function(ix, keyitem) {
+        Gamelab.each(keyboardKeys, function(ix, keyitem) {
 
-          Gamestack.InputSystem.extendKey('key_' + keyitem.toLowerCase(), function() {
+          Gamelab.InputSystem.extendKey('key_' + keyitem.toLowerCase(), function() {
 
             callback(keyitem.toLowerCase());
 
@@ -4408,7 +4408,7 @@ for(var x in ColorStrings)
 
       if (inputKey && gpix >= 0) {
 
-        Gamestack.GamepadAdapter.on(inputKey, gpix, function(x, y) {
+        Gamelab.GamepadAdapter.on(inputKey, gpix, function(x, y) {
 
           callback(x, y);
 
@@ -4423,11 +4423,11 @@ for(var x in ColorStrings)
    * @extends InputEvent
    *
    * Creates an instance of KeyboardEvent
-   * <info-bit> Gamestack.KeyboardEvent runs a callback function when keyboard-keys are pressed</info-bit>
+   * <info-bit> Gamelab.KeyboardEvent runs a callback function when keyboard-keys are pressed</info-bit>
    * @param   {Array | string} keys the Array of keys or single string-key for this event
    * @param   {Function} callback the callback-function to be called when this event is triggered
 
-   * @returns {Gamestack.KeyboardEvent}
+   * @returns {Gamelab.KeyboardEvent}
    */
 
   class KeyboardEvent extends InputEvent {
@@ -4448,9 +4448,9 @@ for(var x in ColorStrings)
 
       if (keyboardKeys instanceof Array) {
 
-        Gamestack.each(keyboardKeys, function(ix, keyitem) {
+        Gamelab.each(keyboardKeys, function(ix, keyitem) {
 
-          Gamestack.InputSystem.extendKey('key_' + keyitem.toLowerCase(), function() {
+          Gamelab.InputSystem.extendKey('key_' + keyitem.toLowerCase(), function() {
 
             __inst.callback(keyitem.toLowerCase());
 
@@ -4480,11 +4480,11 @@ for(var x in ColorStrings)
    * @extends InputEvent
    *
    * Creates an instance of GamepadEvent
-   * <info-bit> Gamestack.GamepadEvent runs a callback function when any specified gamepad-buttons or gamepad-sticks are pressed</info-bit>
+   * <info-bit> Gamelab.GamepadEvent runs a callback function when any specified gamepad-buttons or gamepad-sticks are pressed</info-bit>
    * @param   {Array | string} gamepadKeys the Array of gamepadKeys or single string-key, representing gamepad-buttons or gamepad-sticks for this event
    * @param   {Function} callback the callback-function to be called when this event is triggered
 
-   * @returns {Gamestack.GamepadEvent}
+   * @returns {Gamelab.GamepadEvent}
    */
 
   class GamepadEvent extends InputEvent {
@@ -4509,7 +4509,7 @@ for(var x in ColorStrings)
 
       var __inst = this;
 
-      Gamestack.GamepadAdapter.on(gamepadKeys, this.gps, function(x, y) {
+      Gamelab.GamepadAdapter.on(gamepadKeys, this.gps, function(x, y) {
 
         __inst.callback(x, y);
 
@@ -4588,7 +4588,7 @@ for(var x in ColorStrings)
    * @param   {onBool} onBool the function to be tested each update
    * @param   {call} call the function to be called when onBool returns true;
 
-   * @returns {BoolEvent} a Gamestack.BoolEvent object
+   * @returns {BoolEvent} a Gamelab.BoolEvent object
    */
 
 
@@ -4606,7 +4606,7 @@ for(var x in ColorStrings)
         console.info('CustomBoolEvent():needs .callback function(){} --Add this as 2nd argument or via chainable Call() function');
       };
 
-      Gamestack.gs_events.push(this);
+      Gamelab.gs_events.push(this);
 
     }
 
@@ -4645,21 +4645,21 @@ for(var x in ColorStrings)
 
   BoolEvent.Bool = BoolEvent.On;
 
-  Gamestack.GSEvent = GSEvent;
+  Gamelab.GSEvent = GSEvent;
 
-  Gamestack.GSEventLink = GSEventLink;
+  Gamelab.GSEventLink = GSEventLink;
 
-  Gamestack.InputEvent = InputEvent;
+  Gamelab.InputEvent = InputEvent;
 
-  Gamestack.GamepadEvent = GamepadEvent;
+  Gamelab.GamepadEvent = GamepadEvent;
 
-  Gamestack.KeyboardEvent = KeyboardEvent;
+  Gamelab.KeyboardEvent = KeyboardEvent;
 
-  Gamestack.CollisionEvent = CollisionEvent;
+  Gamelab.CollisionEvent = CollisionEvent;
 
-  Gamestack.BoxCollisionEvent = CollisionEvent;
+  Gamelab.BoxCollisionEvent = CollisionEvent;
 
-  Gamestack.BoolEvent = BoolEvent;
+  Gamelab.BoolEvent = BoolEvent;
 
 })();
 ;(function () {
@@ -4668,26 +4668,26 @@ for(var x in ColorStrings)
     /**
      * Creates an instance of Frame
      *
-     * <info-bit>Gamestack.Frame is called automatically by Gamestack.Sprite and Gamestack.Animation.
-     * Gamestack.Frame does not take arguments.
+     * <info-bit>Gamelab.Frame is called automatically by Gamelab.Sprite and Gamelab.Animation.
+     * Gamelab.Frame does not take arguments.
      * It is instantiated, then initilized with chainable function-calls.</info-bit>
      *
      * @returns {Frame}
      *
      * @example
      *
-     * var selected_frame = new Gamestack.Frame().Image(gameImage).Size(frameSizeVector);
+     * var selected_frame = new Gamelab.Frame().Image(gameImage).Size(frameSizeVector);
      */
 
 
     class Frame {
         constructor() {
             var __inst = this;
-            this.framePos = new Gamestack.Vector(0, 0);
+            this.framePos = new Gamelab.Vector(0, 0);
         }
 
         Image(src) {
-            this.image = new Gamestack.GameImage(src);
+            this.image = new Gamelab.GameImage(src);
             return this;
         }
 
@@ -4703,33 +4703,33 @@ for(var x in ColorStrings)
 
         Size(s) {
 
-            this.size = new Gamestack.Vector(s, s, s);
+            this.size = new Gamelab.Vector(s, s, s);
 
-            this.frameSize = new Gamestack.Vector(s, s, s);
+            this.frameSize = new Gamelab.Vector(s, s, s);
 
             return this;
 
         }
 
         Position(p) {
-            this.position = new Gamestack.Vector(p, p, p);
+            this.position = new Gamelab.Vector(p, p, p);
 
-            this.framePos = new Gamestack.Vector(p, p, p);
+            this.framePos = new Gamelab.Vector(p, p, p);
 
             return this;
         }
 
         FramePos(p) {
-            this.position = new Gamestack.Vector(p, p, p);
+            this.position = new Gamelab.Vector(p, p, p);
 
-            this.framePos = new Gamestack.Vector(p, p, p);
+            this.framePos = new Gamelab.Vector(p, p, p);
 
             return this;
         }
 
         StoreOffscreen(){
 
-          this.offscreen = new Gamestack.OffscreenCanvasRendering(this.image);
+          this.offscreen = new Gamelab.OffscreenCanvasRendering(this.image);
 
                       for(var x in this.offscreen)
                       {
@@ -4760,13 +4760,13 @@ for(var x in ColorStrings)
                     // Check that opacity is above zero
                     if (pixel.data[3] != 0) {
 
-                        var vector = new Gamestack.Vector(x, y),
+                        var vector = new Gamelab.Vector(x, y),
 
                             gridObject = {
 
                                 position: vector,
 
-                                size: new Gamestack.Vector(unitSize, unitSize),
+                                size: new Gamelab.Vector(unitSize, unitSize),
 
                                 pixel:pixel
 
@@ -4793,13 +4793,13 @@ for(var x in ColorStrings)
                     // Check that opacity is above zero
 
 
-                        var vector = new Gamestack.Vector(x, y),
+                        var vector = new Gamelab.Vector(x, y),
 
                             gridObject = {
 
                                 position: vector,
 
-                                size: new Gamestack.Vector(unitSize, unitSize),
+                                size: new Gamelab.Vector(unitSize, unitSize),
 
                                 pixel:pixel
 
@@ -4849,7 +4849,7 @@ for(var x in ColorStrings)
 
     }
 
-    Gamestack.Frame = Frame;
+    Gamelab.Frame = Frame;
 
 })();
 ;/**
@@ -4910,17 +4910,17 @@ class ControllerEventKeys {
 
 }
 
-Gamestack.ControllerEventKeys = ControllerEventKeys;
+Gamelab.ControllerEventKeys = ControllerEventKeys;
 
 
 /**
- * Creates an instance of GamepadAdapter: --instead use the existing: Gamestack.GamepadAdapter, a working instance of this class.
+ * Creates an instance of GamepadAdapter: --instead use the existing: Gamelab.GamepadAdapter, a working instance of this class.
  * -supports game-controller input for web-games
  * -accesses live gamepad input from the HTML5 Gamepad Api
  * @returns {GamepadAdapter} an instance of GamepadAdapter
  * */
 
-Gamestack.gamepads = Gamestack.gamepads || [];
+Gamelab.gamepads = Gamelab.gamepads || [];
 
 class GamepadAdapter {
 
@@ -5074,14 +5074,14 @@ class GamepadAdapter {
 
         this.__gamepads.push(gp);
 
-        Gamestack.gamepads = this.__gamepads;
+        Gamelab.gamepads = this.__gamepads;
 
         return gp;
 
     }
 
     getGamepads() {
-        return Gamestack.gamepads;
+        return Gamelab.gamepads;
 
     }
 
@@ -5189,9 +5189,9 @@ class GamepadAdapter {
  *
  * *********/
 
-if (!Gamestack.GamepadAdapter) {
+if (!Gamelab.GamepadAdapter) {
 
-    Gamestack.GamepadAdapter = new GamepadAdapter();
+    Gamelab.GamepadAdapter = new GamepadAdapter();
 
     // __gameInstance.gamepads.push(gamepad);
 
@@ -5202,8 +5202,8 @@ if (!Gamestack.GamepadAdapter) {
     super();
     this.Object(this);
     this.points = [];
-    this.position = new Gamestack.Vector(0, 0);
-    this.size = new Gamestack.Vector(0, 0);
+    this.position = new Gamelab.Vector(0, 0);
+    this.size = new Gamelab.Vector(0, 0);
     this.index = 0;
     this.call = function() {};
   }
@@ -5236,7 +5236,7 @@ if (!Gamestack.GamepadAdapter) {
           console.log('using x portion::' + out_of_1);
 
           var next_y = this.position.y + (this.size.y * this.call(out_of_1, 1.0)),
-            next_point = new Gamestack.Vector(next_x, next_y);
+            next_point = new Gamelab.Vector(next_x, next_y);
           this.points.push(next_point);
 
       }
@@ -5245,14 +5245,14 @@ if (!Gamestack.GamepadAdapter) {
   }
 
   getOffsetPos(pos){
-    var offset = this.window_offset || new Gamestack.Vector(0, 0);
+    var offset = this.window_offset || new Gamelab.Vector(0, 0);
     return pos.add(offset);
   }
 
   draw(ctx, camera) {
 
-    ctx = ctx || Gamestack.game_windows[0].ctx;
-    camera = camera || Gamestack.game_windows[0].camera;
+    ctx = ctx || Gamelab.game_windows[0].ctx;
+    camera = camera || Gamelab.game_windows[0].camera;
 
     var points = this.points;
 
@@ -5285,16 +5285,16 @@ if (!Gamestack.GamepadAdapter) {
 
 }
 
-Gamestack.Line2d = Line2d;
+Gamelab.Line2d = Line2d;
 
-Gamestack.Line2D = Line2d;
+Gamelab.Line2D = Line2d;
 ;
 /**
  * Creates a Sound instance. Implements HTML5-Audio object
  * --DevTODO : complete docs for the Sound class
  *
  * @param   {string} src the source-path of the targeted sound-file
- * @returns {Sound} instance of Gamestack.Sound
+ * @returns {Sound} instance of Gamelab.Sound
  * */
 
 class Sound {
@@ -5507,9 +5507,9 @@ class SoundList{
 
 }
 
-Gamestack.Sound = Sound;
+Gamelab.Sound = Sound;
 
-Gamestack.SoundList = SoundList;
+Gamelab.SoundList = SoundList;
 ;
 var THREE_EXT = {
 
@@ -5561,7 +5561,7 @@ class Three //dependency: THREE.js
         this.scene.add( new THREE.AmbientLight( 0xffffff, 1.0  ) );
 
 
-        this.renderer = Gamestack.renderer || new THREE.WebGLRenderer({
+        this.renderer = Gamelab.renderer || new THREE.WebGLRenderer({
                 preserveDrawingBuffer: true,
                 alpha:true
             });
@@ -5677,9 +5677,9 @@ class Three //dependency: THREE.js
      *
      * @example
      * //constructor call with chainable function-calls: Creates multi-frame Animation from src, then sets properties with chainable-function-calls.
-     * var multiFrameAnime = new Gamestack.Animation('../images/characters/full/spaceman1.png') //constructor is called
+     * var multiFrameAnime = new Gamelab.Animation('../images/characters/full/spaceman1.png') //constructor is called
      * .FrameSize(130, 130)
-     * .FrameBounds(new Gamestack.Vector(9, 0), new Gamestack.Vector(23, 0), new Gamestack.Vector(23, 0))
+     * .FrameBounds(new Gamelab.Vector(9, 0), new Gamelab.Vector(23, 0), new Gamelab.Vector(23, 0))
      * .Seesaw() //The Animation will play back-and-forth repeatedly (cycle through frames forwards, then backwards and so on.
      * .Duration(900); //Animation lasts 900 millis OR just under 1 second
      *
@@ -5695,12 +5695,12 @@ class Three //dependency: THREE.js
 
             var args = typeof(src) == 'object' ? src : {};
 
-            //Gamestack.Modifiers.informable(this, args);
+            //Gamelab.Modifiers.informable(this, args);
 
             if (typeof src == 'string') {
                 this.Src(src, args.frameBounds);
             }
-            else if(args instanceof Gamestack.GameImage)
+            else if(args instanceof Gamelab.GameImage)
             {
                 console.log('Animation(): args are an instance of GameImage');
 
@@ -5710,10 +5710,10 @@ class Three //dependency: THREE.js
             {
                 console.log('Animation(): args was an instance of HTMLImageElement');
 
-                this.image = new Gamestack.GameImage(args);
+                this.image = new Gamelab.GameImage(args);
             }
 
-            else if(args instanceof Gamestack.Animation)
+            else if(args instanceof Gamelab.Animation)
             {
 
                 this.image = args.image;
@@ -5722,23 +5722,23 @@ class Three //dependency: THREE.js
             else if(typeof(args)=='object' && args.src)
             {
                 this.src = args.src;
-                this.image = new Gamestack.GameImage(args.src);
+                this.image = new Gamelab.GameImage(args.src);
             }
 
-            this.frameSize = this.frameSize || new Gamestack.Vector(args.frameSize || new Gamestack.Vector(0, 0));
+            this.frameSize = this.frameSize || new Gamelab.Vector(args.frameSize || new Gamelab.Vector(0, 0));
 
             if (args.frameBounds && args.frameBounds.min && args.frameBounds.max) {
 
-                this.frameBounds = new Gamestack.VectorFrameBounds(args.frameBounds.min, args.frameBounds.max, args.frameBounds.termPoint);
+                this.frameBounds = new Gamelab.VectorFrameBounds(args.frameBounds.min, args.frameBounds.max, args.frameBounds.termPoint);
 
             }
             else {
 
-                this.frameBounds = new Gamestack.VectorFrameBounds(new Gamestack.Vector(0, 0, 0), new Gamestack.Vector(0, 0, 0), new Gamestack.Vector(0, 0, 0));
+                this.frameBounds = new Gamelab.VectorFrameBounds(new Gamelab.Vector(0, 0, 0), new Gamelab.Vector(0, 0, 0), new Gamelab.Vector(0, 0, 0));
 
             }
 
-            this.frameOffset = this.getArg(args, 'frameOffset', new Gamestack.Vector(0, 0, 0));
+            this.frameOffset = this.getArg(args, 'frameOffset', new Gamelab.Vector(0, 0, 0));
 
             this.apply2DFrames();
 
@@ -5770,7 +5770,7 @@ class Three //dependency: THREE.js
 
               console.log('setting GameImage with string:' + src);
               this.src = src;
-              this.image = new Gamestack.GameImage(src);
+              this.image = new Gamelab.GameImage(src);
 
           }
           else if(src instanceof GameImage)
@@ -5783,7 +5783,7 @@ class Three //dependency: THREE.js
           {
               console.log('Animation(): args was an instance of HTMLImageElement');
 
-              this.image = new Gamestack.GameImage(src);
+              this.image = new Gamelab.GameImage(src);
           }
 
           if(!options.frameBounds)
@@ -5799,10 +5799,10 @@ class Three //dependency: THREE.js
 
               console.log('setting GameImage with string:' + src);
               this.src = src;
-              this.image = new Gamestack.GameImage(src);
+              this.image = new Gamelab.GameImage(src);
 
           }
-          else if(src instanceof Gamestack.GameImage)
+          else if(src instanceof Gamelab.GameImage)
           {
               console.log('Animation(): args are an instance of GameImage');
 
@@ -5812,7 +5812,7 @@ class Three //dependency: THREE.js
           {
               console.log('Animation(): args was an instance of HTMLImageElement');
 
-              this.image = new Gamestack.GameImage(src);
+              this.image = new Gamelab.GameImage(src);
           }
 
           this.init_singleFrame();
@@ -5836,13 +5836,13 @@ class Three //dependency: THREE.js
             this.image.domElement.onload = function () {
                 if(!__inst.__isInit)
                 __inst.FrameSize(__inst.image.domElement.width, __inst.image.domElement.height)
-                    .FrameBounds(new Gamestack.Vector(0, 0), new Gamestack.Vector(0, 0));
+                    .FrameBounds(new Gamelab.Vector(0, 0), new Gamelab.Vector(0, 0));
 
                 __inst.run();
 
             };
 
-            Gamestack.log('Animation():set single-frame animation');
+            Gamelab.log('Animation():set single-frame animation');
 
             return this;
 
@@ -5902,7 +5902,7 @@ class Three //dependency: THREE.js
 
         FrameSize(w, h)
         {
-            this.frameSize = new Gamestack.Vector(w, h);
+            this.frameSize = new Gamelab.Vector(w, h);
 
             this.__isInit = true;
 
@@ -5921,7 +5921,7 @@ class Three //dependency: THREE.js
 
         FrameBounds(minVector, maxVector, termVector)
         {
-            this.frameBounds = new Gamestack.VectorFrameBounds(minVector, maxVector, termVector);
+            this.frameBounds = new Gamelab.VectorFrameBounds(minVector, maxVector, termVector);
 
             this.__isInit = true;
 
@@ -5931,7 +5931,7 @@ class Three //dependency: THREE.js
         }
 
         FrameOffset(x, y){
-          this.frameOffset = new Gamestack.Vector(x, y);
+          this.frameOffset = new Gamelab.Vector(x, y);
           return this;
         }
 
@@ -5977,11 +5977,11 @@ class Three //dependency: THREE.js
 
             this.__frametype = 'single';
 
-            this.frameSize = new Gamestack.Vector(this.image.domElement.width, this.image.domElement.height);
+            this.frameSize = new Gamelab.Vector(this.image.domElement.width, this.image.domElement.height);
 
             this.frameBounds = false;
 
-            this.selected_frame = new Gamestack.Frame().Image(this.image).Size(this.frameSize);
+            this.selected_frame = new Gamelab.Frame().Image(this.image).Size(this.frameSize);
 
             this.frames = [];
 
@@ -6029,7 +6029,7 @@ class Three //dependency: THREE.js
                         y: y * this.frameSize.y + this.frameOffset.y
                     };
 
-                    var f = new Gamestack.Frame().Image(this.image).Size(this.frameSize).Position(framePos);
+                    var f = new Gamelab.Frame().Image(this.image).Size(this.frameSize).Position(framePos);
 
 
                     this.frames.push(f);
@@ -6050,7 +6050,7 @@ class Three //dependency: THREE.js
 
             }
 
-            this.frames[0] = this.selected_frame = this.frames[0] || new Gamestack.Frame().Image(this.image).Size(this.frameSize);
+            this.frames[0] = this.selected_frame = this.frames[0] || new Gamelab.Frame().Image(this.image).Size(this.frameSize);
 
             if (this.seesaw_mode) {
 
@@ -6084,7 +6084,7 @@ class Three //dependency: THREE.js
             if(!Larva.allDefined([this.image, this.image.domElement]))
                 return [];
 
-            this.canvasObject = this.canvasObject || new Gamestack.OffscreenCanvasRendering(this.image);
+            this.canvasObject = this.canvasObject || new Gamelab.OffscreenCanvasRendering(this.image);
 
             this.colorMap = this.colorMap || this.ColoredPixelGrid();
 
@@ -6112,7 +6112,7 @@ class Three //dependency: THREE.js
                     // Check that opacity is above zero
                     if (pixel.data[3] != 0) {
 
-                        var vector = new Gamestack.Vector(x, y),
+                        var vector = new Gamelab.Vector(x, y),
 
                             gridObject = {
 
@@ -6154,7 +6154,7 @@ class Three //dependency: THREE.js
             {
                 var c = this.colorMap[x];
 
-                if(Gamestack.Collision.boxesCollide(frame.framePos, frame.frameSize, c.position, c.size))
+                if(Gamelab.Collision.boxesCollide(frame.framePos, frame.frameSize, c.position, c.size))
                 {
 
                     map.push(c);
@@ -6311,21 +6311,21 @@ class Three //dependency: THREE.js
     }
     ;
 
-    /** @memberof Gamestack */
+    /** @memberof Gamelab */
 
-    Gamestack.Animation = Animation;
+    Gamelab.Animation = Animation;
 
-    Gamestack.Animation.continuous = Gamestack.Animation.run; //'continuous is an alternate reference to 'run'.'
+    Gamelab.Animation.continuous = Gamelab.Animation.run; //'continuous is an alternate reference to 'run'.'
 
-    Gamestack.Animation.continue = Gamestack.Animation.run; //'continue is an alternate reference to 'run'.'
+    Gamelab.Animation.continue = Gamelab.Animation.run; //'continue is an alternate reference to 'run'.'
 
-    Gamestack.Animation.animate = Gamestack.Animation.run; //'animate is an alternate reference to 'run'.'
+    Gamelab.Animation.animate = Gamelab.Animation.run; //'animate is an alternate reference to 'run'.'
 
 })();
 ;/**
  * Creates an instance of Sprite.
  *
- * <info-bit>Gamestack.Sprite is a container for 2D Animations.
+ * <info-bit>Gamelab.Sprite is a container for 2D Animations.
  * -apply Sprite class to create behaviors for an entire 2d-game-entity.
  *
  * Sprites hold reference to their-own Animations and Sounds.</info-bit>
@@ -6335,7 +6335,7 @@ class Three //dependency: THREE.js
  * @param   {string=} [src] the srcPath for the image of the Sprite
  * @param   {scale=} [anime] the scale to be applied to width + height of the image
  *
- * @returns {Sprite} a Gamestack.Sprite object
+ * @returns {Sprite} a Gamelab.Sprite object
  *
  * @example
  *
@@ -6352,13 +6352,13 @@ class Sprite extends Scriptable {
     var args = typeof src == 'object' ? src : {};
 
 
-    if (args instanceof Gamestack.Animation) //instantiate from animation
+    if (args instanceof Gamelab.Animation) //instantiate from animation
     {
-      console.dev('args was Gamestack.Animation', args);
+      console.dev('args was Gamelab.Animation', args);
       args = {
         selected_animation: args,
         image: args.image,
-        size: new Gamestack.Vector(args.frameSize)
+        size: new Gamelab.Vector(args.frameSize)
       };
     }
 
@@ -6366,7 +6366,7 @@ class Sprite extends Scriptable {
 
     if (typeof src == 'string') {
       this.src = src;
-      this.selected_animation = new Gamestack.Animation(src);
+      this.selected_animation = new Gamelab.Animation(src);
       this.image = this.selected_animation.image;
       this.SingleFrame();
     }
@@ -6374,7 +6374,7 @@ class Sprite extends Scriptable {
     this.animations = [];
 
     //create size property
-    this.size = new Gamestack.Vector(0, 0);
+    this.size = new Gamelab.Vector(0, 0);
 
     if (typeof(scale) == 'number') //image plus 'scale' argument
     {
@@ -6394,7 +6394,7 @@ class Sprite extends Scriptable {
 
   static_image_load(img) {
 
-    this.size = new Gamestack.Vector(img.width * this.scale, img.height * this.scale).round();
+    this.size = new Gamelab.Vector(img.width * this.scale, img.height * this.scale).round();
 
   }
 
@@ -6450,7 +6450,7 @@ class Sprite extends Scriptable {
 
     this.FromData(args, true); //Using a FUNCTIONAL COPY --heavy to process
 
-    if (args.image instanceof Gamestack.GameImage && !this.image) {
+    if (args.image instanceof Gamelab.GameImage && !this.image) {
       this.image = args.image;
     }
 
@@ -6462,21 +6462,21 @@ class Sprite extends Scriptable {
 
     this.id = this.create_id();
 
-    this.animations = Gamestack.getArg(args, 'animations', []);
+    this.animations = Gamelab.getArg(args, 'animations', []);
 
-    this.scripts = Gamestack.getArg(args, 'scripts', []);
+    this.scripts = Gamelab.getArg(args, 'scripts', []);
 
-    this.motions = Gamestack.getArg(args, 'motions', []);
+    this.motions = Gamelab.getArg(args, 'motions', []);
 
-    this.particles = Gamestack.getArg(args, 'particles', []);
+    this.particles = Gamelab.getArg(args, 'particles', []);
 
-    this.shots = Gamestack.getArg(args, 'shots', []);
+    this.shots = Gamelab.getArg(args, 'shots', []);
 
-    this.sounds = Gamestack.getArg(args, 'sounds', []);
+    this.sounds = Gamelab.getArg(args, 'sounds', []);
 
-    this.init_ext = Gamestack.getArg(args, 'init_ext', []);
+    this.init_ext = Gamelab.getArg(args, 'init_ext', []);
 
-    this.group = Gamestack.getArg(args, 'group', 'one');
+    this.group = Gamelab.getArg(args, 'group', 'one');
 
     this.scrollFactor = args.scrollFactor || 1.0;
 
@@ -6486,65 +6486,65 @@ class Sprite extends Scriptable {
       this.scrollFactor = 0;
     }
 
-    this.speed = new Gamestack.Vector(Gamestack.getArg(args, 'speed', new Gamestack.Vector(0, 0)));
+    this.speed = new Gamelab.Vector(Gamelab.getArg(args, 'speed', new Gamelab.Vector(0, 0)));
 
-    this.size = new Gamestack.Vector(Gamestack.getArg(args, 'size', new Gamestack.Vector(0, 0)));
+    this.size = new Gamelab.Vector(Gamelab.getArg(args, 'size', new Gamelab.Vector(0, 0)));
 
-    this.position = new Gamestack.Vector(Gamestack.getArg(args, 'position', new Gamestack.Vector(0, 0, 0)));
+    this.position = new Gamelab.Vector(Gamelab.getArg(args, 'position', new Gamelab.Vector(0, 0, 0)));
 
-    this.collision_bounds = Gamestack.getArg(args, 'collision_bounds', new Gamestack.VectorBounds(new Gamestack.Vector(0, 0, 0), new Gamestack.Vector(0, 0, 0)));
+    this.collision_bounds = Gamelab.getArg(args, 'collision_bounds', new Gamelab.VectorBounds(new Gamelab.Vector(0, 0, 0), new Gamelab.Vector(0, 0, 0)));
 
-    this.rotation = new Gamestack.Vector(Gamestack.getArg(args, 'rotation', new Gamestack.Vector(0, 0, 0)));
+    this.rotation = new Gamelab.Vector(Gamelab.getArg(args, 'rotation', new Gamelab.Vector(0, 0, 0)));
 
     this.scale = args.scale || 1.0;
 
-    this.acceleration = Gamestack.getArg(args, 'acceleration', new Gamestack.Vector(0, 0, 0));
+    this.acceleration = Gamelab.getArg(args, 'acceleration', new Gamelab.Vector(0, 0, 0));
 
-    this.rot_speed = new Gamestack.Vector(Gamestack.getArg(args, 'rot_speed', new Gamestack.Vector(0, 0)));
+    this.rot_speed = new Gamelab.Vector(Gamelab.getArg(args, 'rot_speed', new Gamelab.Vector(0, 0)));
 
-    this.rot_accel = new Gamestack.Vector(Gamestack.getArg(args, 'rot_accel', new Gamestack.Vector(0, 0)));
+    this.rot_accel = new Gamelab.Vector(Gamelab.getArg(args, 'rot_accel', new Gamelab.Vector(0, 0)));
 
-    this.padding = Gamestack.getArg(args, 'padding', new Gamestack.Vector(0, 0, 0));
+    this.padding = Gamelab.getArg(args, 'padding', new Gamelab.Vector(0, 0, 0));
 
 
     var __inst = this;
 
-    //Apply / instantiate Sound(), Gamestack.Motion(), and Gamestack.Animation() args...
+    //Apply / instantiate Sound(), Gamelab.Motion(), and Gamelab.Animation() args...
 
 
-    Gamestack.each(this.shots, function(ix, item) {
+    Gamelab.each(this.shots, function(ix, item) {
 
-      __inst.shots[ix] = new Gamestack.Shot(item);
-
-    });
-
-    Gamestack.each(this.sounds, function(ix, item) {
-
-      __inst.sounds[ix] = new Gamestack.Sound(item);
+      __inst.shots[ix] = new Gamelab.Shot(item);
 
     });
 
-    Gamestack.each(this.motions, function(ix, item) {
+    Gamelab.each(this.sounds, function(ix, item) {
 
-      __inst.motions[ix] = new Gamestack.TweenMotion(item);
-
-    });
-
-    Gamestack.each(this.animations, function(ix, item) {
-
-      __inst.animations[ix] = new Gamestack.Animation(item);
+      __inst.sounds[ix] = new Gamelab.Sound(item);
 
     });
 
-    Gamestack.each(this.particles, function(ix, item) {
+    Gamelab.each(this.motions, function(ix, item) {
 
-      __inst.particles[ix] = new Gamestack.GSProton(item);
+      __inst.motions[ix] = new Gamelab.TweenMotion(item);
+
+    });
+
+    Gamelab.each(this.animations, function(ix, item) {
+
+      __inst.animations[ix] = new Gamelab.Animation(item);
+
+    });
+
+    Gamelab.each(this.particles, function(ix, item) {
+
+      __inst.particles[ix] = new Gamelab.GSProton(item);
 
     });
 
     //Apply initializers:
 
-    Gamestack.each(this.init_ext, function(ix, item) {
+    Gamelab.each(this.init_ext, function(ix, item) {
 
       __inst.addInitializer(item);
 
@@ -6554,7 +6554,7 @@ class Sprite extends Scriptable {
 
       console.dev('applying animation:' + jstr(args.selected_animation));
 
-      this.selected_animation = new Gamestack.Animation(args.selected_animation);
+      this.selected_animation = new Gamelab.Animation(args.selected_animation);
 
     }
   }
@@ -6571,9 +6571,9 @@ class Sprite extends Scriptable {
    Clone(sprite){
      console.log('using Clone() function');
 
-     var clone = new Gamestack.Sprite(sprite.src);
+     var clone = new Gamelab.Sprite(sprite.src);
 
-     clone.Anime(new Gamestack.Animation(sprite.anime));
+     clone.Anime(new Gamelab.Animation(sprite.anime));
 
      clone.apply_args(sprite);
 
@@ -6584,11 +6584,11 @@ class Sprite extends Scriptable {
 
      var sprite = this;
 
-     camera = camera || Gamestack.game_windows[0].camera || {
-       position: new Gamestack.Vector(0, 0, 0)
+     camera = camera || Gamelab.game_windows[0].camera || {
+       position: new Gamelab.Vector(0, 0, 0)
      };
 
-     if (sprite.active && (this.DRAWOFFSCREEN || sprite.onScreen(Gamestack.WIDTH, Gamestack.HEIGHT))) {
+     if (sprite.active && (this.DRAWOFFSCREEN || sprite.onScreen(Gamelab.WIDTH, Gamelab.HEIGHT))) {
        this.draw_current_frame(ctx, camera);
      }
    }
@@ -6645,7 +6645,7 @@ class Sprite extends Scriptable {
        var realHeight = targetSize.y;
 
 
-       var origin = sprite.origin || new Gamestack.Vector(realWidth / 2, realHeight / 2);
+       var origin = sprite.origin || new Gamelab.Vector(realWidth / 2, realHeight / 2);
 
        //optional animation : offset
 
@@ -6671,7 +6671,7 @@ class Sprite extends Scriptable {
 
        var frame = sprite.selected_animation.selected_frame;
 
-       sprite.realPosition = new Gamestack.Vector(x, y);
+       sprite.realPosition = new Gamelab.Vector(x, y);
 
        if (frame && frame.image && frame.image.data) {
 
@@ -6684,7 +6684,7 @@ class Sprite extends Scriptable {
 
          if (frame.image.domElement instanceof HTMLImageElement) {
 
-           Gamestack.Canvas.draw_image_frame(frame.image.domElement, frame.framePos, frame.frameSize, new Gamestack.Vector2D(Math.round(x + (realWidth / 2)), Math.round(y + (realHeight / 2))), new Gamestack.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin);
+           Gamelab.Canvas.draw_image_frame(frame.image.domElement, frame.framePos, frame.frameSize, new Gamelab.Vector2D(Math.round(x + (realWidth / 2)), Math.round(y + (realHeight / 2))), new Gamelab.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin);
 
          }
        }
@@ -6704,7 +6704,7 @@ class Sprite extends Scriptable {
 
   Add(object) {
 
-    if (object instanceof Gamestack.Animation) {
+    if (object instanceof Gamelab.Animation) {
       this.animations.add(object);
     }
 
@@ -6754,7 +6754,7 @@ class Sprite extends Scriptable {
 
     this.scale = scaleFloat;
 
-    this.size = new Gamestack.Vector(this.image.domElement.width * scaleFloat, this.image.domElement.height * scaleFloat);
+    this.size = new Gamelab.Vector(this.image.domElement.width * scaleFloat, this.image.domElement.height * scaleFloat);
 
     return this;
   }
@@ -6859,9 +6859,9 @@ class Sprite extends Scriptable {
 
   to_map_object(size, framesize) {
 
-    this.__mapSize = new Gamestack.Vector(size || this.size);
+    this.__mapSize = new Gamelab.Vector(size || this.size);
 
-    this.frameSize = new Gamestack.Vector(framesize || this.size);
+    this.frameSize = new Gamelab.Vector(framesize || this.size);
 
     return this;
 
@@ -6880,7 +6880,7 @@ class Sprite extends Scriptable {
 
   create_id() {
 
-    return Gamestack.create_id();
+    return Gamelab.create_id();
 
   }
 
@@ -6895,7 +6895,7 @@ class Sprite extends Scriptable {
 
   getSizeByMax(mx, my) {
 
-    var size = new Gamestack.Vector(this.size);
+    var size = new Gamelab.Vector(this.size);
 
     var wth = size.y / size.x;
 
@@ -6927,7 +6927,7 @@ class Sprite extends Scriptable {
 
   assertSpeed() {
     if (!this.speed) {
-      this.speed = new Gamestack.Vector(0, 0, 0);
+      this.speed = new Gamelab.Vector(0, 0, 0);
     }
 
   }
@@ -6963,14 +6963,14 @@ class Sprite extends Scriptable {
 
         }
         else{
-            __inst.size = new Gamestack.Vector(__inst.image.domElement.width, __inst.image.domElement.height);
-            __inst.selected_animation = new Gamestack.Animation(__inst.image).FrameSize(__inst.size);
+            __inst.size = new Gamelab.Vector(__inst.image.domElement.width, __inst.image.domElement.height);
+            __inst.selected_animation = new Gamelab.Animation(__inst.image).FrameSize(__inst.size);
             __inst.Scale(__inst.scale || 1.0);
         }
 
     };
 
-    Gamestack.log('set single-frame animation');
+    Gamelab.log('set single-frame animation');
 
     return this;
 
@@ -7006,7 +7006,7 @@ class Sprite extends Scriptable {
 
   isDead(gw) {
 
-    gw = gw || Gamestack.game_windows[0];
+    gw = gw || Gamelab.game_windows[0];
 
     return this.hasOwnProperty('life') && this.life <= 0;
   }
@@ -7026,30 +7026,30 @@ class Sprite extends Scriptable {
   }
 
   /**
-   * indicates if any portion of the sprite is within screen bounds --uses Gamestack.WIDTH, Gamestack.HEIGHT OR any w,h arguments passed to this method
+   * indicates if any portion of the sprite is within screen bounds --uses Gamelab.WIDTH, Gamelab.HEIGHT OR any w,h arguments passed to this method
    * @function
    * @memberof Sprite
-   * @param {number} w optional screen-width argument, defaults to Gamestack.WIDTH
-   * @param {number} h optional screen-height argument, defaults to Gamestack.HEIGHT
+   * @param {number} w optional screen-width argument, defaults to Gamelab.WIDTH
+   * @param {number} h optional screen-height argument, defaults to Gamelab.HEIGHT
    * @returns {boolean} a true or false value to show if any part of the sprite is on-screen
    **********/
 
   onScreen(w, h, gw) {
 
-    w = w || Gamestack.WIDTH;
+    w = w || Gamelab.WIDTH;
 
-    h = h || Gamestack.HEIGHT;
+    h = h || Gamelab.HEIGHT;
 
-    gw = gw || Gamestack.game_windows[0];
+    gw = gw || Gamelab.game_windows[0];
 
-    var camera = gw.camera || Gamestack.camera || {
-        position: new Gamestack.Vector(0, 0, 0)
+    var camera = gw.camera || Gamelab.camera || {
+        position: new Gamelab.Vector(0, 0, 0)
       },
       scrollFactor = this.noScroll ? 0 : this.scrollFactor;
 
-    var camPos = new Gamestack.Vector(camera.position).mult(scrollFactor);
+    var camPos = new Gamelab.Vector(camera.position).mult(scrollFactor);
 
-    var p = new Gamestack.Vector(this.position.x - camPos.x, this.position.y - camPos.y, this.position.z - camPos.z);
+    var p = new Gamelab.Vector(this.position.x - camPos.x, this.position.y - camPos.y, this.position.z - camPos.z);
 
     return p.x + this.size.x > -1000 - w && p.x < w + 1000 &&
       p.y + this.size.y > 0 - 1000 - h && p.y < h + 1000;
@@ -7062,7 +7062,7 @@ class Sprite extends Scriptable {
 
   /*****************************
    * update()
-   * -starts empty:: is applied recursively by Gamestack.js as the main sprite-update
+   * -starts empty:: is applied recursively by Gamelab.js as the main sprite-update
    ***************************/
 
   /**
@@ -7086,8 +7086,8 @@ class Sprite extends Scriptable {
    *
    * @example
    * // applies a constant speed property --speed is Vector(x, y)
-   * mySprite.rot_speed = new Gamestack.Vector(3);
-   * //def_update() will run automatically with the gamestack update. The above sprite will rotate at a constant speed of 3.
+   * mySprite.rot_speed = new Gamelab.Vector(3);
+   * //def_update() will run automatically with the gamelab update. The above sprite will rotate at a constant speed of 3.
    * @example
    * // how to reset to nothing:: if automatic speed updates are undesired, replace the def_update() function with a 'do nothing' function.
    * mySprite.def_update = function()
@@ -7149,7 +7149,7 @@ class Sprite extends Scriptable {
 
 
   /**
-   * extends an existing function, and is applied by Gamestack in addInitializer();
+   * extends an existing function, and is applied by Gamelab in addInitializer();
    * @ignore
    * -REMOVED FROM DOCS : SYSTEM USE ONLY
    **********/
@@ -7256,7 +7256,7 @@ class Sprite extends Scriptable {
 
     }
 
-    var ixChange = Gamestack.Curves.InOut[curveKey](pctFloat) * speed * 0.5;
+    var ixChange = Gamelab.Curves.InOut[curveKey](pctFloat) * speed * 0.5;
 
     if (curveKey == 'linear') {
       ixChange = speed;
@@ -7268,7 +7268,7 @@ class Sprite extends Scriptable {
       ixChange = 1;
     }
 
-    __inst.position = new Gamestack.Vector(line.points[__inst.__crtLineIx]);
+    __inst.position = new Gamelab.Vector(line.points[__inst.__crtLineIx]);
 
     //console.log(ixChange);
 
@@ -7280,7 +7280,7 @@ class Sprite extends Scriptable {
       __inst.__crtLineIx = 0;
     }
 
-    if (offset instanceof Gamestack.Vector) {
+    if (offset instanceof Gamelab.Vector) {
       this.position = this.position.add(offset);
     }
   }
@@ -7323,7 +7323,7 @@ class Sprite extends Scriptable {
 
     }
 
-    var ixChange = Gamestack.Curves.InOut[curveKey](pctFloat) * speed * 0.5;
+    var ixChange = Gamelab.Curves.InOut[curveKey](pctFloat) * speed * 0.5;
 
     if (curveKey == 'linear') {
       ixChange = speed;
@@ -7335,7 +7335,7 @@ class Sprite extends Scriptable {
       ixChange = 1;
     }
 
-    __inst.position = new Gamestack.Vector(line.points[__inst.__crtLineIx]);
+    __inst.position = new Gamelab.Vector(line.points[__inst.__crtLineIx]);
 
     // console.log(ixChange);
 
@@ -7345,7 +7345,7 @@ class Sprite extends Scriptable {
       __inst.__crtLineIx = 0;
     }
 
-    if (offset instanceof Gamestack.Vector) {
+    if (offset instanceof Gamelab.Vector) {
       this.position = this.position.add(offset);
     }
   }
@@ -7375,7 +7375,7 @@ class Sprite extends Scriptable {
 
     for (var x in grid1) {
       for (var y in grid2) {
-        if (Gamestack.Collision.boxesCollide(grid1[x].position, grid1[x].size, grid2[y].position, grid2[y].size)) {
+        if (Gamelab.Collision.boxesCollide(grid1[x].position, grid1[x].size, grid2[y].position, grid2[y].size)) {
           return true;
 
         }
@@ -7395,9 +7395,9 @@ class Sprite extends Scriptable {
 
   init_colliderHighlights(unitMarker) {
     while (this.colliderHighlights.length < 100) {
-      var sprite = new Gamestack.Sprite(unitMarker);
+      var sprite = new Gamelab.Sprite(unitMarker);
       this.colliderHighlights.push(sprite);
-      Gamestack.game_windows[0].add(sprite);
+      Gamelab.game_windows[0].add(sprite);
     }
   }
 
@@ -7431,7 +7431,7 @@ class Sprite extends Scriptable {
           real_gridPiece_pos = gridPiece.position.mult(anime_scale),
           real_gridPiece_size = gridPiece.size.mult(anime_scale);
 
-        this.colliderHighlights[x].Pos(this.position.add(new Gamestack.Vector(real_gridPiece_pos.x, real_gridPiece_pos.y).sub(anime.selected_frame.framePos.mult(anime_scale))));
+        this.colliderHighlights[x].Pos(this.position.add(new Gamelab.Vector(real_gridPiece_pos.x, real_gridPiece_pos.y).sub(anime.selected_frame.framePos.mult(anime_scale))));
 
         this.colliderHighlights[x].Size(real_gridPiece_size);
 
@@ -7476,7 +7476,7 @@ class Sprite extends Scriptable {
 
   hasBoxCollision(sprite) {
 
-    return Gamestack.Collision.spriteBoxesCollide(this, sprite);
+    return Gamelab.Collision.spriteBoxesCollide(this, sprite);
 
   }
 
@@ -7504,28 +7504,28 @@ class Sprite extends Scriptable {
    * @function
    * @memberof Sprite
    * @param {Object} options an object of arguments
-   * @param {Gamestack.Animation} animation the animation to fire from the Sprite
+   * @param {Gamelab.Animation} animation the animation to fire from the Sprite
    * @param {number} speed the speed of the shot that is projected
-   * @param {Gamestack.Vector} position the initial position of the shot: defaults to current Sprite position
-   * @param {Gamestack.Vector} size the Vector size of the shot
-   * @param {Gamestack.Vector} rot_offset the rotational offset to apply: controls direction of the shot
+   * @param {Gamelab.Vector} position the initial position of the shot: defaults to current Sprite position
+   * @param {Gamelab.Vector} size the Vector size of the shot
+   * @param {Gamelab.Vector} rot_offset the rotational offset to apply: controls direction of the shot
    **********/
 
   shoot(options, gw) {
     //character shoots an animation
 
-    gw = gw || Gamestack.game_windows[0];
+    gw = gw || Gamelab.game_windows[0];
 
     this.prep_key = 'shoot';
 
-    let animation = options.bullet || options.animation || options.anime || new Gamestack.Animation();
+    let animation = options.bullet || options.animation || options.anime || new Gamelab.Animation();
 
     let speed = options.speed || options.velocity || 1;
 
 
-    let size = options.size || new Gamestack.Vector(10, 10, 0);
+    let size = options.size || new Gamelab.Vector(10, 10, 0);
 
-    let position = new Gamestack.Vector(options.position) || new Gamestack.Vector(this.position);
+    let position = new Gamelab.Vector(options.position) || new Gamelab.Vector(this.position);
 
 
     let rot_offset = options.rot_offset || options.rotation || 0;
@@ -7542,26 +7542,26 @@ class Sprite extends Scriptable {
 
       var __playerInst = this;
 
-      if (Gamestack.isAtPlay) {
+      if (Gamelab.isAtPlay) {
 
         var bx = position.x,
           by = position.y,
           bw = size.x,
           bh = size.y;
 
-        var shot = new Gamestack.Sprite({
+        var shot = new Gamelab.Sprite({
 
           active: true,
 
-          position: new Gamestack.Vector(position),
+          position: new Gamelab.Vector(position),
 
-          size: new Gamestack.Vector(size),
+          size: new Gamelab.Vector(size),
 
           speed: speed,
 
           image: animation.image,
 
-          rotation: new Gamestack.Vector(0, 0, 0),
+          rotation: new Gamelab.Vector(0, 0, 0),
 
           flipX: false,
 
@@ -7572,7 +7572,7 @@ class Sprite extends Scriptable {
 
         shot.setAnimation(animation);
 
-        rot_offset = new Gamestack.Vector(rot_offset, 0, 0);
+        rot_offset = new Gamelab.Vector(rot_offset, 0, 0);
 
         shot.position.x = bx, shot.position.y = by;
 
@@ -7584,9 +7584,9 @@ class Sprite extends Scriptable {
 
         shot.rotation.x = rot_offset.x + rotPlus;
 
-        //  shot.origin = new Gamestack.Vector(position);
+        //  shot.origin = new Gamelab.Vector(position);
 
-        shot.speed = new Gamestack.Vector(Math.cos((shot.rotation.x) * 3.14 / 180) * speed, Math.sin((shot.rotation.x) * 3.14 / 180) * speed);
+        shot.speed = new Gamelab.Vector(Math.cos((shot.rotation.x) * 3.14 / 180) * speed, Math.sin((shot.rotation.x) * 3.14 / 180) * speed);
 
         shots.push(shot);
 
@@ -7616,24 +7616,24 @@ class Sprite extends Scriptable {
    * @param {Vector} position the initial position of the shot: defaults to current Sprite position
    * @param {Vector} size the Vector size of the shot
    * @param {Vector} offset the positional offset to apply
-   * @returns {Sprite} a Gamestack.Sprite object
+   * @returns {Sprite} a Gamelab.Sprite object
    **********/
 
   subsprite(options, gw) {
 
-    gw = gw || Gamestack.game_windows[0];
+    gw = gw || Gamelab.game_windows[0];
 
-    let animation = options.animation || new Gamestack.Animation();
+    let animation = options.animation || new Gamelab.Animation();
 
-    let position = options.position || new Gamestack.Vector(this.position);
+    let position = options.position || new Gamelab.Vector(this.position);
 
-    let offset = options.offset || new Gamestack.Vector(0, 0, 0);
+    let offset = options.offset || new Gamelab.Vector(0, 0, 0);
 
-    let size = new Gamestack.Vector(options.size || this.size);
+    let size = new Gamelab.Vector(options.size || this.size);
 
-    if (Gamestack.isAtPlay) {
+    if (Gamelab.isAtPlay) {
 
-      var subsprite = gw.add(new Gamestack.Sprite({
+      var subsprite = gw.add(new Gamelab.Sprite({
 
         active: true,
 
@@ -7645,7 +7645,7 @@ class Sprite extends Scriptable {
 
         image: animation.image,
 
-        rotation: new Gamestack.Vector(0, 0, 0),
+        rotation: new Gamelab.Vector(0, 0, 0),
 
         flipX: false,
 
@@ -7676,7 +7676,7 @@ class Sprite extends Scriptable {
 
   animate(animation) {
 
-    if (Gamestack.isAtPlay) {
+    if (Gamelab.isAtPlay) {
 
       if (animation) {
         this.setAnimation(animation)
@@ -8002,7 +8002,7 @@ class Sprite extends Scriptable {
     var t = new TWEEN.Tween(this.position)
       .easing(TWEEN.Easing.Quadratic.InOut)
 
-      .to(new Gamestack.Vector(x, y), duration)
+      .to(new Gamelab.Vector(x, y), duration)
       .onUpdate(function() {
         //console.log(objects[0].position.x,objects[0].position.y);
 
@@ -8038,7 +8038,7 @@ class Sprite extends Scriptable {
     var t = new TWEEN.Tween(this.rotation)
       .easing(TWEEN.Easing.Quadratic.InOut)
 
-      .to(new Gamestack.Vector(r), duration)
+      .to(new Gamelab.Vector(r), duration)
       .onUpdate(function() {
         //console.log(objects[0].position.x,objects[0].position.y);
 
@@ -8065,7 +8065,7 @@ class Sprite extends Scriptable {
 
   center() {
 
-    return new Gamestack.Vector(this.position.x + this.size.x / 2, this.position.y + this.size.y / 2, 0);
+    return new Gamelab.Vector(this.position.x + this.size.x / 2, this.position.y + this.size.y / 2, 0);
 
   }
 
@@ -8254,9 +8254,9 @@ class Sprite extends Scriptable {
 
     }
 
-    this.speed = this.speed || new Gamestack.Vector(0, 0, 0);
+    this.speed = this.speed || new Gamelab.Vector(0, 0, 0);
 
-    this.padding = this.padding || new Gamestack.Vector(0, 0, 0);
+    this.padding = this.padding || new Gamelab.Vector(0, 0, 0);
 
     // this.position = this.position.sub(this.speed);
 
@@ -8363,7 +8363,7 @@ class Sprite extends Scriptable {
   restoreFrom(data) {
     data.image = new GameImage(data.src || data.image.src);
 
-    return new Gamestack.Sprite(data);
+    return new Gamelab.Sprite(data);
 
   }
 
@@ -8384,7 +8384,7 @@ class Sprite extends Scriptable {
 
       $.getJSON(file_path, function(data) {
 
-        __inst = new Gamestack.Sprite(data);
+        __inst = new Gamelab.Sprite(data);
 
       });
     }
@@ -8401,7 +8401,7 @@ class Sprite extends Scriptable {
 
 };
 
-Gamestack.Sprite = Sprite;
+Gamelab.Sprite = Sprite;
 ;
 
 class Text {
@@ -8414,7 +8414,7 @@ class Text {
 
     this.color = 'white';
 
-    this.position = new Gamestack.Vector(0, 0);
+    this.position = new Gamelab.Vector(0, 0);
   }
 
   Font(fsize, ffamily){
@@ -8440,7 +8440,7 @@ class Text {
 
 
     getOffsetPos(pos){
-      var offset = this.window_offset || new Gamestack.Vector(0, 0);
+      var offset = this.window_offset || new Gamelab.Vector(0, 0);
       return pos.add(offset);
     }
 
@@ -8458,7 +8458,7 @@ class Text {
 
     ctx.font = this.fontSize + ' ' + this.fontFamily;
 
-    var pos = new Gamestack.Vector(x, y),
+    var pos = new Gamelab.Vector(x, y),
     realPos = this.getOffsetPos(pos);
 
     ctx.fillText(this.text, realPos.x, realPos.y);
@@ -8469,7 +8469,7 @@ class Text {
 }
 
 
-Gamestack.Text = Text;
+Gamelab.Text = Text;
 ;/****************************
  * Robotix
  ***************************/
@@ -8525,24 +8525,24 @@ class Attachment {
 
 
             for (var x in this.clasticObjects) {
-                if (!this.clasticObjects[x] instanceof Gamestack.Sprite) {
-                    this.clasticObjects[x] = Gamestack.getById(this.clasticObjects[x].id);
+                if (!this.clasticObjects[x] instanceof Gamelab.Sprite) {
+                    this.clasticObjects[x] = Gamelab.getById(this.clasticObjects[x].id);
                 }
 
             }
 
 
             for (var x in this.topClastics) {
-                if (!this.topClastics[x] instanceof Gamestack.Sprite) {
-                    this.topClastics[x] = Gamestack.getById(this.topClastics[x].id);
+                if (!this.topClastics[x] instanceof Gamelab.Sprite) {
+                    this.topClastics[x] = Gamelab.getById(this.topClastics[x].id);
                 }
 
             }
 
 
             for (var x in this.subjects) {
-                if (!this.subjects[x] instanceof Gamestack.Sprite) {
-                    this.subjects[x] = Gamestack.getById(this.subjects[x].id);
+                if (!this.subjects[x] instanceof Gamelab.Sprite) {
+                    this.subjects[x] = Gamelab.getById(this.subjects[x].id);
                 }
 
             }
@@ -8578,7 +8578,7 @@ class Attachment {
 
             var max = this.max || {};
 
-            Gamestack.each(subjects, function (ix, itemx) {
+            Gamelab.each(subjects, function (ix, itemx) {
 
                 if(!itemx.jumping && !itemx.flying)
                 itemx.accelY(accel, max);
@@ -8595,7 +8595,7 @@ class Attachment {
 
                 itemx.groundMaxY = 3000000; //some crazy number you'll never reach in-game
 
-                Gamestack.each(topClastics, function (iy, itemy) {
+                Gamelab.each(topClastics, function (iy, itemy) {
 
                 //    itemx.collide_stop_top(itemy);
 
@@ -8607,11 +8607,11 @@ class Attachment {
 
     let Force = GravityForce;
 
-    Gamestack.Force = Force;
+    Gamelab.Force = Force;
 
-    Gamestack.GForce = Force;
+    Gamelab.GForce = Force;
 
-    Gamestack.GravityForce = GravityForce;
+    Gamelab.GravityForce = GravityForce;
 
 })();
 ;;;;;class Player extends Sprite
@@ -8629,7 +8629,7 @@ class Attachment {
 }
 
 
-Gamestack.Player = Player;
+Gamelab.Player = Player;
 ;
 
 
@@ -8639,7 +8639,7 @@ Gamestack.Player = Player;
  *
  * @param   {string} name the name of this Shot
  * @param   {GameImage | Animation} imageOrAnimation the GameImage or Animation to apply for this Shot
- * @returns {Shot} a Gamestack.Shot object
+ * @returns {Shot} a Gamelab.Shot object
  */
 
 class Shot
@@ -8648,11 +8648,11 @@ class Shot
     {
         this.name = name || 'No-Name';
 
-        if(imageOrAnimation instanceof Gamestack.GameImage)
+        if(imageOrAnimation instanceof Gamelab.GameImage)
         {
             this.anime = new Animation(imageOrAnimation);
         }
-        else if(imageOrAnimation instanceof Gamestack.Animation)
+        else if(imageOrAnimation instanceof Gamelab.Animation)
         {
             this.anime = imageOrAnimation;
 
@@ -8721,7 +8721,7 @@ class Shot
 
     CurveMode(key, size, growth)
     {
-        this.curve = Gamestack.Curves.InOut[key.toLowerCase()];
+        this.curve = Gamelab.Curves.InOut[key.toLowerCase()];
 
         this.curve_key = key.toLowerCase();
 
@@ -8731,7 +8731,7 @@ class Shot
         this.curve_growth = growth;
 
         if(typeof(this.curve_size)=='number')
-            this.curve_size = new Gamestack.Vector(this.curve_size, this.curve_size);
+            this.curve_size = new Gamelab.Vector(this.curve_size, this.curve_size);
 
         return this;
 
@@ -8761,8 +8761,8 @@ class Shot
 }
 
 
-Gamestack.Shot = Shot;
-;class Background extends Gamestack.Sprite {
+Gamelab.Shot = Shot;
+;class Background extends Gamelab.Sprite {
 
     constructor(arg1={}, arg2={}) {
 
@@ -8829,7 +8829,7 @@ Gamestack.Shot = Shot;
             this.members.push(new Background(this.source_objects[x]));//src strings OR Sprites()
         }
 
-        gw = gw || Gamestack.game_windows[0];
+        gw = gw || Gamelab.game_windows[0];
 
         var w= gw.canvas.width, h = gw.canvas.height,
             xBacksTotal = Math.floor(approxRows / 2), yBacksTotal =  Math.floor(approxCols / 2);
@@ -8931,11 +8931,11 @@ Gamestack.Shot = Shot;
 
     add(object)
     {
-        var cleanCheck = object instanceof Gamestack.Sprite || object instanceof Array && object[0] instanceof Gamestack.Sprite; //is Sprite
+        var cleanCheck = object instanceof Gamelab.Sprite || object instanceof Array && object[0] instanceof Gamelab.Sprite; //is Sprite
 
         if(!cleanCheck)
         {
-            return console.error('Must have: valid contents (Gamestack.Sprite OR [] of Gamestack.Sprite())');
+            return console.error('Must have: valid contents (Gamelab.Sprite OR [] of Gamelab.Sprite())');
         }
 
         if(object instanceof Array)
@@ -8952,7 +8952,7 @@ Gamestack.Shot = Shot;
 
 }
 
-Gamestack.Background = Background;;
+Gamelab.Background = Background;;
 //Author: Jordan E. Blake
 
 
@@ -9188,11 +9188,11 @@ class Projectile {
 
         this.description = args.description || "__";
 
-        this.animation = Gamestack.getArg(args, 'animation', new Animation());
+        this.animation = Gamelab.getArg(args, 'animation', new Animation());
 
         this.parent_id = args.parent_id || args.object_id || "__blank"; //The parent object
 
-        this.name = Gamestack.getArg(args, 'name', "__");
+        this.name = Gamelab.getArg(args, 'name', "__");
 
         this.size = false;
 
@@ -9217,15 +9217,15 @@ class Projectile {
 
         this.line.Rotation(this.rotation);
 
-        this.description = Gamestack.getArg(args, 'description', false);
+        this.description = Gamelab.getArg(args, 'description', false);
 
-        this.duration = Gamestack.getArg(args, 'duration', 500);
+        this.duration = Gamelab.getArg(args, 'duration', 500);
 
-        this.delay = Gamestack.getArg(args, 'delay', 0);
+        this.delay = Gamelab.getArg(args, 'delay', 0);
 
-        this.position = Gamestack.getArg(args, 'position', new Vector(0, 0, 0));
+        this.position = Gamelab.getArg(args, 'position', new Vector(0, 0, 0));
 
-        this.motion_curve = Gamestack.getArg(args, 'motion_curve', TWEEN.Easing.Linear.None);
+        this.motion_curve = Gamelab.getArg(args, 'motion_curve', TWEEN.Easing.Linear.None);
 
         this.highlighted = false;
 
@@ -9274,7 +9274,7 @@ class Projectile {
 
         var spr = this.sprites[this.sprites.length - 1];
 
-        Gamestack.remove(spr);
+        Gamelab.remove(spr);
 
     }
 
@@ -9295,7 +9295,7 @@ class Projectile {
         var half = numberShots / 2;
 
         for(var x = half * -1; x <= half; x++) {
-            var shot = Gamestack.add(new Sprite({
+            var shot = Gamelab.add(new Sprite({
 
                 active: true,
 
@@ -9388,7 +9388,7 @@ class Projectile {
                 }
 
                 if (x == lp.length - 1) {
-                    Gamestack.remove(sprite);
+                    Gamelab.remove(sprite);
 
                 }
 
@@ -9396,7 +9396,7 @@ class Projectile {
 
         });
 
-        Gamestack.add(sprite);
+        Gamelab.add(sprite);
 
         this.sprites.push(sprite);
 
@@ -9405,17 +9405,17 @@ class Projectile {
 }
 
 
-Gamestack.Projectile = Projectile;;
+Gamelab.Projectile = Projectile;;
 
 
 (function(){
     console.log('Terrain class... creating');
 
-class Terrain extends Gamestack.Sprite
+class Terrain extends Gamelab.Sprite
 {
     constructor(args={})
     {
-        super(args); //init as Gamestack.Sprite()
+        super(args); //init as Gamelab.Sprite()
 
         this.collideables = args.collideables || args.colliders || [];
 
@@ -9433,7 +9433,7 @@ class Terrain extends Gamestack.Sprite
 
         return this;
     }
-    onCollide() // Gamestack.Terrain instance should have an onCollide() function
+    onCollide() // Gamelab.Terrain instance should have an onCollide() function
     {
 
     }
@@ -9441,7 +9441,7 @@ class Terrain extends Gamestack.Sprite
 }
 
 
-    Gamestack.Terrain= Terrain;
+    Gamelab.Terrain= Terrain;
 
 })();
 ;
@@ -9450,15 +9450,15 @@ class Terrain extends Gamestack.Sprite
 (function(){
     console.log('Interactive class... creating');
 
-    class Interactive extends Gamestack.Sprite {
+    class Interactive extends Gamelab.Sprite {
         constructor(args = {}) {
-            super(args); //init as Gamestack.Sprite()
+            super(args); //init as Gamelab.Sprite()
 
-            this.collision_settings = new Gamestack.CollisionSettings(args);
+            this.collision_settings = new Gamelab.CollisionSettings(args);
 
             this.collideables = args.collideables || [];
 
-            Gamestack.Extendors.collideable(this, args); //overwrites the onCollide():
+            Gamelab.Extendors.collideable(this, args); //overwrites the onCollide():
 
         }
 
@@ -9475,7 +9475,7 @@ class Terrain extends Gamestack.Sprite
             return this;
         }
 
-        onCollide() // Gamestack.Interactive instance should have an onCollide() function
+        onCollide() // Gamelab.Interactive instance should have an onCollide() function
         {
 
         }
@@ -9483,7 +9483,7 @@ class Terrain extends Gamestack.Sprite
     }
 
 
-Gamestack.Interactive = Interactive;
+Gamelab.Interactive = Interactive;
 
 
 })();;class SpriteArray {
@@ -9558,7 +9558,7 @@ Gamestack.Interactive = Interactive;
 
 }
 
-Gamestack.SpriteArray = SpriteArray;
+Gamelab.SpriteArray = SpriteArray;
 
 
 class SpriteVerticalChain extends SpriteArray {
@@ -9573,15 +9573,15 @@ class SpriteVerticalChain extends SpriteArray {
 
     sprite.onUpdate(function() {
 
-      this.origin = this.origin || new Gamestack.Vector(this.size.x / 2, 0);
+      this.origin = this.origin || new Gamelab.Vector(this.size.x / 2, 0);
 
       if (this.parent) {
 
 
-        this.offset = this.offset || new Gamestack.Vector(0, 0);
+        this.offset = this.offset || new Gamelab.Vector(0, 0);
 
 
-        var extremity = new Gamestack.Vector(0, this.parent.size.y);
+        var extremity = new Gamelab.Vector(0, this.parent.size.y);
 
         var p = this.parent.position.add(this.parent.origin);
 
@@ -9589,7 +9589,7 @@ class SpriteVerticalChain extends SpriteArray {
 
         //  p = p.add(parent.origin);
 
-        var np = new Gamestack.Vector(Gamestack.GeoMath.rotatePointsXY(extremity.x, extremity.y, this.parent.rotation.x));
+        var np = new Gamelab.Vector(Gamelab.GeoMath.rotatePointsXY(extremity.x, extremity.y, this.parent.rotation.x));
 
         this.position = p.add(np).add(this.offset);
 
@@ -9605,7 +9605,7 @@ class SpriteVerticalChain extends SpriteArray {
 
 }
 
-Gamestack.SpriteVerticalChain = SpriteVerticalChain;
+Gamelab.SpriteVerticalChain = SpriteVerticalChain;
 ;
 
 
@@ -9640,32 +9640,32 @@ class SpriteCollider {
   }
 }
 
-Gamestack.FeatureSymbol = FeatureSymbol;
+Gamelab.FeatureSymbol = FeatureSymbol;
 
-Gamestack.FeatureInjectors = Gamestack.FeatureInjectors || {};
+Gamelab.FeatureInjectors = Gamelab.FeatureInjectors || {};
 
-Gamestack.FeatureInject = function(constructor, args) {
+Gamelab.FeatureInject = function(constructor, args) {
 
-  //console.log('Gamestack.FeatureInject()');
+  //console.log('Gamelab.FeatureInject()');
 
   var GClassFeatures = {};
 
 
-  for (var y in Gamestack.ObjectFeatureMap) {
+  for (var y in Gamelab.ObjectFeatureMap) {
 
-    if (Gamestack[y] && typeof Gamestack[y] == 'function') {
+    if (Gamelab[y] && typeof Gamelab[y] == 'function') {
 
-      var constructor = Gamestack[y];
+      var constructor = Gamelab[y];
 
       GClassFeatures[y] = {};
 
-      //  console.log('Feature Symbol-key:' + Gamestack.ObjectFeatureMap[x][y]);
+      //  console.log('Feature Symbol-key:' + Gamelab.ObjectFeatureMap[x][y]);
 
       GClassFeatures[y].featureSymbols = GClassFeatures[y].featureSymbols || [];
 
-      for (var z in Gamestack.ObjectFeatureMap[y]) {
+      for (var z in Gamelab.ObjectFeatureMap[y]) {
 
-        GClassFeatures[y].featureSymbols.push(new Gamestack.FeatureSymbol(Gamestack.ObjectFeatureMap[y][z]));
+        GClassFeatures[y].featureSymbols.push(new Gamelab.FeatureSymbol(Gamelab.ObjectFeatureMap[y][z]));
 
         GClassFeatures[y].featureSymbols.hasKey = function(key) {
 
@@ -9694,10 +9694,10 @@ Gamestack.FeatureInject = function(constructor, args) {
           return false;
         };
 
-        //  console.info('adding feature-symbol:' + Gamestack.ObjectFeatureMap[x][y]);
+        //  console.info('adding feature-symbol:' + Gamelab.ObjectFeatureMap[x][y]);
       }
     } else {
-      console.error('Gamestack.ObjectFeatureMap: member by name of ' + x + ' does not exist as member of Gamestack');
+      console.error('Gamelab.ObjectFeatureMap: member by name of ' + x + ' does not exist as member of Gamelab');
     }
   }
 
@@ -9705,11 +9705,11 @@ Gamestack.FeatureInject = function(constructor, args) {
   console.info('FEATURES:', GClassFeatures);
 
 
-  for (var x in Gamestack.FeatureInjectors) {
+  for (var x in Gamelab.FeatureInjectors) {
 
-    //  console.log(Gamestack.FeatureInjectors[x]);
+    //  console.log(Gamelab.FeatureInjectors[x]);
 
-    var props = Larva.getProtoFuncs(Gamestack.FeatureInjectors[x]);
+    var props = Larva.getProtoFuncs(Gamelab.FeatureInjectors[x]);
 
     for (var y = 0; y < props.length; y++) {
 
@@ -9718,7 +9718,7 @@ Gamestack.FeatureInject = function(constructor, args) {
       for (var z in GClassFeatures)
         if (GClassFeatures[z] && GClassFeatures[z].featureSymbols.hasKey(props[y])) {
 
-          Gamestack.FeatureInjectors[x][props[y]](Gamestack[z].prototype, args);
+          Gamelab.FeatureInjectors[x][props[y]](Gamelab[z].prototype, args);
 
         }
     }
@@ -9809,13 +9809,13 @@ class VectorFunctions {
     obj.Size = function(x, y, z) {
 
       if (typeof(x) == 'object')
-        this.size = new Gamestack.Vector(x);
+        this.size = new Gamelab.Vector(x);
 
       else if (!isNaN(x) && !isNaN(y)) //has minimum of numeric x and y
-        this.size = new Gamestack.Vector(x, y, z);
+        this.size = new Gamelab.Vector(x, y, z);
 
       else //use x accross the vector
-        this.size = new Gamestack.Vector(x, x, x);
+        this.size = new Gamelab.Vector(x, x, x);
 
       return this;
     };
@@ -9823,13 +9823,13 @@ class VectorFunctions {
     obj.Pos = function(x, y, z) {
 
       if (typeof(x) == 'object')
-        this.position = new Gamestack.Vector(x);
+        this.position = new Gamelab.Vector(x);
 
       else if (!isNaN(x) && !isNaN(y)) //has minimum of numeric x and y
-        this.position = new Gamestack.Vector(x, y, z);
+        this.position = new Gamelab.Vector(x, y, z);
 
       else //use x accross the vector
-        this.position = new Gamestack.Vector(x, x, x);
+        this.position = new Gamelab.Vector(x, x, x);
 
       return this;
     };
@@ -9837,13 +9837,13 @@ class VectorFunctions {
     obj.Rot = function(x, y, z) {
 
       if (typeof(x) == 'object')
-        this.rotation = new Gamestack.Vector(x);
+        this.rotation = new Gamelab.Vector(x);
 
       else if (!isNaN(x) && !isNaN(y)) //has minimum of numeric x and y
-        this.rotation = new Gamestack.Vector(x, y, z);
+        this.rotation = new Gamelab.Vector(x, y, z);
 
       else //use x accross the vector
-        this.rotation = new Gamestack.Vector(x, x, x);
+        this.rotation = new Gamelab.Vector(x, x, x);
 
       return this;
     };
@@ -9861,13 +9861,13 @@ class VectorFunctions {
     obj.Pos = function(x, y, z) {
 
       if (typeof(x) == 'object')
-        this.position = new Gamestack.Vector(x);
+        this.position = new Gamelab.Vector(x);
 
       else if (!isNaN(x) && !isNaN(y)) //has minimum of numeric x and y
-        this.position = new Gamestack.Vector(x, y, z);
+        this.position = new Gamelab.Vector(x, y, z);
 
       else //use x accross the vector
-        this.position = new Gamestack.Vector(x, x, x);
+        this.position = new Gamelab.Vector(x, x, x);
 
       return this;
     };
@@ -9881,13 +9881,13 @@ class VectorFunctions {
     obj.Size = function(x, y, z) {
 
       if (typeof(x) == 'object')
-        this.size = new Gamestack.Vector(x);
+        this.size = new Gamelab.Vector(x);
 
       else if (!isNaN(x) && !isNaN(y)) //has minimum of numeric x and y
-        this.size = new Gamestack.Vector(x, y, z);
+        this.size = new Gamelab.Vector(x, y, z);
 
       else //use x accross the vector
-        this.size = new Gamestack.Vector(x, x, x);
+        this.size = new Gamelab.Vector(x, x, x);
 
       return this;
     };
@@ -9900,13 +9900,13 @@ class VectorFunctions {
     obj.Rot = function(x, y, z) {
 
       if (typeof(x) == 'object')
-        this.rotation = new Gamestack.Vector(x);
+        this.rotation = new Gamelab.Vector(x);
 
       else if (!isNaN(x) && !isNaN(y)) //has minimum of numeric x and y
-        this.rotation = new Gamestack.Vector(x, y, z);
+        this.rotation = new Gamelab.Vector(x, y, z);
 
       else //use x accross the vector
-        this.rotation = new Gamestack.Vector(x, x, x);
+        this.rotation = new Gamelab.Vector(x, x, x);
 
       if (typeof this.Transpose == 'function') {
         this.Transpose();
@@ -9925,13 +9925,13 @@ class VectorFunctions {
     obj.Min = function(x, y, z) {
 
       if (typeof(x) == 'object')
-        this.min = new Gamestack.Vector(x);
+        this.min = new Gamelab.Vector(x);
 
       else if (!isNaN(x) && !isNaN(y)) //has minimum of numeric x and y
-        this.min = new Gamestack.Vector(x, y, z);
+        this.min = new Gamelab.Vector(x, y, z);
 
       else //use x accross the vector
-        this.min = new Gamestack.Vector(x, x, x);
+        this.min = new Gamelab.Vector(x, x, x);
 
       return this;
     };
@@ -9944,13 +9944,13 @@ class VectorFunctions {
     obj.Max = function(x, y, z) {
 
       if (typeof(x) == 'object')
-        this.max = new Gamestack.Vector(x);
+        this.max = new Gamelab.Vector(x);
 
       else if (!isNaN(x) && !isNaN(y)) //has minimum of numeric x and y
-        this.max = new Gamestack.Vector(x, y, z);
+        this.max = new Gamelab.Vector(x, y, z);
 
       else //use x accross the vector
-        this.max = new Gamestack.Vector(x, x, x);
+        this.max = new Gamelab.Vector(x, x, x);
 
       return this;
     };
@@ -9969,9 +9969,9 @@ class VectorFunctions {
     //apply the transposition
     obj.Transpose = function(rotation, position) {
 
-      this.rotation = new Gamestack.Vector(rotation || this.rotation);
+      this.rotation = new Gamelab.Vector(rotation || this.rotation);
 
-      this.position = new Gamestack.Vector(position || this.position);
+      this.position = new Gamelab.Vector(position || this.position);
 
       //TODO: Modify this trig function and its call below to an optional 3D rotation
 
@@ -9979,7 +9979,7 @@ class VectorFunctions {
 
         var p = this.points[x];
 
-        var np = Gamestack.Trig.rotate_from_xy(0, 0, p.x, p.y, this.rotation.x);
+        var np = Gamelab.Trig.rotate_from_xy(0, 0, p.x, p.y, this.rotation.x);
 
         this.points[x] = this.position.add(np);
 
@@ -10032,11 +10032,11 @@ class VectorFunctions {
   }
 
   informable(obj, args) {
-    obj.name = Gamestack.getArg(args, 'name', "__ObjectName");
+    obj.name = Gamelab.getArg(args, 'name', "__ObjectName");
 
-    obj.description = Gamestack.getArg(args, 'description', false);
+    obj.description = Gamelab.getArg(args, 'description', false);
 
-    obj.group = Gamestack.getArg(args, 'group', 'one');
+    obj.group = Gamelab.getArg(args, 'group', 'one');
   }
 
   tweenable(obj) {
@@ -10058,9 +10058,9 @@ class VectorFunctions {
 
       obj.curve_string = 'linear_none'
 
-      Gamestack.each(TWEEN.Easing, function(ix, easing) {
+      Gamelab.each(TWEEN.Easing, function(ix, easing) {
 
-        Gamestack.each(TWEEN.Easing[ix], function(iy, easeType) {
+        Gamelab.each(TWEEN.Easing[ix], function(iy, easeType) {
 
           if (ix == s1 && iy == s2) {
 
@@ -10086,9 +10086,9 @@ class VectorFunctions {
 
       var c = [];
 
-      Gamestack.each(TWEEN.Easing, function(ix, easing) {
+      Gamelab.each(TWEEN.Easing, function(ix, easing) {
 
-        Gamestack.each(easing, function(iy, easeType) {
+        Gamelab.each(easing, function(iy, easeType) {
 
           if (['in', 'out', 'inout', 'none'].indexOf(iy.toLowerCase()) >= 0) {
 
@@ -10107,11 +10107,11 @@ class VectorFunctions {
 
 };
 
-Gamestack.FeatureInjectors.CssFeatures = new CssFeatures();
+Gamelab.FeatureInjectors.CssFeatures = new CssFeatures();
 
-Gamestack.FeatureInjectors.VectorFunctions = new VectorFunctions();
+Gamelab.FeatureInjectors.VectorFunctions = new VectorFunctions();
 
-Gamestack.FeatureInjectors.DataFunctions = new DataFunctions();
+Gamelab.FeatureInjectors.DataFunctions = new DataFunctions();
 ;let Larva = {
 
   DEV:false,
@@ -10388,10 +10388,10 @@ let R = function(obj, callback){
 
   };
 ;/**
- * Creates Gamestack.js Canvas: The canvas-renderer for Gamestack games.
+ * Creates Gamelab.js Canvas: The canvas-renderer for Gamelab games.
 
  @description
- This Canvas library handles the low-level drawing of Gamestack.Animation objects on HTML5Canvas.
+ This Canvas library handles the low-level drawing of Gamelab.Animation objects on HTML5Canvas.
  -Draws Sprites according to their rotation, size, and properties.
  * @returns {CanvasLib} a CanvasLib object.
  */
@@ -10400,7 +10400,7 @@ let R = function(obj, callback){
 
   console.log('CanvasStack class... creating');
 
-  class GamestackCanvas {
+  class GamelabCanvas {
 
     constructor() {
 
@@ -10412,7 +10412,7 @@ let R = function(obj, callback){
 
     isStopped() {
 
-      return Gamestack.stopDraw || false;
+      return Gamelab.stopDraw || false;
 
     }
 
@@ -10422,7 +10422,7 @@ let R = function(obj, callback){
         return;
 
 
-      var ctx = Gamestack.game_windows[0].ctx;
+      var ctx = Gamelab.game_windows[0].ctx;
 
       ctx.strokeStyle = 'aqua';
 
@@ -10476,7 +10476,7 @@ let R = function(obj, callback){
 
       }
 
-      origin = origin || new Gamestack.Vector(width / 2, height / 2);
+      origin = origin || new Gamelab.Vector(width / 2, height / 2);
 
       //draw the image
       canvasContext.drawImage(image, fx, fy, fw, fh, origin.x * (-1), origin.y * (-1), width, height);
@@ -10498,9 +10498,9 @@ let R = function(obj, callback){
   }
 
 
-  Gamestack.Canvas = new GamestackCanvas();
+  Gamelab.Canvas = new GamelabCanvas();
 
-  Gamestack.GamestackCanvas = GamestackCanvas;
+  Gamelab.GamelabCanvas = GamelabCanvas;
 
   class OffscreenCanvasRendering {
     constructor(psuedoImage) {
@@ -10530,7 +10530,7 @@ let R = function(obj, callback){
 
   };
 
-  Gamestack.OffscreenCanvasRendering = OffscreenCanvasRendering;
+  Gamelab.OffscreenCanvasRendering = OffscreenCanvasRendering;
 
 })();
 ;if (typeof JSON.decycle !== 'function') {
@@ -11676,15 +11676,15 @@ TWEEN.Interpolation = {
 
 
 
-//Attach to the global Gamestack object
+//Attach to the global Gamelab object
 
 /***************
  *
- * @memberOf Gamestack
+ * @memberOf Gamelab
  *
  * *****************/
 
-Gamestack.TWEEN = TWEEN;
+Gamelab.TWEEN = TWEEN;
 
 
 /*
@@ -11715,9 +11715,9 @@ Gamestack.TWEEN = TWEEN;
 
 */
 ;
-//Call Gamestack.FeatureInject::
+//Call Gamelab.FeatureInject::
 
-Gamestack.FeatureInject();
+Gamelab.FeatureInject();
 
 
 // UMD (Universal Module Definition)
@@ -11727,18 +11727,18 @@ Gamestack.FeatureInject();
 
         // AMD
         define([], function () {
-            return Gamestack;
+            return Gamelab;
         });
 
     } else if (typeof module !== 'undefined' && typeof exports === 'object') {
 
         // Node.js
-        module.exports = Gamestack;
+        module.exports = Gamelab;
 
     } else if (root !== undefined) {
 
         // Global variable
-        root.Gamestack = Gamestack;
+        root.Gamelab = Gamelab;
 
     }
 

@@ -1,10 +1,10 @@
 -----------------------------------------------------
-![](images/gamestack-logo.png)
+![](images/gamelab-logo.png)
 -------------------------------------------------------------------
 -----------------------------------------------------
-![](images/gamestack-banner.png)
+![](images/gamelab-banner.png)
 -------------------------------------------------------------------
-#### Gamestack.js is a javascript library for 2D games.
+#### Gamelab.js is a javascript library for 2D games.
 -------------------------------------------------------------------
 
 #### Features:
