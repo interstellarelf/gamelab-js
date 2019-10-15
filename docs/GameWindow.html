@@ -28,28 +28,31 @@
         left: 200px;
         border: none;
         background: url("images/g.png");
-        background-size:96% auto;
+        background-size: 96% auto;
         width: 40px;
         height: 40px;
         border-radius: 50%;
       }
-
-
-
-      div#main{
-
-      background:#101010;
-
+      img.logo-main {
+        width: 180px;
+        height: auto;
+      }
+      div#main {
+        background: #101010;
+      }
+      example-link {
+        cursor: pointer;
+      }
+      h3.reference-title {
+        display: none;
       }
 
-
-      example-link{
-
-      cursor:pointer;
-
+      h1.page-title{
+        display:none;
       }
 
     </style>
+
 
   </head>
 
@@ -70,7 +73,6 @@
       <ul>
         <li >
           <img class="logo" style="cursor:pointer; position:relative; height:34px; width:auto; " src="images/gamelab-logo.png" onclick="window.location='index.html';"></img>
-            <i class="g-icon"></i>
         </li>
 
         
@@ -116,7 +118,7 @@
       
         <div class="class-description">
           <p>Creates a new GameWindow</p>
-<iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/GameWindow.html'> </iframe>
+<iframe style='width:400px; height:450px; overflow:hidden;' src='./html/iframe-error.html'> </iframe>
         </div>
       
     
@@ -2242,54 +2244,21 @@
 
   <script>
 
-    var g = {rotation:0};
-
-    var DisplayUpdates = {
-
-      Logo:{
-        start: function () {
-
-        setInterval(function () {
-
-            g.rotation += 1.0;
-
-          var GDom = document.querySelector('i.g-icon');
-
-            GDom.style.transform = `rotate(${g.rotation}deg)`;
-
-        }, 20);
-
-        }
-      }
-
-    };
-
-
-  $(document).ready(function(){
-
-      console.log('Document-Ready::');
-      DisplayUpdates.Logo.start();
-
-  });
-
+    $(document).ready(function () {
+      console.log('doc-ready::');
+    });
   </script>
-
-
 
   
   <script type="text/javascript">
     $(document).ready(function () {
-
       SearcherDisplay.init();
 
       $('#search-form').submit(function (e) {
 
         //alert('form submit'); localStorage.setItem('searchValue', $('#search-input').val());
-
         SearcherDisplay.startSearch();
-
         e.preventDefault();
-
         return false;
 
       });
@@ -2300,7 +2269,6 @@
   <script type="text/x-docstrap-searchdb">
     <%= searchableDocuments %>
   </script>
-
 
 </body>
 </html>

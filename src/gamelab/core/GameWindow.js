@@ -1,7 +1,7 @@
 
   /**
    * Creates a new GameWindow
-   * <iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/GameWindow.html'> </iframe>
+   * <iframe style='width:400px; height:450px; overflow:hidden;' src='./html/iframe-error.html'> </iframe>
    * @param   {Object} canvas the canvas element for this gameWindow. --GameWindow's if not supplied, the constructor will create a full-screen canvas, if a canvas.
     * @param   {Array} drawables=[] a list of drawable objects to be drawn. --Drawables can also be added after constructor call.
    * @returns {GameWindow} a Gamelab.GameWindow object

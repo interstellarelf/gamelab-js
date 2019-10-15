@@ -28,28 +28,31 @@
         left: 200px;
         border: none;
         background: url("images/g.png");
-        background-size:96% auto;
+        background-size: 96% auto;
         width: 40px;
         height: 40px;
         border-radius: 50%;
       }
-
-
-
-      div#main{
-
-      background:#101010;
-
+      img.logo-main {
+        width: 180px;
+        height: auto;
+      }
+      div#main {
+        background: #101010;
+      }
+      example-link {
+        cursor: pointer;
+      }
+      h3.reference-title {
+        display: none;
       }
 
-
-      example-link{
-
-      cursor:pointer;
-
+      h1.page-title{
+        display:none;
       }
 
     </style>
+
 
   </head>
 
@@ -70,7 +73,6 @@
       <ul>
         <li  class="active" >
           <img class="logo" style="cursor:pointer; position:relative; height:34px; width:auto; " src="images/gamelab-logo.png" onclick="window.location='index.html';"></img>
-            <i class="g-icon"></i>
         </li>
 
         
@@ -111,14 +113,18 @@
   <section class="readme">
     <article>
       <hr>
-<h2><img src="images/gamelab-logo.png" alt=""></h2><hr>
-<h2><img src="images/gamelab-banner.png" alt=""></h2><h4>Gamelab.js is a javascript library for 2D games.</h4><hr>
+<h2><img src="images/gamelab-logo-small.png" alt=""></h2><h2><img src="images/gamelab-banner.png" alt=""></h2><h4>Gamelab.js</h4><ul>
+<li>a javascript library for canvas games.</li>
+</ul>
+<hr>
 <h4>Features:</h4><ul>
-<li>js game-objects</li>
-<li>animations, sounds, gamepad-input</li>
-<li>events + behaviors</li>
-<li>framerate + memory tracking</li>
-<li>html + javascript examples + documentation</li>
+<li>sprites</li>
+<li>animations</li>
+<li>particles</li>
+<li>sounds</li>
+<li>gamepad-input</li>
+<li>events</li>
+<li>behaviors</li>
 </ul>
 <p>This project is open-source under the MIT License.</p>
     </article>
@@ -163,54 +169,21 @@
 
   <script>
 
-    var g = {rotation:0};
-
-    var DisplayUpdates = {
-
-      Logo:{
-        start: function () {
-
-        setInterval(function () {
-
-            g.rotation += 1.0;
-
-          var GDom = document.querySelector('i.g-icon');
-
-            GDom.style.transform = `rotate(${g.rotation}deg)`;
-
-        }, 20);
-
-        }
-      }
-
-    };
-
-
-  $(document).ready(function(){
-
-      console.log('Document-Ready::');
-      DisplayUpdates.Logo.start();
-
-  });
-
+    $(document).ready(function () {
+      console.log('doc-ready::');
+    });
   </script>
-
-
 
   
   <script type="text/javascript">
     $(document).ready(function () {
-
       SearcherDisplay.init();
 
       $('#search-form').submit(function (e) {
 
         //alert('form submit'); localStorage.setItem('searchValue', $('#search-input').val());
-
         SearcherDisplay.startSearch();
-
         e.preventDefault();
-
         return false;
 
       });
@@ -221,7 +194,6 @@
   <script type="text/x-docstrap-searchdb">
     <%= searchableDocuments %>
   </script>
-
 
 </body>
 </html>

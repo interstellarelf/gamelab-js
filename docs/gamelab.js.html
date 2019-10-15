@@ -30,28 +30,31 @@
         left: 200px;
         border: none;
         background: url("images/g.png");
-        background-size:96% auto;
+        background-size: 96% auto;
         width: 40px;
         height: 40px;
         border-radius: 50%;
       }
-
-
-
-      div#main{
-
-      background:#101010;
-
+      img.logo-main {
+        width: 180px;
+        height: auto;
+      }
+      div#main {
+        background: #101010;
+      }
+      example-link {
+        cursor: pointer;
+      }
+      h3.reference-title {
+        display: none;
       }
 
-
-      example-link{
-
-      cursor:pointer;
-
+      h1.page-title{
+        display:none;
       }
 
     </style>
+
 
   </head>
 
@@ -72,7 +75,6 @@
       <ul>
         <li >
           <img class="logo" style="cursor:pointer; position:relative; height:34px; width:auto; " src="images/gamelab-logo.png" onclick="window.location='index.html';"></img>
-            <i class="g-icon"></i>
         </li>
 
         
@@ -2755,7 +2757,7 @@ for (var x in ColorStrings) {
 ;
   /**
    * Creates a new GameWindow
-   * &lt;iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/GameWindow.html'> &lt;/iframe>
+   * &lt;iframe style='width:400px; height:450px; overflow:hidden;' src='./html/iframe-error.html'> &lt;/iframe>
    * @param   {Object} canvas the canvas element for this gameWindow. --GameWindow's if not supplied, the constructor will create a full-screen canvas, if a canvas.
     * @param   {Array} drawables=[] a list of drawable objects to be drawn. --Drawables can also be added after constructor call.
    * @returns {GameWindow} a Gamelab.GameWindow object
@@ -5652,7 +5654,7 @@ Gamelab.Audio = Audio;
    *
    * Creates an instance of Animation with one or more Frames.
    *
-   * &lt;iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/Animation.html'> &lt;/iframe>
+   * &lt;example-marker data-class='Animation' data-info='Use JQuery fnxs to load content into the div outside of this p-element. Do not use iframe' > &lt;/example-marker>
    *
    * @param   {string=} [src] the src-image-path for this Animation
    * @returns {Animation} an Animation object
@@ -11636,54 +11638,21 @@ Gamelab.FeatureInject();
 
   <script>
 
-    var g = {rotation:0};
-
-    var DisplayUpdates = {
-
-      Logo:{
-        start: function () {
-
-        setInterval(function () {
-
-            g.rotation += 1.0;
-
-          var GDom = document.querySelector('i.g-icon');
-
-            GDom.style.transform = `rotate(${g.rotation}deg)`;
-
-        }, 20);
-
-        }
-      }
-
-    };
-
-
-  $(document).ready(function(){
-
-      console.log('Document-Ready::');
-      DisplayUpdates.Logo.start();
-
-  });
-
+    $(document).ready(function () {
+      console.log('doc-ready::');
+    });
   </script>
-
-
 
   
   <script type="text/javascript">
     $(document).ready(function () {
-
       SearcherDisplay.init();
 
       $('#search-form').submit(function (e) {
 
         //alert('form submit'); localStorage.setItem('searchValue', $('#search-input').val());
-
         SearcherDisplay.startSearch();
-
         e.preventDefault();
-
         return false;
 
       });
@@ -11694,7 +11663,6 @@ Gamelab.FeatureInject();
   <script type="text/x-docstrap-searchdb">
     <%= searchableDocuments %>
   </script>
-
 
 </body>
 </html>
