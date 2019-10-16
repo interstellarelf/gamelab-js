@@ -3202,3 +3202,60 @@
 [2019-10-15T13:06:51.334] [INFO] default - Renderable
 [2019-10-15T13:06:51.334] [INFO] default - Rectangle
 [2019-10-15T13:06:51.334] [INFO] default - --applying examples
+[2019-10-15T18:41:07.385] [INFO] default - --gathered examples.json data
+[2019-10-15T18:41:07.650] [INFO] default - KeyboardEvent
+[2019-10-15T18:41:07.651] [INFO] default - SpriteFill
+[2019-10-15T18:41:07.651] [INFO] default - GameWindow
+[2019-10-15T18:41:07.651] [INFO] default - Camera
+[2019-10-15T18:41:07.651] [INFO] default - Animation
+[2019-10-15T18:41:07.651] [INFO] default - Frame
+[2019-10-15T18:41:07.651] [INFO] default - Sound
+[2019-10-15T18:41:07.651] [INFO] default - GamepadEvent
+[2019-10-15T18:41:07.651] [INFO] default - Module
+[2019-10-15T18:41:07.651] [INFO] default - SpriteBrush
+[2019-10-15T18:41:07.651] [INFO] default - BoneSprite
+[2019-10-15T18:41:07.651] [INFO] default - VectorFrameBounds
+[2019-10-15T18:41:07.651] [INFO] default - GameImage
+[2019-10-15T18:41:07.651] [INFO] default - BoolEvent
+[2019-10-15T18:41:07.651] [INFO] default - InputEvent
+[2019-10-15T18:41:07.651] [INFO] default - Renderable
+[2019-10-15T18:41:07.651] [INFO] default - Rectangle
+[2019-10-15T18:41:07.651] [INFO] default - --applying examples
+[2019-10-15T18:43:16.225] [INFO] default - --gathered examples.json data
+[2019-10-15T18:43:16.444] [INFO] default - KeyboardEvent
+[2019-10-15T18:43:16.444] [INFO] default - SpriteFill
+[2019-10-15T18:43:16.444] [INFO] default - GameWindow
+[2019-10-15T18:43:16.444] [INFO] default - Camera
+[2019-10-15T18:43:16.444] [INFO] default - Animation
+[2019-10-15T18:43:16.444] [INFO] default - Frame
+[2019-10-15T18:43:16.444] [INFO] default - Sound
+[2019-10-15T18:43:16.444] [INFO] default - GamepadEvent
+[2019-10-15T18:43:16.444] [INFO] default - Module
+[2019-10-15T18:43:16.444] [INFO] default - SpriteBrush
+[2019-10-15T18:43:16.444] [INFO] default - BoneSprite
+[2019-10-15T18:43:16.444] [INFO] default - VectorFrameBounds
+[2019-10-15T18:43:16.444] [INFO] default - GameImage
+[2019-10-15T18:43:16.444] [INFO] default - BoolEvent
+[2019-10-15T18:43:16.444] [INFO] default - InputEvent
+[2019-10-15T18:43:16.444] [INFO] default - Renderable
+[2019-10-15T18:43:16.444] [INFO] default - Rectangle
+[2019-10-15T18:43:16.444] [INFO] default - --applying examples
+[2019-10-15T19:49:48.451] [INFO] default - --gathered examples.json data
+[2019-10-15T19:49:48.671] [INFO] default - KeyboardEvent
+[2019-10-15T19:49:48.671] [INFO] default - SpriteFill
+[2019-10-15T19:49:48.671] [INFO] default - GameWindow
+[2019-10-15T19:49:48.671] [INFO] default - Camera
+[2019-10-15T19:49:48.672] [INFO] default - Animation
+[2019-10-15T19:49:48.672] [INFO] default - Frame
+[2019-10-15T19:49:48.672] [INFO] default - Sound
+[2019-10-15T19:49:48.672] [INFO] default - GamepadEvent
+[2019-10-15T19:49:48.672] [INFO] default - Module
+[2019-10-15T19:49:48.672] [INFO] default - SpriteBrush
+[2019-10-15T19:49:48.672] [INFO] default - BoneSprite
+[2019-10-15T19:49:48.672] [INFO] default - VectorFrameBounds
+[2019-10-15T19:49:48.672] [INFO] default - GameImage
+[2019-10-15T19:49:48.672] [INFO] default - BoolEvent
+[2019-10-15T19:49:48.672] [INFO] default - InputEvent
+[2019-10-15T19:49:48.672] [INFO] default - Renderable
+[2019-10-15T19:49:48.672] [INFO] default - Rectangle
+[2019-10-15T19:49:48.672] [INFO] default - --applying examples

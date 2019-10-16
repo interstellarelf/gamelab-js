@@ -83,6 +83,7 @@ body {
   width: 11px;
   background-color: transparent;
   background: transparent;
+  border-left:1px solid #222;
 }
 
 body::-webkit-scrollbar-thumb,
@@ -113,6 +114,7 @@ iframe, super-frame {
   position:relative;
   min-width:250px;
   min-height:250px;
+  max-width:100%;
 }
 
 example-marker{
@@ -336,6 +338,7 @@ nav {
   z-index: 998;
   margin-top: 0px;
   top: 43px;
+  border-right:1px solid #222;
 }
 
 .navicon-button {
