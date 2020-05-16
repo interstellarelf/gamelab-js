@@ -1,0 +1,74 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Sprite</title>
+    <script src="../dist/gamelab/gamelab.js"></script>
+    <script src="./../res/libraries/dat.gui.js"></script>
+      <script src="./res/js/sprites/MouseActionSprite.js"></script>
+    <!-- spritebox-example.css style -->
+    <link rel="stylesheet" href="../res/styles/gamelab-example.css">
+
+    <style>
+
+
+    @font-face {
+      font-family:baumans;
+      src: url('res/fonts/baumans/Baumans-Regular.ttf');
+    }
+
+    </style>
+
+  </head>
+  <body>
+    <header>
+      <img src="../res/images/gamelab-logo.png" alt="" id="logo">
+      <span class="title">Sprite</span>
+    </header>
+    <script>
+
+      var gameWindow = new Gamelab.GameWindow().Background('black');
+
+      var sprite = new Gamelab.Sprite('./res/images/shapes/circle-ripple.png');
+
+      sprite.position.x = 300;
+      sprite.position.y = 300;
+
+      new MouseActionSprite(sprite);
+
+      gameWindow.add(sprite);
+
+      Gamelab.ready(function () {
+
+      gameWindow.start();
+
+      sprite.onClick(gameWindow, function(){
+        alert('clicked');
+      });
+
+      sprite.onHoverUpdate(gameWindow, function(isHovered){
+        sprite.hovered = isHovered || false;
+      });
+
+      gameWindow.onBeforeDraw(function(){
+
+        if(sprite.hovered)
+        {
+          let padding = 4;
+          gameWindow.ctx.strokeStyle = 'orange';
+          gameWindow.ctx.strokeRect(sprite.position.x - padding,
+                                    sprite.position.y - padding,
+                                    sprite.size.x + padding * 2.0,
+                                    sprite.size.y + padding * 2.0);
+        }
+
+      });
+
+      });
+    </script>
+
+  </body>
+</html>

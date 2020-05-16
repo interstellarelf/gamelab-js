@@ -15,6 +15,8 @@ class Sound {
 
             this.sound = document.createElement('audio');
 
+            this.sound.volume = src.sound.volume;
+
             this.sound.src = src.src;
 
             this.src = src.src;
@@ -23,6 +25,8 @@ class Sound {
         else if (typeof(src) == 'string') {
 
             this.sound = document.createElement('audio');
+
+            this.sound.volume = 1;
 
             this.sound.src = src;
 
@@ -50,6 +54,17 @@ class Sound {
 
     }
 
+    Multiply(number){
+
+      var srcList = [];
+      for(var x = 0; x < number; x++)
+      {
+        srcList.push(this.src || this.sound.src);
+      }
+
+      return new Gamelab.SoundList(srcList).Volume(this.sound.volume);
+    }
+
     Loop(loop)
     {
         this.sound.loop = loop || true;
@@ -69,7 +84,6 @@ class Sound {
 
     Volume(val)
     {
-
         this.sound.volume = val;
 
         return this;
@@ -87,6 +101,12 @@ class Sound {
     }
 
     Play() {
+
+        if(Gamelab.config && Gamelab.config.soundOff)
+        {
+          return;
+        }
+
         if (typeof(this.sound) == 'object' && typeof(this.sound.play) == 'function') {
 
             this.sound.play();
@@ -98,6 +118,10 @@ class Sound {
     }
 
     play() { //same as Play()
+      if(Gamelab.config && Gamelab.config.soundOff)
+      {
+        return;
+      }
         if (typeof(this.sound) == 'object' && typeof(this.sound.play) == 'function') {
 
             this.sound.play();
@@ -181,6 +205,11 @@ class SoundList{
 
     PlayNext()
     {
+      if(Gamelab.config && Gamelab.config.soundOff)
+      {
+        return;
+      }
+
         this.sounds[this.cix % this.sounds.length].play();
 
         this.cix += 1;
@@ -189,6 +218,11 @@ class SoundList{
 
     Play()
     {
+
+      if(Gamelab.config && Gamelab.config.soundOff)
+      {
+        return;
+      }
 
         this.sounds[this.cix % this.sounds.length].play();
 
@@ -199,6 +233,10 @@ class SoundList{
 
     playNext() //same as PlayNext()
     {
+      if(Gamelab.config && Gamelab.config.soundOff)
+      {
+        return;
+      }
         this.sounds[this.cix % this.sounds.length].play();
 
         this.cix += 1;
@@ -207,6 +245,10 @@ class SoundList{
 
     play() //same as Play()
     {
+      if(Gamelab.config && Gamelab.config.soundOff)
+      {
+        return;
+      }
 
         this.sounds[this.cix % this.sounds.length].play();
 

@@ -28,38 +28,45 @@
         left: 200px;
         border: none;
         background: url("images/g.png");
-        background-size: 96% auto;
+        background-size:96% auto;
         width: 40px;
         height: 40px;
         border-radius: 50%;
       }
-      img.logo-main {
-        width: 180px;
-        height: auto;
-      }
-      div#main {
-        background: #101010;
-      }
-      example-link {
-        cursor: pointer;
-      }
-      h3.reference-title {
-        display: none;
+
+
+
+      div#main{
+
+      background:#101010;
+
       }
 
-      h1.page-title{
+
+      example-link{
+
+      cursor:pointer;
+
+      }
+
+      .text.hidden{
         display:none;
       }
 
-    </style>
+      .top-nav-wrapper.no-search ul li.active {
+        border-bottom: none;
+      }
 
+    </style>
 
   </head>
 
   <body>
 
     
-    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+    <span class="text hidden">SEARCH IS DISABLED FOR THIS PAGE</span>
+
     
 
     <input type="checkbox" id="nav-trigger" class="nav-trigger"/>
@@ -69,32 +76,24 @@
 
     <label for="nav-trigger" class="overlay"></label>
 
-    <div class="top-nav-wrapper">
+    <div class="top-nav-wrapper no-search">
       <ul>
         <li >
           <img class="logo" style="cursor:pointer; position:relative; height:34px; width:auto; " src="images/gamelab-logo.png" onclick="window.location='index.html';"></img>
+            <i class="g-icon"></i>
         </li>
 
         
-        <li>
-          <form id="search-form" class="navbar-form" role="search">
-
-            <i class="search-icon-planet"></i>
-            <input type="text" id="search-input" placeholder="Search" class="search-input">
-          </form>
-        </div>
-      </li>
-      
 
     </ul>
   </div>
 
   <nav style="padding-top:30px;">
     <h3 class="reference-title">
-      GamestackJs Documentation
+      Gamelab Documentation
     </h3>
 
-    <h3>Classes</h3><ul><li id="KeyboardEvent-nav"><a href="KeyboardEvent.html">KeyboardEvent</a></li><li id="SpriteFill-nav"><a href="SpriteFill.html">SpriteFill</a></li><li id="GameWindow-nav"><a href="GameWindow.html">GameWindow</a><ul class='methods'><li data-type="method" id="GameWindow-getCanvas-nav"><a href="GameWindow.html#getCanvas">getCanvas</a></li><li data-type="method" id="GameWindow-center-nav"><a href="GameWindow.html#center">center</a></li><li data-type="method" id="GameWindow-GridStyle-nav"><a href="GameWindow.html#GridStyle">GridStyle</a></li><li data-type="method" id="GameWindow-onUpdate-nav"><a href="GameWindow.html#onUpdate">onUpdate</a></li><li data-type="method" id="GameWindow-update-nav"><a href="GameWindow.html#update">update</a></li><li data-type="method" id="GameWindow-onBeforeDraw-nav"><a href="GameWindow.html#onBeforeDraw">onBeforeDraw</a></li><li data-type="method" id="GameWindow-onAfterDraw-nav"><a href="GameWindow.html#onAfterDraw">onAfterDraw</a></li><li data-type="method" id="GameWindow-Size-nav"><a href="GameWindow.html#Size">Size</a></li><li data-type="method" id="GameWindow-add-nav"><a href="GameWindow.html#add">add</a></li><li data-type="method" id="GameWindow-Background-nav"><a href="GameWindow.html#Background">Background</a></li><li data-type="method" id="GameWindow-remove-nav"><a href="GameWindow.html#remove">remove</a></li><li data-type="method" id="GameWindow-animate-nav"><a href="GameWindow.html#animate">animate</a></li><li data-type="method" id="GameWindow-start-nav"><a href="GameWindow.html#start">start</a></li></ul></li><li id="Camera-nav"><a href="Camera.html">Camera</a></li><li id="Animation-nav"><a href="Animation.html">Animation</a><ul class='methods'><li data-type="method" id="Animation-Frame#createColorMap-nav"><a href="Animation.html#.Frame#createColorMap">Frame#createColorMap</a></li><li data-type="method" id="Animation-init_singleFrame-nav"><a href="Animation.html#init_singleFrame">init_singleFrame</a></li><li data-type="method" id="Animation-onLoad-nav"><a href="Animation.html#onLoad">onLoad</a></li><li data-type="method" id="Animation-onRun-nav"><a href="Animation.html#onRun">onRun</a></li><li data-type="method" id="Animation-onComplete-nav"><a href="Animation.html#onComplete">onComplete</a></li><li data-type="method" id="Animation-ReverseFrames-nav"><a href="Animation.html#ReverseFrames">ReverseFrames</a></li><li data-type="method" id="Animation-SingleFrame-nav"><a href="Animation.html#SingleFrame">SingleFrame</a></li><li data-type="method" id="Animation-getCurrentPixelMap-nav"><a href="Animation.html#getCurrentPixelMap">getCurrentPixelMap</a></li><li data-type="method" id="Animation-setFrame-nav"><a href="Animation.html#setFrame">setFrame</a></li><li data-type="method" id="Animation-onUpdate-nav"><a href="Animation.html#onUpdate">onUpdate</a></li><li data-type="method" id="Animation-run-nav"><a href="Animation.html#run">run</a></li><li data-type="method" id="Animation-animate-nav"><a href="Animation.html#animate">animate</a></li><li data-type="method" id="Animation-engage-nav"><a href="Animation.html#engage">engage</a></li></ul></li><li id="Frame-nav"><a href="Frame.html">Frame</a></li><li id="Sound-nav"><a href="Sound.html">Sound</a></li><li id="GamepadEvent-nav"><a href="GamepadEvent.html">GamepadEvent</a></li><li id="Module-nav"><a href="Module.html">Module</a></li><li id="SpriteBrush-nav"><a href="SpriteBrush.html">SpriteBrush</a></li><li id="BoneSprite-nav"><a href="BoneSprite.html">BoneSprite</a></li><li id="VectorFrameBounds-nav"><a href="VectorFrameBounds.html">VectorFrameBounds</a></li><li id="GameImage-nav"><a href="GameImage.html">GameImage</a></li><li id="BoolEvent-nav"><a href="BoolEvent.html">BoolEvent</a><ul class='methods'><li data-type="method" id="BoolEvent-On-nav"><a href="BoolEvent.html#On">On</a></li><li data-type="method" id="BoolEvent-Call-nav"><a href="BoolEvent.html#Call">Call</a></li></ul></li><li id="InputEvent-nav"><a href="InputEvent.html">InputEvent</a></li><li id="Renderable-nav"><a href="Renderable.html">Renderable</a></li><li id="Rectangle-nav"><a href="Rectangle.html">Rectangle</a></li></ul>
+    <h3>Examples</h3><ul><li id="<example-link href='._gamelab-examples/html/boss-room-01.html' >boss-room-01</example-link>-nav"><example-link href='./gamelab-examples/html/boss-room-01.html' >boss-room-01</example-link></li><li id="<example-link href='._gamelab-examples/html/canvas-lightning.html' >canvas-lightning</example-link>-nav"><example-link href='./gamelab-examples/html/canvas-lightning.html' >canvas-lightning</example-link></li><li id="<example-link href='._gamelab-examples/html/image-effect-builder.html' >image-effect-builder</example-link>-nav"><example-link href='./gamelab-examples/html/image-effect-builder.html' >image-effect-builder</example-link></li><li id="<example-link href='._gamelab-examples/html/image-sequence-sprite.html' >image-sequence-sprite</example-link>-nav"><example-link href='./gamelab-examples/html/image-sequence-sprite.html' >image-sequence-sprite</example-link></li><li id="<example-link href='._gamelab-examples/html/level-test.html' >level-test</example-link>-nav"><example-link href='./gamelab-examples/html/level-test.html' >level-test</example-link></li><li id="<example-link href='._gamelab-examples/html/meme-generator.html' >meme-generator</example-link>-nav"><example-link href='./gamelab-examples/html/meme-generator.html' >meme-generator</example-link></li><li id="<example-link href='._gamelab-examples/html/particle.html' >particle</example-link>-nav"><example-link href='./gamelab-examples/html/particle.html' >particle</example-link></li><li id="<example-link href='._gamelab-examples/html/rectangle-block-terrain-generator.html' >rectangle-block-terrain-generator</example-link>-nav"><example-link href='./gamelab-examples/html/rectangle-block-terrain-generator.html' >rectangle-block-terrain-generator</example-link></li><li id="<example-link href='._gamelab-examples/html/run-gun-frog.html' >run-gun-frog</example-link>-nav"><example-link href='./gamelab-examples/html/run-gun-frog.html' >run-gun-frog</example-link></li><li id="<example-link href='._gamelab-examples/html/space-game.html' >space-game</example-link>-nav"><example-link href='./gamelab-examples/html/space-game.html' >space-game</example-link></li><li id="<example-link href='._gamelab-examples/html/sprite-jungle-gym.html' >sprite-jungle-gym</example-link>-nav"><example-link href='./gamelab-examples/html/sprite-jungle-gym.html' >sprite-jungle-gym</example-link></li><li id="<example-link href='._gamelab-examples/html/sprite.mouse-events.html' >sprite</example-link>-nav"><example-link href='./gamelab-examples/html/sprite.mouse-events.html' >sprite</example-link></li><li id="<example-link href='._gamelab-examples/html/sprite.pixel-rays.html' >sprite</example-link>-nav"><example-link href='./gamelab-examples/html/sprite.pixel-rays.html' >sprite</example-link></li><li id="<example-link href='._gamelab-examples/html/title-sequence.html' >title-sequence</example-link>-nav"><example-link href='./gamelab-examples/html/title-sequence.html' >title-sequence</example-link></li><li id="<example-link href='._gamelab-examples/html/zipmeister.html' >zipmeister</example-link>-nav"><example-link href='./gamelab-examples/html/zipmeister.html' >zipmeister</example-link></li></ul><h3>Classes</h3><ul><li id="GamepadEvent-nav"><a href="GamepadEvent.html">GamepadEvent</a></li><li id="SpriteGroup-nav"><a href="SpriteGroup.html">SpriteGroup</a></li><li id="GameWindow-nav"><a href="GameWindow.html">GameWindow</a><ul class='methods'><li data-type="method" id="GameWindow-getCanvas-nav"><a href="GameWindow.html#getCanvas">getCanvas</a></li><li data-type="method" id="GameWindow-center-nav"><a href="GameWindow.html#center">center</a></li><li data-type="method" id="GameWindow-GridStyle-nav"><a href="GameWindow.html#GridStyle">GridStyle</a></li><li data-type="method" id="GameWindow-onUpdate-nav"><a href="GameWindow.html#onUpdate">onUpdate</a></li><li data-type="method" id="GameWindow-onResize-nav"><a href="GameWindow.html#onResize">onResize</a></li><li data-type="method" id="GameWindow-update-nav"><a href="GameWindow.html#update">update</a></li><li data-type="method" id="GameWindow-onBeforeDraw-nav"><a href="GameWindow.html#onBeforeDraw">onBeforeDraw</a></li><li data-type="method" id="GameWindow-onAfterDraw-nav"><a href="GameWindow.html#onAfterDraw">onAfterDraw</a></li><li data-type="method" id="GameWindow-Size-nav"><a href="GameWindow.html#Size">Size</a></li><li data-type="method" id="GameWindow-add-nav"><a href="GameWindow.html#add">add</a></li><li data-type="method" id="GameWindow-Background-nav"><a href="GameWindow.html#Background">Background</a></li><li data-type="method" id="GameWindow-remove-nav"><a href="GameWindow.html#remove">remove</a></li><li data-type="method" id="GameWindow-run-nav"><a href="GameWindow.html#run">run</a></li><li data-type="method" id="GameWindow-start-nav"><a href="GameWindow.html#start">start</a></li></ul></li><li id="BoolEvent-nav"><a href="BoolEvent.html">BoolEvent</a><ul class='methods'><li data-type="method" id="BoolEvent-On-nav"><a href="BoolEvent.html#On">On</a></li><li data-type="method" id="BoolEvent-Call-nav"><a href="BoolEvent.html#Call">Call</a></li></ul></li><li id="Camera-nav"><a href="Camera.html">Camera</a></li><li id="Animation-nav"><a href="Animation.html">Animation</a><ul class='methods'><li data-type="method" id="Animation-init_singleFrame-nav"><a href="Animation.html#init_singleFrame">init_singleFrame</a></li><li data-type="method" id="Animation-onLoad-nav"><a href="Animation.html#onLoad">onLoad</a></li><li data-type="method" id="Animation-onRun-nav"><a href="Animation.html#onRun">onRun</a></li><li data-type="method" id="Animation-onComplete-nav"><a href="Animation.html#onComplete">onComplete</a></li><li data-type="method" id="Animation-soleComplete-nav"><a href="Animation.html#soleComplete">soleComplete</a></li><li data-type="method" id="Animation-ReverseFrames-nav"><a href="Animation.html#ReverseFrames">ReverseFrames</a></li><li data-type="method" id="Animation-SingleFrame-nav"><a href="Animation.html#SingleFrame">SingleFrame</a></li><li data-type="method" id="Animation-getCurrentPixelMap-nav"><a href="Animation.html#getCurrentPixelMap">getCurrentPixelMap</a></li><li data-type="method" id="Animation-setFrame-nav"><a href="Animation.html#setFrame">setFrame</a></li><li data-type="method" id="Animation-onUpdate-nav"><a href="Animation.html#onUpdate">onUpdate</a></li><li data-type="method" id="Animation-run-nav"><a href="Animation.html#run">run</a></li><li data-type="method" id="Animation-animate-nav"><a href="Animation.html#animate">animate</a></li><li data-type="method" id="Animation-engage-nav"><a href="Animation.html#engage">engage</a></li><li data-type="method" id="Animation-Frame#createColorMap-nav"><a href="Animation.html#.Frame#createColorMap">Frame#createColorMap</a></li></ul></li><li id="Module-nav"><a href="Module.html">Module</a></li><li id="Sprite-nav"><a href="Sprite.html">Sprite</a><ul class='methods'><li data-type="method" id="Sprite-onLoad-nav"><a href="Sprite.html#onLoad">onLoad</a></li><li data-type="method" id="Sprite-Clone-nav"><a href="Sprite.html#Clone">Clone</a></li><li data-type="method" id="Sprite-Add-nav"><a href="Sprite.html#Add">Add</a></li><li data-type="method" id="Sprite-Life-nav"><a href="Sprite.html#Life">Life</a></li><li data-type="method" id="Sprite-init-nav"><a href="Sprite.html#init">init</a></li><li data-type="method" id="Sprite-addInitializer-nav"><a href="Sprite.html#addInitializer">addInitializer</a></li><li data-type="method" id="Sprite-get_id-nav"><a href="Sprite.html#get_id">get_id</a></li><li data-type="method" id="Sprite-create_id-nav"><a href="Sprite.html#create_id">create_id</a></li><li data-type="method" id="Sprite-getSizeByMax-nav"><a href="Sprite.html#getSizeByMax">getSizeByMax</a></li><li data-type="method" id="Sprite-SingleFrame-nav"><a href="Sprite.html#SingleFrame">SingleFrame</a></li><li data-type="method" id="Sprite-LifeSpan-nav"><a href="Sprite.html#LifeSpan">LifeSpan</a></li><li data-type="method" id="Sprite-Life-nav"><a href="Sprite.html#Life">Life</a></li><li data-type="method" id="Sprite-isDead-nav"><a href="Sprite.html#isDead">isDead</a></li><li data-type="method" id="Sprite-die-nav"><a href="Sprite.html#die">die</a></li><li data-type="method" id="Sprite-onScreen-nav"><a href="Sprite.html#onScreen">onScreen</a></li><li data-type="method" id="Sprite-update-nav"><a href="Sprite.html#update">update</a></li><li data-type="method" id="Sprite-onUpdate-nav"><a href="Sprite.html#onUpdate">onUpdate</a></li><li data-type="method" id="Sprite-travelLineOnLoop-nav"><a href="Sprite.html#travelLineOnLoop">travelLineOnLoop</a></li><li data-type="method" id="Sprite-shoot-nav"><a href="Sprite.html#shoot">shoot</a></li><li data-type="method" id="Sprite-subsprite-nav"><a href="Sprite.html#subsprite">subsprite</a></li><li data-type="method" id="Sprite-animate-nav"><a href="Sprite.html#animate">animate</a></li><li data-type="method" id="Sprite-onAnimationComplete-nav"><a href="Sprite.html#onAnimationComplete">onAnimationComplete</a></li><li data-type="method" id="Sprite-center-nav"><a href="Sprite.html#center">center</a></li><li data-type="method" id="Sprite-overlap_x-nav"><a href="Sprite.html#overlap_x">overlap_x</a></li><li data-type="method" id="Sprite-overlap_y-nav"><a href="Sprite.html#overlap_y">overlap_y</a></li><li data-type="method" id="Sprite-collide_stop_x-nav"><a href="Sprite.html#collide_stop_x">collide_stop_x</a></li><li data-type="method" id="Sprite-restoreFrom-nav"><a href="Sprite.html#restoreFrom">restoreFrom</a></li></ul></li><li id="Frame-nav"><a href="Frame.html">Frame</a></li><li id="Sound-nav"><a href="Sound.html">Sound</a></li><li id="InputEvent-nav"><a href="InputEvent.html">InputEvent</a></li><li id="Renderable-nav"><a href="Renderable.html">Renderable</a></li><li id="SpriteFill-nav"><a href="SpriteFill.html">SpriteFill</a></li><li id="SpriteBrush-nav"><a href="SpriteBrush.html">SpriteBrush</a></li><li id="BoneSprite-nav"><a href="BoneSprite.html">BoneSprite</a></li><li id="VectorFrameBounds-nav"><a href="VectorFrameBounds.html">VectorFrameBounds</a></li><li id="GameImage-nav"><a href="GameImage.html">GameImage</a></li><li id="Rectangle-nav"><a href="Rectangle.html">Rectangle</a></li><li id="KeyboardEvent-nav"><a href="KeyboardEvent.html">KeyboardEvent</a></li></ul>
   </nav>
 
   <div id="main">
@@ -285,7 +284,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line2653">line 2653</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3062">line 3062</a>
         </li>
       </ul>
     </dd>
@@ -424,7 +423,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line2663">line 2663</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3071">line 3071</a>
         </li>
       </ul>
     </dd>
@@ -540,7 +539,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line2676">line 2676</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3086">line 3086</a>
         </li>
       </ul>
     </dd>
@@ -656,7 +655,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line2703">line 2703</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3111">line 3111</a>
         </li>
       </ul>
     </dd>
@@ -746,7 +745,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line2763">line 2763</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3204">line 3204</a>
         </li>
       </ul>
     </dd>
@@ -837,7 +836,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line2776">line 2776</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3217">line 3217</a>
         </li>
       </ul>
     </dd>
@@ -928,7 +927,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line2863">line 2863</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3309">line 3309</a>
         </li>
       </ul>
     </dd>
@@ -1019,7 +1018,98 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line2919">line 2919</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3360">line 3360</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#onResize">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="onResize">
+      <span class="type-signature"></span>onResize<span class="signature">()</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>adds a resize call to the GameWindow:: resize to be called when window size changes</p>
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3375">line 3375</a>
         </li>
       </ul>
     </dd>
@@ -1110,7 +1200,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line2932">line 2932</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3388">line 3388</a>
         </li>
       </ul>
     </dd>
@@ -1201,7 +1291,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3021">line 3021</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3517">line 3517</a>
         </li>
       </ul>
     </dd>
@@ -1292,7 +1382,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3045">line 3045</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3546">line 3546</a>
         </li>
       </ul>
     </dd>
@@ -1467,7 +1557,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3071">line 3071</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3572">line 3572</a>
         </li>
       </ul>
     </dd>
@@ -1642,7 +1732,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3112">line 3112</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3613">line 3613</a>
         </li>
       </ul>
     </dd>
@@ -1788,7 +1878,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3171">line 3171</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3658">line 3658</a>
         </li>
       </ul>
     </dd>
@@ -1934,7 +2024,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3188">line 3188</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3672">line 3672</a>
         </li>
       </ul>
     </dd>
@@ -1967,13 +2057,13 @@
   
 
   <span class='name-container'>
-    <a class="link-icon" href="#animate">
+    <a class="link-icon" href="#run">
       <svg height="20" width="20" style="fill: black;">
         <use xlink:href="#linkIcon"></use>
       </svg>
     </a>
-    <h4 class="name" id="animate">
-      <span class="type-signature"></span>animate<span class="signature">(time)</span><span class="type-signature"></span>
+    <h4 class="name" id="run">
+      <span class="type-signature"></span>run<span class="signature">(time)</span><span class="type-signature"></span>
     </h4>
   </span>
 
@@ -2006,6 +2096,8 @@
       
 
       
+        <th>Default</th>
+      
 
       <th class="last">Description</th>
     </tr>
@@ -2033,6 +2125,12 @@
 
         
 
+        
+          <td class="default">
+            
+              0
+            
+          </td>
         
 
         <td class="description last">
@@ -2080,7 +2178,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3222">line 3222</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3722">line 3722</a>
         </li>
       </ul>
     </dd>
@@ -2171,7 +2269,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3275">line 3275</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line3795">line 3795</a>
         </li>
       </ul>
     </dd>
@@ -2214,29 +2312,11 @@
   <br class="clear">
 
   
-  <div class="modal fade" id="searchResults">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Search results</h4>
-        </div>
-        <div class="modal-body"></div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-      <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-  </div>
-  
 
   <footer>
     Documentation generated by
     <a href="https://github.com/jsdoc3/jsdoc">JSDoc
-      3.5.5</a>
+      3.6.3</a>
   </footer>
 
   <script src="scripts/linenumber.js"></script>
@@ -2244,31 +2324,46 @@
 
   <script>
 
-    $(document).ready(function () {
-      console.log('doc-ready::');
-    });
+    var g = {rotation:0};
+
+    var DisplayUpdates = {
+
+      Logo:{
+        start: function () {
+
+        setInterval(function () {
+
+            g.rotation += 1.0;
+
+          var GDom = document.querySelector('i.g-icon');
+
+            GDom.style.transform = `rotate(${g.rotation}deg)`;
+
+        }, 20);
+
+        }
+      }
+
+    };
+
+
+  $(document).ready(function(){
+
+      console.log('Document-Ready::');
+      DisplayUpdates.Logo.start();
+
+  });
+
   </script>
 
-  
-  <script type="text/javascript">
-    $(document).ready(function () {
-      SearcherDisplay.init();
 
-      $('#search-form').submit(function (e) {
 
-        //alert('form submit'); localStorage.setItem('searchValue', $('#search-input').val());
-        SearcherDisplay.startSearch();
-        e.preventDefault();
-        return false;
-
-      });
-    });
-  </script>
   
 
   <script type="text/x-docstrap-searchdb">
     <%= searchableDocuments %>
   </script>
+
 
 </body>
 </html>

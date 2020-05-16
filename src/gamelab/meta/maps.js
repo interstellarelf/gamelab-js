@@ -50,13 +50,17 @@ let ObjectFeatureMap = { //className / must have named function properties when 
 
   Sprite: ['@spatial', '@data'],
 
-  SpriteBrush: ['@spatial', '@data'],
+  SpriteGroup:['@relative_spatial', '@data'],
 
-  Elipse:['@spatial'],
+  SpriteBrush: ['@spatial', '@data'],
 
   Frame:['@spatial'],
 
   Particle:['@spatial'],
+
+  RectangularLine:['@spatial'],
+
+  Circle:['@spatial'],
 
   Animation: ['@anchored', '@framedriven', '@effectdriven', '@data'],
 

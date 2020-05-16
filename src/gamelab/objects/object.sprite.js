@@ -12,51 +12,36 @@
  *
  * @returns {Sprite} a Gamelab.Sprite object
  *
- *
- *
  */
 
-var Checkers = {
 
-    ListProps:function(array, props, call){
-
-      array.forEach(function(){
-
-
-
-      });
-
-    }
-
-};
-
-class Sprite extends Scriptable {
-  constructor(src = {}, scale = 1.0) {
-    super();
-    this.Object(this);
-
+class Sprite {
+  constructor(src = {}, scale) {
     var args = typeof src == 'object' ? src : {};
 
-
-    if (args instanceof Gamelab.Animation) //instantiate from animation
-    {
-      console.dev('args was Gamelab.Animation', args);
-      args = {
-        selected_animation: args,
-        image: args.image,
-        size: new Gamelab.Vector(args.frameSize)
-      };
-    }
-
+    this.handleAnimationArgs(args);
     this.animations = [];
+    this.layer = 0;
+    this.type = 'Sprite';
 
     //create size property
     this.size = new Gamelab.Vector(0, 0);
     this.active = true; //defaults to active or visible
+    this.ticker = 0;
 
+    this.scale = scale || 1.0;
 
-    //apply image from string 'src'
+    //apply canvas-src if passed
+    this.handleCanvasArgs(src);
 
+    //apply remaining args
+    this.apply_args(args);
+
+    if (!this.selected_animation)
+      this.SingleFrame();
+  }
+
+  handleCanvasArgs(src) {
     if (src instanceof HTMLCanvasElement) {
       this.src = src;
       this.selected_animation = new Gamelab.Animation(src);
@@ -66,25 +51,45 @@ class Sprite extends Scriptable {
       this.SingleFrame();
     } else if (typeof src == 'string') {
       this.src = src;
+
+      var srcTail = this.src.split('/').pop();
+      //set name to part of file-name, if name falsy
+      if (srcTail) {
+        this.name = this.name || srcTail.split('.')[0];
+      }
+
       this.selected_animation = new Gamelab.Animation(src);
       this.image = this.selected_animation.image;
       this.animations = [];
       this.animations.push(this.selected_animation);
       this.SingleFrame();
     }
-
-    if (typeof(scale) == 'number') //image plus 'scale' argument
-    {
-      this.scale = scale || 1.0;
-    }
-
-    //apply remaining args
-    this.apply_args(args);
-
-    if (!this.selected_animation)
-      this.SingleFrame();
   }
 
+  handleAnimationArgs(args) {
+    if (args instanceof Gamelab.Animation) //instantiate from animation
+    {
+      console.info('args was Gamelab.Animation', args);
+      args = {
+        selected_animation: args,
+        image: args.image,
+        size: new Gamelab.Vector(args.frameSize)
+      };
+    }
+  }
+
+  Origin(o) {
+    this.origin = new Gamelab.Vector(o);
+    if (this.anime) {
+      this.anime.origin = new Gamelab.Vector(o);
+    }
+    return this;
+  }
+
+  Layer(l) {
+    this.layer = l;
+    return this;
+  }
 
   Size(x, y, z) {
     this.size = new Gamelab.Vector(x, y, z);
@@ -94,30 +99,134 @@ class Sprite extends Scriptable {
     return this.size;
   }
 
-
   static_image_load(img) {
     this.size = new Gamelab.Vector(img.width * this.scale, img.height * this.scale).round();
   }
 
-  EffectCanvas(color) {
+  pushColorEffectCanvas(color) {
+    this.effectCanvasList = this.effectCanvasList || [];
 
-    this.effectCanvas = document.createElement('CANVAS');
-
+    var canvas = document.createElement('CANVAS');
     var img = this.image.domElement;
 
+    canvas.width = img.width;
+    canvas.height = img.height;
+
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, img.width, img.height);
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.67;
+    ctx.globalCompositeOperation = "source-atop";
+    ctx.fillRect(0, 0, img.width, img.height);
+    ctx.globalCompositeOperation = "source-over";
+
+    this.effectCanvasList.push(canvas);
+
+    return this;
+  }
+
+  GlobalComposite(g) {
+    this.globalCompositeOperation = g;
+    return this;
+  }
+
+  ColorEffect(color, opacity = 0.666) {
+    this.clearEffects();
+    this.effectCanvas = this.effectCanvas || document.createElement('CANVAS');
+
+    var img = this.image.domElement;
     this.effectCanvas.width = img.width;
     this.effectCanvas.height = img.height;
 
-    this.effectCtx = this.effectCanvas.getContext('2d');
-
-
-    this.effectCtx.drawImage(img, 0, 0, img.width, img.height);
+    this.effectCtx = this.effectCtx || this.effectCanvas.getContext('2d');
+    this.effectCtx.drawImage(img, 0, 0, img.width * this.scale, img.height * this.scale);
 
     this.effectCtx.fillStyle = color;
-    this.effectCtx.globalAlpha = 0.62;
+    this.effectCtx.globalAlpha = opacity;
     this.effectCtx.globalCompositeOperation = "source-atop";
     this.effectCtx.fillRect(0, 0, img.width, img.height);
     this.effectCtx.globalCompositeOperation = "source-over";
+    this.data = this.effectCtx.getImageData(0, 0, this.effectCanvas.width, this.effectCanvas.height);
+    return this;
+  }
+
+  DrawToCanvas() {
+    this.clearEffects();
+    this.effectCanvas = this.effectCanvas || document.createElement('CANVAS');
+    var img = this.image.domElement;
+    this.effectCanvas.width = img.width;
+    this.effectCanvas.height = img.height;
+    this.effectCtx = this.effectCtx || this.effectCanvas.getContext('2d');
+    this.effectCtx.drawImage(img, 0, 0, img.width, img.height);
+    this.image.domElement = this.effectCanvas;
+    return this;
+  }
+
+  doCanvasEffects() {
+
+    if (!this.stored) {
+      this.clearEffects();
+    }
+
+    this.effectCanvas = this.effectCanvas || document.createElement('CANVAS');
+    this.effectCanvasList = this.effectCanvasList || [];
+
+    var img = this.image.domElement;
+
+    this.img = img;
+    this.effectCanvas.width = img.width;
+    this.effectCanvas.height = img.height;
+    this.effectCtx = this.effectCtx || this.effectCanvas.getContext('2d');
+    this.effectCtx.drawImage(img, 0, 0, img.width, img.height);
+
+    this.data = this.effectCtx.getImageData(0, 0, this.effectCanvas.width, this.effectCanvas.height);
+    this.effectCanvasList.push(this.effectCanvas);
+
+    this.stored = true;
+    this.effectFrames = [];
+  }
+
+  resetEffectFrames() {
+    this.effectFrames = [];
+    return this;
+  }
+
+  addFilterFrame(api, callback) {
+
+    this.effectCanvasList = this.effectCanvasList || [];
+    this.effectFrames = this.effectFrames || [];
+    this.effectCanvasTimer = 0;
+
+    if (api.timer == 0) {
+      //    alert('doing effects');
+      this.doCanvasEffects();
+    }
+
+    var data = this.effectCtx.getImageData(0, 0, this.effectCanvas.width, this.effectCanvas.height);
+    api.next(data);
+    this.effectFrames.push(data);
+    //    console.log('added effect data');
+  }
+
+  DoubleBackFilterFrames() {
+    this.effectFrames = this.effectFrames.concat(this.effectFrames.slice().reverse());
+    return;
+  }
+
+  addImageFrame(image, callback) {
+    this.effectCanvasTimer = 0;
+    this.effectCanvas.width = this.size.x;
+    this.effectCanvas.height = this.size.y;
+    this.effectCtx.drawImage(image, 0, 0, this.size.x, this.size.y);
+    var data = this.effectCtx.getImageData(0, 0, this.effectCanvas.width, this.effectCanvas.height);
+    console.info('effect', data);
+    this.effectFrames.push(data);
+    console.log('added effect data');
+  }
+
+  clearEffects() {
+    if (this.effectCanvas && this.effectCtx)
+      this.effectCtx.clearRect(0, 0, this.effectCanvas.width, this.effectCanvas.height);
     return this;
   }
 
@@ -132,27 +241,17 @@ class Sprite extends Scriptable {
   onLoad(f) {
 
     if (this.src instanceof HTMLCanvasElement) {
-
       var f = f || function() {};
-
       f.bind(this).call(false);
-
     }
 
     if (this.image && this.image.domElement) {
-
       var img = this.image.domElement,
-
         load = img.onload;
-
       f = f || function() {};
-
       f.bind(this);
-
       this.load_call = f;
-
       var $sprite = this;
-
       img.onload = function() {
 
         $sprite.load_total += 1;
@@ -165,11 +264,13 @@ class Sprite extends Scriptable {
       img.onerror = function(err) {
         $sprite.load_call(true, $sprite);
       }
+    } else if (this.anime && this.anime.frames instanceof Array) {
+      this.load_call = f;
+      f.bind(this).call();
     }
 
     return this;
   }
-
 
   Opacity(o) {
 
@@ -186,7 +287,6 @@ class Sprite extends Scriptable {
 
     this.FromData(args, true); //Using a FUNCTIONAL COPY --heavy to process
 
-
     function array_instance(list) {
       return list.slice(0);
     };
@@ -195,9 +295,11 @@ class Sprite extends Scriptable {
       this.image = args.image;
     }
 
-    this.name = args.name || "__blankName";
+    if (typeof args.name == 'string')
+      this.name = args.name;
 
-    this.life = args.life || 999999999999;
+    //life is either provided or assumed to be approx 4 seconds
+    this.life = args.life || 4000 / 50;
 
     this.description = args.description || "__spriteDesc";
 
@@ -236,17 +338,11 @@ class Sprite extends Scriptable {
      **********/
 
     this.motions = Gamelab.getArg(args, 'motions', []);
-
     this.particles = Gamelab.getArg(args, 'particles', []);
-
     this.shots = Gamelab.getArg(args, 'shots', []);
-
     this.init_ext = Gamelab.getArg(args, 'init_ext', []);
-
     this.group = Gamelab.getArg(args, 'group', 'one');
-
     this.scrollFactor = args.scrollFactor || 1.0;
-
     this.noScroll = args.noScroll || false;
 
     if (this.noScroll) {
@@ -275,12 +371,11 @@ class Sprite extends Scriptable {
      **********/
 
     this.position = new Gamelab.Vector(Gamelab.getArg(args, 'position', new Gamelab.Vector(0, 0, 0)));
-
-
     this.realPosition = new Gamelab.Vector(Gamelab.getArg(args, 'realPosition', new Gamelab.Vector(0, 0, 0)));
-
     this.collision_bounds = Gamelab.getArg(args, 'collision_bounds', new Gamelab.VectorBounds(new Gamelab.Vector(0, 0, 0), new Gamelab.Vector(0, 0, 0)));
 
+
+    this.GROUNDED = false;
 
     /**
      *
@@ -298,13 +393,9 @@ class Sprite extends Scriptable {
      **********/
 
     this.scale = args.scale || 1.0;
-
     this.acceleration = Gamelab.getArg(args, 'acceleration', new Gamelab.Vector(0, 0, 0));
-
     this.rot_speed = new Gamelab.Vector(Gamelab.getArg(args, 'rot_speed', new Gamelab.Vector(0, 0)));
-
     this.rot_accel = new Gamelab.Vector(Gamelab.getArg(args, 'rot_accel', new Gamelab.Vector(0, 0)));
-
     this.padding = Gamelab.getArg(args, 'padding', new Gamelab.Vector(0, 0, 0));
 
 
@@ -314,52 +405,39 @@ class Sprite extends Scriptable {
 
 
     Gamelab.each(this.shots, function(ix, item) {
-
       __inst.shots[ix] = new Gamelab.Shot(item);
-
     });
 
     Gamelab.each(this.sounds, function(ix, item) {
-
       __inst.sounds[ix] = new Gamelab.Sound(item);
-
     });
 
     Gamelab.each(this.motions, function(ix, item) {
-
       __inst.motions[ix] = new Gamelab.TweenMotion(item);
-
     });
 
     Gamelab.each(this.animations, function(ix, item) {
-
       __inst.animations[ix] = new Gamelab.Animation(item);
-
     });
 
     Gamelab.each(this.particles, function(ix, item) {
-
       __inst.particles[ix] = new Gamelab.GSProton(item);
-
     });
 
     //Apply initializers:
 
     Gamelab.each(this.init_ext, function(ix, item) {
-
       __inst.addInitializer(item);
-
     });
 
     if (!this.selected_animation && args.selected_animation) {
 
-      console.dev('applying animation:' + jstr(args.selected_animation));
+      //console.dev('applying animation:' + jstr(args.selected_animation));
       this.selected_animation = new Gamelab.Animation(args.selected_animation);
 
       this.animations = [];
       if (this.animations.indexOf(this.selected_animation) == -1)
         this.animations.push(this.selected_animation);
-
     }
   }
 
@@ -368,17 +446,11 @@ class Sprite extends Scriptable {
   }
 
   Origin(x, y) {
-
     this.origin = new Gamelab.Vector(x, y);
-
     var sprite = this;
-
     this.animations.forEach(function($anime) {
-
       $anime.Origin(sprite.origin);
-
     });
-
   }
 
 
@@ -392,13 +464,9 @@ class Sprite extends Scriptable {
 
   Clone(sprite) {
     console.log('using Clone() function');
-
     var clone = new Gamelab.Sprite(sprite.src);
-
     clone.Anime(new Gamelab.Animation(sprite.anime));
-
     clone.apply_args(sprite);
-
     return clone;
   }
 
@@ -423,11 +491,34 @@ class Sprite extends Scriptable {
       };
     }
 
+    if (sprite.invisible)
+      return;
+
     if (sprite.active && (this.DRAWOFFSCREEN || sprite.onScreen(Gamelab.WIDTH, Gamelab.HEIGHT))) {
       this.draw_current_frame(ctx, camera);
     }
   }
 
+  setSoleUpdate(callback) {
+    this.update = function() {
+      callback.bind(this).call();
+    };
+  }
+
+  onCollision(object, callback) {
+    this.onUpdate(function() {
+      var collisions = Gamelab.Collision.spriteCollideArray([this], object);
+      collisions.forEach(function(c) {
+        callback(c.object, c.collider);
+      });
+    });
+  }
+
+  onListCollision(object, callback) {
+    this.onUpdate(function() {
+      callback(Gamelab.Collision.spriteCollideArray([this], object));
+    });
+  }
 
   draw_current_frame(ctx, camera) {
 
@@ -442,20 +533,40 @@ class Sprite extends Scriptable {
     var frame = false,
       frameList = [];
 
+    if (this.effectCanvas) {
+      this.size = new Gamelab.Vector(this.effectCanvas.width * this.scale, this.effectCanvas.height * this.scale),
+        this.Origin(this.size.div(2.0));
+
+      console.log('drawing effect canvas');
+
+      let imageFrameArgs = {
+        image: this.effectCanvas,
+        framePos: new Gamelab.Vector(0, 0),
+        frameSize: this.size,
+        position: new Gamelab.Vector2D(Math.round(this.position.x + (this.origin.x)), Math.round(this.position.y + (this.origin.y))),
+        size: this.size,
+        rotation: this.rotation.x,
+        canvasContext: ctx,
+        flipX: this.flipX,
+        flipY: this.flipY,
+        origin: this.origin,
+        globalAlpha: this.opacity,
+        globalComposite: this.globalCompositeOperation || false
+      };
+
+      return Gamelab.Canvas.draw_image_frame(imageFrameArgs);
+    }
+
     if (sprite.active) {
 
       if (sprite.selected_animation instanceof Array && sprite.selected_animation.length >= 1) {
         sprite.selected_animation.forEach(function(anime) {
-
           frameList.push(anime.selected_frame);
-
         });
       }
 
       if (sprite.selected_animation instanceof Object && sprite.selected_animation.hasOwnProperty('selected_frame')) {
-
         frame = sprite.selected_animation.selected_frame;
-
       }
 
       var p = sprite.position;
@@ -500,12 +611,40 @@ class Sprite extends Scriptable {
         rotation = sprite.rotation;
       }
 
-      if(!(sprite.selected_animation && sprite.selected_animation.selected_frame))
-      {
+
+      if (this.image && this.image.domElement instanceof HTMLCanvasElement) {
+        var x = this.position.x,
+          y = this.position.y;
+
+        x -= camera_pos.x * scrollFactor || 0;
+        y -= camera_pos.y * scrollFactor || 0;
+        //  console.log('sprite:: canvas draw!! ');
+
+        let imageFrameArgs = {
+          image: this.image.domElement,
+          framePos: new Gamelab.Vector(0, 0),
+          frameSize: this.size,
+          position: new Gamelab.Vector2D(Math.round(x + (origin.x)), Math.round(y + (origin.y))),
+          size: new Gamelab.Vector2D(realWidth, realHeight),
+          rotation: rotation % 360,
+          canvasContext: ctx,
+          flipX: sprite.flipX,
+          flipY: sprite.flipY,
+          origin: origin,
+          globalAlpha: this.opacity,
+          globalComposite: this.globalCompositeOperation || false
+        };
+
+        return Gamelab.Canvas.draw_image_frame(imageFrameArgs);
+
+      }
+
+
+      if (!(sprite.selected_animation && sprite.selected_animation.selected_frame)) {
         return;
       }
 
-      var frame = sprite.selected_animation.selected_frame;      
+      var frame = sprite.selected_animation.selected_frame;
 
       if (frame && frame.image && frame.image.data) {
 
@@ -540,8 +679,24 @@ class Sprite extends Scriptable {
               //console.log('drawing with origin:' + origin.x + ':' + origin.y);
             }
 
-            if (frame && frame.image)
-              Gamelab.Canvas.draw_image_frame(sprite.effectCanvas ? sprite.effectCanvas : frame.image.domElement, frame.framePos, frame.frameSize, new Gamelab.Vector2D(Math.round(xpos + (origin.x)), Math.round(ypos + (origin.y))), new Gamelab.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin, this.opacity, this.globalCompositeOperation || false);
+            if (frame && frame.image) {
+              let imageFrameArgs = {
+                image: sprite.effectCanvas ? sprite.effectCanvas : frame.image.domElement,
+                framePos: frame.framePos,
+                frameSize: frame.frameSize,
+                position: new Gamelab.Vector2D(Math.round(xpos + (origin.x)), Math.round(ypos + (origin.y))),
+                size: new Gamelab.Vector2D(realWidth, realHeight),
+                rotation: rotation % 360,
+                canvasContext: ctx,
+                flipX: sprite.flipX,
+                flipY: sprite.flipY,
+                origin: origin,
+                globalAlpha: this.opacity,
+                globalComposite: this.globalCompositeOperation || false
+              };
+
+              return Gamelab.Canvas.draw_image_frame(imageFrameArgs);
+            }
 
           });
 
@@ -554,16 +709,29 @@ class Sprite extends Scriptable {
           pos.y -= camera_pos.y * scrollFactor || 0;
           sprite.realPosition = pos;
           if (frame.image.domElement instanceof HTMLImageElement || frame.image.domElement instanceof HTMLCanvasElement) {
-            Gamelab.Canvas.draw_image_frame(this.effectCanvas ? this.effectCanvas : frame.image.domElement, frame.framePos, frame.frameSize, new Gamelab.Vector2D(Math.round(pos.x + (origin.x)), Math.round(pos.y + (origin.y))), new Gamelab.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin, this.opacity, this.globalCompositeOperation || false);
+
+            let imageFrameArgs = {
+              image: this.effectCanvas ? this.effectCanvas : frame.image.domElement,
+              framePos: frame.framePos,
+              frameSize: frame.frameSize,
+              position: new Gamelab.Vector2D(Math.round(pos.x + (origin.x)), Math.round(pos.y + (origin.y))),
+              size: new Gamelab.Vector2D(realWidth, realHeight),
+              rotation: rotation % 360,
+              canvasContext: ctx,
+              flipX: sprite.flipX,
+              flipY: sprite.flipY,
+              origin: origin,
+              globalAlpha: this.opacity,
+              globalComposite: this.globalCompositeOperation || false
+            };
+
+            return Gamelab.Canvas.draw_image_frame(imageFrameArgs);
           }
-
         }
-
       }
     }
 
   }
-
 
   /**
    * adds an animation to the sprites
@@ -610,6 +778,10 @@ class Sprite extends Scriptable {
       if (fxlCopy || typeof(data[x]) !== 'function')
         this[x] = data[x];
     }
+
+    if (data.update) {
+      this.update = data.update;
+    }
     return this;
   }
 
@@ -625,15 +797,32 @@ class Sprite extends Scriptable {
    * @memberof Sprite
    **************************************************************/
 
-  Scale(scaleFloat) {
+  Scale(scaleFloat, frameSize = {}) {
 
     this.scale = scaleFloat;
 
-    this.size = new Gamelab.Vector(this.image.domElement.width * scaleFloat, this.image.domElement.height * scaleFloat);
+    if (this.anime && this.anime.frameSize && this.anime.frameSize.above_zero_xy()) {
+      frameSize = this.anime.frameSize;
+    }
+
+    var size_x = frameSize.x || this.image.domElement.width,
+      size_y = frameSize.y || this.image.domElement.height;
+
+    var size = new Gamelab.Vector(size_x * scaleFloat, size_y * scaleFloat);
+
+
+    if (!this.size || isNaN(this.size.x) || isNaN(this.size.y))
+      this.size = new Gamelab.Vector(0, 0);
+
+
+    var diffpos = size.sub(this.size).half();
+
+    this.position.x -= diffpos.x;
+    this.position.y -= diffpos.y;
+    this.size = size;
 
     return this;
   }
-
 
   /**************************************************************
    * applies a float value arg to Sprite.scrollFactor
@@ -646,24 +835,16 @@ class Sprite extends Scriptable {
 
   ScrollFactor(s) {
     this.scrollFactor = s;
-
     return this;
-
   }
-
 
   engage(obj) //engages an object having an engage function
   {
-
     obj.parent = this;
-
     if (obj.engage) {
       obj.engage();
-
     }
-
   }
-
 
   /**
    * pass argument v to the sprite.life property.
@@ -674,13 +855,9 @@ class Sprite extends Scriptable {
    **********/
 
   Life(v) {
-
     this.life = v;
-
     return this;
-
   }
-
 
   /**
    * initializes sprites. triggers all functions previously passed to the addInitializer function.
@@ -704,14 +881,10 @@ class Sprite extends Scriptable {
    **********/
 
   addInitializer(fun) {
-
     let boundFun = fun.bind(this)
-
     if (this.init_ext.indexOf(boundFun) < 0) {
-
       this.init_ext.push(boundFun)
     };
-
   }
 
   /*****************************
@@ -772,27 +945,20 @@ class Sprite extends Scriptable {
   getSizeByMax(mx, my) {
 
     var size = new Gamelab.Vector(this.size);
-
     var wth = size.y / size.x;
-
     var htw = size.x / size.y;
 
     if (size.x > mx) {
       size.x = mx;
-
       size.y = size.x * wth;
-
     }
 
     if (size.y > my) {
       size.y = my;
-
       size.x = size.y * htw;
-
     }
 
     return size;
-
   }
 
   /*****************************
@@ -805,7 +971,6 @@ class Sprite extends Scriptable {
     if (!this.speed) {
       this.speed = new Gamelab.Vector(0, 0, 0);
     }
-
   }
 
 
@@ -895,9 +1060,7 @@ class Sprite extends Scriptable {
    **********/
 
   isDead(gw) {
-
     gw = gw || Gamelab.game_windows[0];
-
     return this.hasOwnProperty('life') && this.life <= 0;
   }
 
@@ -908,11 +1071,8 @@ class Sprite extends Scriptable {
    **********/
 
   die(gw) {
-
     this.life = 0;
-
     return this;
-
   }
 
   /**
@@ -927,9 +1087,7 @@ class Sprite extends Scriptable {
   onScreen(w, h, gw) {
 
     w = w || Gamelab.WIDTH;
-
     h = h || Gamelab.HEIGHT;
-
     gw = gw || Gamelab.game_windows[0];
 
     var camera = gw && gw.camera ? gw.camera : Gamelab && Gamelab.camera ? Gamelab.camera : {
@@ -938,9 +1096,7 @@ class Sprite extends Scriptable {
       scrollFactor = this.noScroll ? 0 : this.scrollFactor;
 
     var sprite = this,
-
       p = sprite.position,
-
       camera_pos = camera.position || {
         x: 0,
         y: 0,
@@ -964,7 +1120,6 @@ class Sprite extends Scriptable {
 
     return x + sprite.size.x > -1000 - w && x < w + 1000 &&
       y + sprite.size.y > 0 - 1000 - h && y < h + 1000;
-
   }
 
   /*****************************
@@ -977,114 +1132,18 @@ class Sprite extends Scriptable {
    ***************************/
 
   /**
-   * the main update for the sprite --applied recursively by GameWindow after gameWindow.start is called
+   * the main update for the sprite --applied recursively by GameWindow
    * @function
    * @memberof Sprite
    **********/
 
   update(sprite) {}
 
-  /*****************************
-   * def_update()
-   * -applies speed and other default factors of movement
-   * -is used by Quick2d.js as the system def_update (default update)
-   ***************************/
 
-  /**
-   * Automatically updates various speed and rotational properties for the Sprite()
-   * @function
-   * @memberof Sprite
-   *
-   * @example
-   * // applies a constant speed property --speed is Vector(x, y)
-   * mySprite.rot_speed = new Gamelab.Vector(3);
-   * //def_update() will run automatically with the gamelab update. The above sprite will rotate at a constant speed of 3.
-   * @example
-   * // how to reset to nothing:: if automatic speed updates are undesired, replace the def_update() function with a 'do nothing' function.
-   * mySprite.def_update = function()
-   *                      {
-   *                     //do nothing
-   *                     };
-   **********/
-
-
-  def_update(sprite) {
-
-    if (this.hasOwnProperty('life') && !isNaN(this.life)) {
-
-      this.life -= 1;
-
-    };
-
-    for (var x in this.speed) {
-
-      if (this.speed[x] > 0 || this.speed[x] < 0) {
-
-        this.position[x] += this.speed[x];
-
-      }
-
-    }
-
-    for (var x in this.acceleration) {
-
-      if (this.acceleration[x] > 0 || this.acceleration[x] < 0) {
-
-        this.speed[x] += this.acceleration[x];
-
-      }
-
-    }
-
-    for (var x in this.rot_speed) {
-
-      if (this.rot_speed[x] > 0 || this.rot_speed[x] < 0) {
-
-        this.rotation[x] += this.rot_speed[x];
-
-      }
-
-
-    }
-
-    for (var x in this.rot_accel) {
-
-
-      if (this.rot_accel[x] > 0 || this.rot_accel[x] < 0) {
-
-        this.rot_speed[x] += this.rot_accel[x];
-
-      }
-    }
+  updateBySpeed() {
+    this.position.x += this.speed.x;
+    this.position.y += this.speed.y;
   }
-
-
-  /**
-   * extends an existing function, and is applied by Gamelab in addInitializer();
-   * @ignore
-   * -REMOVED FROM DOCS : SYSTEM USE ONLY
-   **********/
-
-  extendFunc(fun, extendedFunc) {
-
-    console.log('extending func');
-
-    var ef = extendedFunc;
-
-    var __inst = this;
-
-    return function() {
-
-      ef(__inst);
-
-      //any new function comes after
-
-      fun(__inst);
-
-    }.bind(this);
-
-  }
-
 
   /*****************************
    *  onUpdate(fun)
@@ -1112,8 +1171,6 @@ class Sprite extends Scriptable {
 
 
   onUpdate(fun) {
-
-    var id = this.create_id();
 
     fun = fun.bind(this);
 
@@ -1147,9 +1204,7 @@ class Sprite extends Scriptable {
     speed = speed || 1;
 
     var motionCurveOptions = ["linear", "quadratic", "cubic"];
-
     curveKey = curveKey || "linear";
-
     var line = lineObject;
 
     if (lineObject.line) {
@@ -1159,12 +1214,10 @@ class Sprite extends Scriptable {
     this.__crtLineIx = this.__crtLineIx || 0;
 
     var __inst = this,
-
       pctFloat = __inst.__crtLineIx % ((line.points.length - 1) / 2) / ((line.points.length - 1) / 2);
 
     if (__inst.__crtLineIx >= ((line.points.length - 1) / 2)) {
       pctFloat = 1.0 - pctFloat;
-
     }
 
     var ixChange = Gamelab.Curves.InOut[curveKey](pctFloat) * speed * 0.5;
@@ -1186,7 +1239,6 @@ class Sprite extends Scriptable {
     __inst.__crtLineIx += ixChange;
 
     if (__inst.__crtLineIx >= line.points.length) {
-
       line.points = line.points.reverse();
       __inst.__crtLineIx = 0;
     }
@@ -1261,147 +1313,6 @@ class Sprite extends Scriptable {
     }
   }
 
-  /**
-   * returns a true || false value for immediate color-collision --non-transparent-pixels --between colored-pixels of this sprite and the sprite argument
-   * @function
-   * @memberof Sprite
-   * @param {Sprite} spr the sprite object to be collided
-   * @returns {boolean} a true or false value to show if collision is happening
-   **********/
-
-  hasPixelCollision(sprite) {
-
-    if (!TypeCode.truthyPropsPerArray([this, sprite], 'selected_animation'))
-      return;
-
-    if (!TypeCode.truthyPropsPerArray([this.selected_animation, sprite.selected_animation], 'getCurrentPixelMap'))
-      return;
-
-    let anime = this.selected_animation,
-      alt_anime = sprite.selected_animation;
-
-    var grid1 = anime.selectedFramePixelMap = this.selected_animation.getCurrentPixelMap(),
-
-      grid2 = alt_anime.selectedFramePixelMap = alt_anime.getCurrentPixelMap();
-
-    for (var x in grid1) {
-      for (var y in grid2) {
-        if (Gamelab.Collision.boxesCollide(grid1[x].position, grid1[x].size, grid2[y].position, grid2[y].size)) {
-          return true;
-
-        }
-
-      }
-    }
-
-    return false;
-  }
-
-  init_pixelCollision() {
-    let anime = this.selected_animation;
-
-    this.selectedFramePixelMap = anime.getCurrentPixelMap(anime.scaleOf(this.size));
-    this.colliderHighlights = this.colliderHighlights || [];
-  }
-
-  init_colliderHighlights(unitMarker) {
-    while (this.colliderHighlights.length < 100) {
-      var sprite = new Gamelab.Sprite(unitMarker);
-      this.colliderHighlights.push(sprite);
-      Gamelab.game_windows[0].add(sprite);
-    }
-  }
-
-  pixelGridOff() {
-
-
-  }
-
-  set_colliderHighlights(hSprite, on) {
-    this.collider_highlightsOn = on || false;
-
-    this.init_pixelCollision();
-
-    this.init_colliderHighlights(hSprite);
-
-    let anime = this.selected_animation;
-
-    for (var x in this.colliderHighlights) {
-      this.colliderHighlights[x].active = false;
-    }
-
-    if (hSprite && this.collider_highlightsOn)
-      for (var x in this.selectedFramePixelMap) {
-        if (!this.colliderHighlights[x]) {
-          continue;
-        }
-
-        let gridPiece = this.selectedFramePixelMap[x];
-
-        let anime_scale = anime.scaleOf(this.size),
-          real_gridPiece_pos = gridPiece.position.mult(anime_scale),
-          real_gridPiece_size = gridPiece.size.mult(anime_scale);
-
-        this.colliderHighlights[x].Pos(this.position.add(new Gamelab.Vector(real_gridPiece_pos.x, real_gridPiece_pos.y).sub(anime.selected_frame.framePos.mult(anime_scale))));
-
-        this.colliderHighlights[x].Size(real_gridPiece_size);
-
-        this.colliderHighlights[x].active = true;
-      };
-
-  }
-
-  onPixelCollision(sprite, callback, highlightSprite) {
-
-    let anime = this.selected_animation;
-
-    this.onUpdate(function() {
-
-      var anime = this.selected_animation;
-
-      if (this.hasPixelCollision(sprite)) {
-
-        if (!this.colliderHighlights) {
-
-
-        } else
-          for (var x in colliderHighlights) {
-            gameWindow.remove(colliderHighlights[x]);
-          };
-
-        callback(this, sprite);
-
-      };
-
-    });
-  }
-
-
-  /**
-   * returns a true || false value for immediate box-collision --between this sprite and the sprite argument
-   * @function
-   * @memberof Sprite
-   * @param {Sprite} sprite the alternate Sprite for collision detection
-   * @returns {boolean} a true or false value to show if collision is happening
-   **********/
-
-  hasBoxCollision(sprite) {
-
-    return Gamelab.Collision.spriteBoxesCollide(this, sprite);
-
-  }
-
-  onBoxCollision(sprite, callback) {
-    this.onUpdate(function() {
-
-      if (this.hasBoxCollision(sprite, this.boxCollisionSettings.padding)) {
-
-        callback(this, sprite);
-
-      };
-    });
-  }
-
   /*****************************
    *  shoot(sprite)
    *  -fire a shot from the sprite:: as in a firing gun or spaceship
@@ -1424,91 +1335,64 @@ class Sprite extends Scriptable {
 
   shoot(options, gw) {
     //character shoots an animation
-
     gw = gw || Gamelab.game_windows[0];
-
     this.prep_key = 'shoot';
 
     let animation = options.bullet || options.animation || options.anime || new Gamelab.Animation();
-
     let speed = options.speed || options.velocity || 1;
 
 
     let size = options.size || new Gamelab.Vector(10, 10, 0);
-
     let position = new Gamelab.Vector(options.position) || new Gamelab.Vector(this.position);
 
 
     let rot_offset = options.rot_offset || options.rotation || 0;
-
     let total = options.total || 1;
-
     let rot_disp = options.rot_disp || 0; //the full rotational-dispersion of the bullets
 
     let life = options.life || 900;
-
-    var shots = [];
-
+    let shots = [];
     for (var x = 0; x < total; x++) {
 
       var __playerInst = this;
-
       if (Gamelab.isAtPlay) {
-
         var bx = position.x,
           by = position.y,
           bw = size.x,
           bh = size.y;
 
         var shot = new Gamelab.Sprite().FromData({
-
           active: true,
-
           position: new Gamelab.Vector(position),
-
           size: new Gamelab.Vector(size),
-
           speed: speed,
-
           image: animation.image,
-
           rotation: new Gamelab.Vector(0, 0, 0),
-
           flipX: false,
-
           life: options.life,
-
           noScroll: true
-
         });
 
 
         shot.Animation(animation);
 
         rot_offset = new Gamelab.Vector(rot_offset, 0, 0);
-
         shot.position.x = bx, shot.position.y = by;
 
         //Danger On this line: annoying math --dispersing rotation of bullets by rot_disp
 
         var div = rot_disp / total;
-
         var rotPlus = div * x + div / 2 - rot_disp / 2;
 
         shot.rotation.x = rot_offset.x + rotPlus;
-
         //  shot.origin = new Gamelab.Vector(position);
 
         shot.speed = new Gamelab.Vector(Math.cos((shot.rotation.x) * 3.14 / 180) * speed, Math.sin((shot.rotation.x) * 3.14 / 180) * speed);
-
         shots.push(shot);
 
         shot.onUpdate(function(spr) {
           // console.log('update:rotation:' + shot.rotation.x);
-
-
         });
-
         gw.add(shot);
       }
     }
@@ -1533,47 +1417,31 @@ class Sprite extends Scriptable {
     gw = gw || Gamelab.game_windows[0];
 
     let animation = options.animation || new Gamelab.Animation();
-
     let position = options.position || new Gamelab.Vector(this.position);
-
     let offset = options.offset || new Gamelab.Vector(0, 0, 0);
-
     let size = new Gamelab.Vector(options.size || this.size);
 
     if (Gamelab.isAtPlay) {
 
       var subsprite = gw.add(new Gamelab.Sprite().FromData({
-
         active: true,
-
         position: position,
-
         size: size,
-
         offset: offset,
-
         image: animation.image,
-
         rotation: new Gamelab.Vector(0, 0, 0),
-
         flipX: false,
-
         scrollFactor: this.scrollFactor,
-
         noScroll: this.noScroll
-
       }));
-
 
       subsprite.Animation(animation);
 
       return subsprite;
 
     } else {
-      alert('No subsprite when not at play');
-
+      console.error('No subsprite when not at play');
     }
-
   }
 
 
@@ -1585,17 +1453,27 @@ class Sprite extends Scriptable {
    **********/
 
   animate(animation) {
-
     if (Gamelab.isAtPlay) {
-
       if (animation) {
         this.Animation(animation)
       }
 
-      this.selected_animation.run();
+      if (this.effectFrames instanceof Array && this.effectFrames.length && this.effectFrames.length >= 1) {
+        this.effectCanvasTimer += 1;
 
+        console.log('drawing from effect');
+
+        var data = this.effectFrames[this.effectCanvasTimer % this.effectFrames.length];
+        //  this.clearEffects();
+        this.effectCtx.putImageData(data, 0, 0);
+        console.log('animated data');
+      } else if (this.effectCanvas) {
+        this.effectCanvasTimer += 1;
+        //do nothing
+      } else if (this.selected_animation) {
+        this.selected_animation.run();
+      }
     }
-
   }
 
   /**
@@ -1606,360 +1484,14 @@ class Sprite extends Scriptable {
    * @param {Function} fun the function to call when the animation is complete
    *
    **********/
-
   onAnimationComplete(fun) {
-
     this.selected_animation.onComplete(fun);
-
   }
 
-  /*****************************
-   *  accelY
-   *  -accelerate on Y-Axis with 'accel' and 'max' (speed) arguments
-   *  -example-use: gravitation of sprite || up / down movement
-   ***************************/
-
-  /**
-   * accelerate speed on the y-axis
-   *
-   * @function
-   * @memberof Sprite
-   * @param {number} accel the increment of acceleration
-   * @param {number} max the maximum for speed
-   *
-   **********/
-
-  accelY(accel, max) {
-
-    accel = Math.abs(accel);
-
-    if (typeof(max) == 'number') {
-      max = {
-        y: max
-      };
-
-    }
-
-    this.assertSpeed();
-
-    let diff = max.y - this.speed.y;
-
-    if (diff > 0) {
-      this.speed.y += Math.abs(diff) >= accel ? accel : diff;
-
-    };
-
-    if (diff < 0) {
-      this.speed.y -= Math.abs(diff) >= accel ? accel : diff;
-
-    };
-
-  }
-
-  /*****************************
-   *  accelX
-   *  -accelerate on x-Axis
-   *  -example-use: running of sprite || left / right movement
-   ***************************/
-
-
-  /**
-   * accelerate speed on the x-Axis
-   *
-   * @function
-   * @memberof Sprite
-   * @param {number} accel the increment of acceleration
-   * @param {number} max the maximum for speed
-   *
-   **********/
-
-
-  accelX(accel, max) {
-
-    accel = Math.abs(accel);
-
-    if (typeof(max) == 'number') {
-      max = {
-        x: max
-      };
-
-    }
-
-    this.assertSpeed();
-
-    let diff = max.x - this.speed.x;
-
-    if (diff > 0) {
-      this.speed.x += Math.abs(diff) >= accel ? accel : diff;
-
-    };
-
-    if (diff < 0) {
-      this.speed.x -= Math.abs(diff) >= accel ? accel : diff;
-
-    };
-
-  }
-
-
-  /*****************************
-   *  accel
-   *  -accelerate any acceleration -key
-   ***************************/
-
-
-  /**
-   * decelerate speed on the x-Axis, toward zero
-   * @function
-   * @memberof Sprite
-   * @param {number} amt the increment of deceleration, negatives ignored
-   *
-   **********/
-
-  decelY(amt) {
-
-    amt = Math.abs(amt);
-
-    if (Math.abs(this.speed.y) <= amt) {
-      this.speed.y = 0;
-
-    } else if (this.speed.y > amt) {
-
-      this.speed.y -= amt;
-    } else if (this.speed.y < amt * -1) {
-
-      this.speed.y += amt;
-    }
-
-  }
-
-  /*****************************
-   *  decelX
-   *  -decelerate on the X axis
-   *  -args: 1 float:amt
-   ***************************/
-
-
-  /**
-   * decelerate speed on the x-Axis, toward zero
-   * @function
-   * @memberof Sprite
-   * @param {number} amt the increment of deceleration, negatives ignored
-   *
-   **********/
-
-  decelX(amt) {
-
-    amt = Math.abs(amt);
-
-
-    if (this.speed.x > amt) {
-
-      this.speed.x -= amt;
-    } else if (this.speed.x < amt * -1) {
-
-      this.speed.x += amt;
-    }
-
-    if (Math.abs(this.speed.x) <= amt) {
-
-      this.speed.x = 0;
-
-    }
-
-  }
-
-
-  /**
-   * accelerate toward a max value on any object-property
-   * @function
-   * @memberof Sprite
-   * @param {Object} prop The object to control
-   * @param {string} key the target property-key for object argument
-   * @param {number} accel the additive increase to the property on each call
-   * @param {number} max the max value to accelerate towards
-   **********/
-
-  accel(object, key, accel, max) {
-
-    var prop = object;
-
-    accel = Math.abs(accel);
-
-    if (typeof(max) == 'number') {
-      max = {
-        x: max
-      };
-    }
-
-    let speed = prop[key];
-
-    // this.assertSpeed();
-
-    let diff = max.x - prop[key];
-
-    if (diff > 0) {
-      prop[key] += Math.abs(diff) >= accel ? accel : diff;
-
-    };
-
-    if (diff < 0) {
-      prop[key] -= Math.abs(diff) >= accel ? accel : diff;
-
-    };
-
-  }
-
-
-  /*****************************
-   *  decel
-   *  -deceleration -key
-   ***************************/
-
-  /**
-   * decelerate toward a max value on any object-property
-   * @function
-   * @memberof Sprite
-   * @param {Object} prop the object to control
-   * @param {string} key the property-key for targeted property of prop argument
-   *
-   * @param {number} decel the increment of deceleration
-   *
-   * @param {number} max the max value to decelerate towards
-   *
-   *
-   **********/
-
-  decel(prop, key, rate) {
-
-    if (typeof(rate) == 'object') {
-
-      rate = rate.rate;
-
-    }
-
-    rate = Math.abs(rate);
-
-    if (Math.abs(prop[key]) <= rate) {
-      prop[key] = 0;
-    } else if (prop[key] > 0) {
-      prop[key] -= rate;
-
-    } else if (prop[key] < 0) {
-      prop[key] += rate;
-
-    } else {
-
-      prop[key] = 0;
-
-    }
-  }
-
-
-  seekPosition(target_Position, differential_SpeedMultiple) {
-    var target = {};
-
-    //always positive:
-    differential_SpeedMultiple = Math.abs(differential_SpeedMultiple);
-
-    if (target_Position.hasOwnProperty('position')) {
-      console.log('1st argument had its own position property. Using this property now:');
-      target = target_Position.position;
-    } else {
-      target = target_Position;
-    }
-
-    let diff = this.position.sub(target).mult(-1);
-
-    this.speed = diff.mult(differential_SpeedMultiple);
-  }
-
-  /*****************************
-   *  decelY
-   *  -decelerate on the Y axis
-   *  -args: 1 float:amt
-   ***************************/
-
-
-  /**
-   * A generic 'smooth motion', adds to position.x and position.y with smooth acceleration and deceleration
-   * --uses quadratic-easing of the TWEEN.js library
-   * @function
-   * @memberof Sprite
-   * @param {number} x The x to be added to Sprite().positon.x over the course of the SmoothMotion --use negative for subtractive motion
-   * @param {number} y The y to be added to Sprite().positon.y over the course of the SmoothMotion- -use negative for subtractive motion
-   * @param {number} duration the amount of time taken to complete this motion
-   *
-   **********/
-
-  SmoothMotion(x, y, duration) {
-    if (typeof(x) == 'object') //argument coercion: x is a vector, y is duration
-    {
-      duration = y;
-      y = x.y;
-      x = x.x;
-    }
-
-    x = x + this.position.x;
-
-    y = y + this.position.y;
-
-    if (!TWEEN instanceof Object) {
-      return console.error('TWEEN.js required for SmoothMotion();');
-    }
-
-    var t = new TWEEN.Tween(this.position)
-      .easing(TWEEN.Easing.Quadratic.InOut)
-
-      .to(new Gamelab.Vector(x, y), duration)
-      .onUpdate(function() {
-        //console.log(objects[0].position.x,objects[0].position.y);
-
-
-      })
-      .onComplete(function() {
-        //console.log(objects[0].position.x, objects[0].position.y);
-
-
-      });
-
-    t.start();
-
-  }
-
-  /**
-   * A generic 'smooth rotate', adds to rotation.x with smooth acceleration and deceleration
-   * --uses quadratic-easing of the TWEEN.js library
-   * @function
-   * @memberof Sprite
-   * @param {number} r The numeric value to be added to Sprite().rotation.x over the course of the SmoothRotate --use negative for subtractive rotation
-   * @param {number} duration the amount of time taken to complete this rotation
-   **********/
-
-  SmoothRotate(r, duration) {
-
-    if (!TWEEN instanceof Object) {
-      return console.error('TWEEN.js required for SmoothRotate();');
-    }
-
-    r = r + this.rotation.x;
-
-    var t = new TWEEN.Tween(this.rotation)
-      .easing(TWEEN.Easing.Quadratic.InOut)
-
-      .to(new Gamelab.Vector(r), duration)
-      .onUpdate(function() {
-        //console.log(objects[0].position.x,objects[0].position.y);
-
-
-      })
-      .onComplete(function() {
-        //console.log(objects[0].position.x, objects[0].position.y);
-
-
-      });
-    t.start();
-
+  grounded(value) {
+    if (value)
+      this.GROUNDED = value;
+    return this.GROUNDED;
   }
 
 
@@ -1971,11 +1503,8 @@ class Sprite extends Scriptable {
    * @returns (Vector) a vector-position pinpointing the current-center of the sprite
    *
    **********/
-
   center() {
-
     return new Gamelab.Vector(this.position.x + this.size.x / 2, this.position.y + this.size.y / 2, 0);
-
   }
 
 
@@ -1989,13 +1518,9 @@ class Sprite extends Scriptable {
    ***************************/
 
   shortest_stop(item, callback) {
-
     var diff_min_y = item.min ? item.min.y : Math.abs(item.position.y - this.position.y + this.size.y);
-
     var diff_min_x = item.min ? item.min.x : Math.abs(item.position.x - this.position.x + this.size.x);
-
     var diff_max_y = item.max ? item.max.y : Math.abs(item.position.y + item.size.y - this.position.y);
-
     var diff_max_x = item.max ? item.max.x : Math.abs(item.position.x + item.size.x - this.position.y);
 
     var dimens = {
@@ -2012,20 +1537,16 @@ class Sprite extends Scriptable {
       if (dimens[x] < min) {
         min = dimens[x];
         minkey = x; // a key of top left bottom or right
-
       }
     }
 
     callback(minkey);
-
   }
-
 
   /*************
    * #BE CAREFUL
    * -with this function :: change sensitive / tricky / 4 way collision
    * *************/
-
 
   /**
    * determine if sprite overlaps on x-axis with another sprite
@@ -2059,7 +1580,6 @@ class Sprite extends Scriptable {
    * -with this function :: change sensitive / tricky / 4 way collision
    * *************/
 
-
   /**
    * determine if sprite overlaps on y-axis with another sprite
    * @function
@@ -2079,7 +1599,6 @@ class Sprite extends Scriptable {
       p2 = item.position;
 
     var paddingX = Math.round(padding * this.size.x),
-
       paddingY = Math.round(padding * this.size.y),
 
       top = p2.y + paddingY,
@@ -2106,7 +1625,7 @@ class Sprite extends Scriptable {
   collide_stop_x(item) {
 
     var apart = false;
-    var ct = 10000;
+    var ct = 500;
 
     while (!apart && ct > 0) {
       ct--;
@@ -2124,129 +1643,6 @@ class Sprite extends Scriptable {
   }
 
 
-  /*************
-   * #BE CAREFUL
-   * -with this function :: change sensitive / tricky / 4 way collision
-   * *************/
-
-
-  /**
-   * Trigger a fourway collision-stop between this and another Sprite ::
-   * objects will behave clastically and resist passing through one-another
-   *
-   * @function
-   * @memberof Sprite
-   * @param {Sprite} item the Sprite to collide with
-   *
-   **********/
-
-  collide_stop(item) {
-
-    if (this.id == item.id) {
-      return false;
-
-    }
-
-    this.speed = this.speed || new Gamelab.Vector(0, 0, 0);
-
-    this.padding = this.padding || new Gamelab.Vector(0, 0, 0);
-
-    // this.position = this.position.sub(this.speed);
-
-    if (this.hasBoxCollision(item)) {
-
-      var diff = this.center().sub(item.center());
-
-      if (this.overlap_x(item, this.padding.x + 0.1) && Math.abs(diff.x) < Math.abs(diff.y)) {
-
-        var apart = false;
-
-        var ct = 10000;
-
-        while (!apart && ct > 0) {
-
-          ct--;
-
-          var diffY = this.center().sub(item.center()).y;
-
-          var distY = Math.abs(this.size.y / 2 + item.size.y / 2 - Math.round(this.size.y * this.padding.y));
-
-          if (Math.abs(diffY) < distY) {
-
-            this.position.y -= diffY > 0 ? -1 : diffY < 0 ? 1 : 0;
-
-            this.position.y = Math.round(this.position.y);
-
-          } else {
-
-            if (diffY <= 0) {
-              this.__inAir = false;
-            };
-
-            this.speed.y = 0;
-
-            return apart = true;
-
-
-          }
-
-
-        }
-
-
-      }
-
-
-      if (this.overlap_y(item, this.padding.y) && Math.abs(diff.y) < Math.abs(diff.x)) {
-
-        this.collide_stop_x(item);
-
-      }
-
-
-    }
-
-
-  }
-
-  /**
-   * collide-stop only from the top (of the sprite passed as argument) ::
-   *
-   * @function
-   * @memberof Sprite
-   * @param {Sprite} item the Sprite to collide with
-   *
-   **********/
-
-  collide_stop_top(item, callback) {
-
-
-    if (this.id == item.id) {
-      return false;
-
-    }
-
-    if (this.overlap_x(item, this.padding.x + 0.1)) {
-
-      console.log('OVERLAP_X');
-
-      var paddingY = this.padding.y * this.size.y;
-
-      var p1 = this.position,
-        p2 = item.position;
-
-      if (p1.y + this.size.y - paddingY <= p2.y) {
-
-        this.groundMaxY = p2.y - this.size.y + paddingY;
-
-      }
-
-
-    }
-
-  }
-
-
   /**
    * restore a sprite from existing json-data --applies to data-persistence
    *
@@ -2258,9 +1654,55 @@ class Sprite extends Scriptable {
 
   restoreFrom(data) {
     data.image = new GameImage(data.src || data.image.src);
-
     return new Gamelab.Sprite(data);
+  }
 
+  ColoredRect(color, w, h) {
+    var canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    var ctx = canvas.getContext('2d');
+    this.canvas = canvas;
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, w, h);
+    this.image = new Gamelab.GameImage(canvas);
+    this.ctx = ctx;
+    this.size = new Gamelab.Vector(w, h);
+    return this;
+  }
+
+  AsCanvasTiles(tilesX, tilesY, unitWidth, unitHeight) {
+
+    var canvas = document.createElement('canvas');
+
+    var width = unitWidth * tilesX + unitWidth,
+      height = unitHeight * tilesY + unitHeight;
+
+    canvas.width = width;
+    canvas.height = height;
+
+    this.size = new Gamelab.Vector(w, h);
+
+    var ctx = canvas.getContext('2d');
+
+    this.canvas = canvas;
+    this.srcImageSave = new Gamelab.GameImage(this.image.domElement.src);
+
+    var $object = this;
+
+    this.srcImageSave.domElement.onload = function() {
+
+      for (var x = 0; x < tilesX; x++) {
+        for (var y = 0; y < tilesY; y++) {
+          ctx.drawImage(this, x * $object.size.x, y * $object.size.y, unitWidth, unitHeight);
+        }
+      }
+    };
+
+
+    this.image = new Gamelab.GameImage(canvas);
+    this.ctx = ctx;
+    return this;
   }
 
 
@@ -2273,15 +1715,10 @@ class Sprite extends Scriptable {
    ***************************/
 
   fromFile(file_path) {
-
     if (typeof file_path == 'string') {
-
       var __inst = this;
-
       $.getJSON(file_path, function(data) {
-
         __inst = new Gamelab.Sprite(data);
-
       });
     }
   }

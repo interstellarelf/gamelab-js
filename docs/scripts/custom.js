@@ -1,63 +1,61 @@
+
+
 var InfoBit = document.registerElement('info-bit', {
-  prototype: Object.create(HTMLParagraphElement.prototype),
-  extends: 'p'
+    prototype: Object.create(HTMLParagraphElement.prototype),
+    extends: 'p'
 });
+
 
 
 var UsageTip = document.registerElement('usage-tip', {
-  prototype: Object.create(HTMLParagraphElement.prototype),
-  extends: 'p'
+    prototype: Object.create(HTMLParagraphElement.prototype),
+    extends: 'p'
 });
+
+
 
 
 var ExampleLink = document.registerElement('example-link', {
-  prototype: Object.create(HTMLAnchorElement.prototype),
-  extends: 'a'
+    prototype: Object.create(HTMLAnchorElement.prototype),
+    extends: 'a'
 });
 
-function IFRAMESRC(key){
 
-  alert('getting IFRAME SRC');
+$(document).ready(function(){
 
-  return './html/iframe-error.html';
-
-};
-
-$(document).ready(function() {
-  //Iframes load::
 
   var ex_links = $('example-link');
 
-  $(ex_links).each(function(ix, jqElement) {
+  $(ex_links).each(function(ix, jqElement){
 
-    $(jqElement).click(function() {
+    $(jqElement).click(function(){
 
-      var iframe = document.createElement('IFRAME');
+    var iframe = document.createElement('IFRAME');
 
-      iframe.classList.add('content-frame');
-      iframe.classList.add('right-window-full');
+    iframe.classList.add('content-frame');
+    iframe.classList.add('right-window-full');
 
-      var main = $('#main section')[0];
+    var main = $('#main section')[0];
 
-      $(main).html('');
+    $(main).html('');
 
-      $(main).append(iframe);
+    $(main).append(iframe);
 
 
-      var frameState = $(main).find('iframe')[0];
+        var frameState = $(main).find('iframe')[0];
 
-      $(frameState).css('width', '100%');
+        $(frameState).css('width', '100%');
 
-      $(frameState).css('height', $(frameState).width() + 'px');
+        $(frameState).css('height', $(frameState).width() + 'px');
 
-      var sectionHeader = $(main).find('header')[0];
+        var sectionHeader = $(main).find('header')[0];
 
-      $(frameState).attr('src', $(jqElement).attr('href'));
+        $(frameState).attr('src', $(jqElement).attr('href'));
 
-      $(sectionHeader).text('');
+        $(sectionHeader).text('');
 
-      var pageTitle = $('h1.page-title')[0];
-      $(pageTitle).text($(jqElement).text());
+            var pageTitle = $('h1.page-title')[0];
+            $(pageTitle).text($(jqElement).text());
 
 
     });

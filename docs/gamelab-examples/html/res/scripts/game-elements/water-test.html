@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Water-Test</title>
+    <script src="../../../../dist/gamelab/gamelab.js"></script>
+
+    <!-- spritebox-example.css style -->
+    <link rel="stylesheet" href="../../../../res/styles/gamelab-example.css">
+
+    <style>
+
+      span.dgc-title {
+        position: absolute;
+        z-index: 9999;
+        width: 241px;
+        height: 20px;
+        font-size: 12px;
+        top: 0;
+        overflow: visible;
+        background: #111;
+        color: lightgrey;
+        padding-left: 4px;
+        border-bottom: 1px solid #444;
+      }
+    </style>
+
+  </head>
+  <body>
+    <header>
+      <img src="../../../../res/images/gamelab-logo.png" alt="" id="logo">
+      <span class="title">Water Test</span>
+    </header>
+    <script>
+
+      var gameWindow = new Gamelab.GameWindow();
+
+
+
+      var line = new Gamelab.Line2D().Color('rgba(0, 200, 200, 0.3)').StepFunction(function (portion, ONE) {
+
+        ONE = ONE || 1.0;
+
+        if (this.offsetX > this.size.x)
+          this.offsetX = this.size.x;
+
+        portion += this.offsetX / this.size.x;
+
+        return Math.sin(portion * (this.frequency));
+
+      });
+
+
+      line.offsetX = 0;
+
+      line.Size(2400, 20);
+
+      line.shapeSize = new Gamelab.Vector(2400, 2000);
+
+      line.frequency = 10;
+
+      line.fv = 0.2;
+
+      line.ov = 10.0;
+
+      line.Position(0, 40);
+
+      gameWindow.add(line);
+
+      gameWindow.onBeforeDraw(function () {
+
+        line.points = [];
+
+        line.frequency += line.fv;
+
+        var maxFreq = line.size.x / 50;
+
+        if (line.frequency > maxFreq - 2.0) {
+          if (line.fv > -0.05)
+            line.fv -= 0.001;
+
+          if (line.frequency > maxFreq)
+            line.frequency = 8;
+          }
+
+        if (line.frequency < -maxFreq + 2.0) {
+
+          if (line.fv < 0.05) {
+                  line.fv += 0.001;
+          }
+
+          if (line.frequency < -maxFreq) {
+                line.frequency = -8;
+          }
+
+        }
+
+        if (line.fv > 0.05) {
+          line.fv = 0.05;
+        }
+
+        if (line.fv < -0.05)
+          line.fv = -0.05;
+
+        line.offsetX += line.ov;
+
+        line.Fill();
+
+        line.points.push(new Gamelab.Vector(line.size.x, line.position.y + line.shapeSize.y));
+
+        line.points.push(new Gamelab.Vector(0 ,  line.position.y + line.shapeSize.y));
+
+        line.points.push(new Gamelab.Vector(line.points[0]));
+
+        line.fillStyle = 'rgba(0, 200, 200, 0.3)';
+
+      });
+
+      gameWindow.start();
+
+      Gamelab.ready(function () {
+
+        alert('gamelab ready');
+
+      });
+    </script>
+
+  </body>
+</html>

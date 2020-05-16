@@ -39,7 +39,7 @@ class GameImage extends Renderable {
 
     this.domElement.onerror = function() {
       this.__error = true;
-      console.dev('--image error');
+      //console.dev('--image error');
     };
 
   }

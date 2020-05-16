@@ -223,23 +223,26 @@
    */
 
   class GamepadEvent extends InputEvent {
-    constructor(keys = [], callback = function() {}) {
+    constructor() {
 
       super({});
 
-      this.keys = keys;
+      this.gps = [0];
+      this.keys = [];
 
-      this.callback = callback;
+      this.callback = function(){};
 
     }
 
     Gamepads(gps = []) {
-      this.gps = gps = TypeCode.arrayWrap(gps || []);
+
+      this.gps = TypeCode.arrayWrap(gps);
 
       return this;
     }
 
     init() {
+
       var gamepadKeys = TypeCode.arrayWrap(this.keys || []);
 
       var __inst = this;
@@ -252,7 +255,15 @@
     }
 
     Keys(keys = []) {
+
       this.keys = TypeCode.arrayWrap(keys);
+
+      for(var x  = 0; x < this.keys.length; x++)
+      {
+        if(typeof this.keys[x] == 'number'){ //must change to a string
+            this.keys[x] = (this.keys[x] + '');
+        }
+      }
 
       return this;
 

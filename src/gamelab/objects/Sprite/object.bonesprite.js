@@ -21,8 +21,31 @@ class BoneSprite extends Sprite {
   addBone(oncreate) {
     var bone = new Bone(this, this.size);
     oncreate.bind(bone).call();
+    this.bones.push(bone);
+  }
+  updateBones(){
+
+    this.bones[0].SetParentPosition(this.position);
+
+    var boffset = this.bones[0].CalcOffset();
+
+    var count = 0;
+
+    for(var x = 0; x < this.bones.length; x+= 2)
+    {
+
+      if(this.bones[x] && this.bones[x + 1])
+      {
+        var b1 = this.bones[x], b2 = this.bones[x + 1];
+        boffset = b1.CalcOffset();
+        b2.SetParentPosition(boffset);
+        b2.CalcOffset(b1);
+      }
+    }
+
   }
   draw_current_frame(ctx, camera) {
+
 
     var sprite = this;
     var frameList = [];

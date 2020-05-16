@@ -1,8 +1,5 @@
 
-
-
 class Box2D{
-
   constructor(pos, size){
     this.Position(pos | 0);
     this.Size(size | 0);

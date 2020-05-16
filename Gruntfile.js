@@ -10,13 +10,15 @@ module.exports = function(grunt) {
 
   require('load-grunt-tasks')(grunt); // npm install --save-dev load-grunt-tasks
 
+  var fsExtra = require('node-fs-extra'),
+    glob = require('glob');
 
-  var fsExtra = require('node-fs-extra'), glob = require('glob');
-
-  //include in docs all examples from gamelab.demo
-  var exampleFolders = [
-    'gamelab.demo'
-  ];
+  var folders = {
+    'gamelab-examples': 'gamelab-examples',
+    'gamelab-tools': 'gamelab-tools',
+    'gamelab-builders': 'gamelab-builders',
+    'gamelab-games': 'gamelab-games'
+  };
 
   grunt.initConfig({
 
@@ -60,21 +62,19 @@ module.exports = function(grunt) {
           expand: true,
           cwd: 'src/__concat',
           src: ['gamelab.js'],
-          dest: '../gamelab-tools/gamelab-tools/sprite-builder/Resources/Shared/libraries'
+          dest: '../msi-gamelab/Resources/Shared/libraries'
         }]
       }
-
     },
-
 
     concat: {
       options: {
         separator: ';',
       },
-
       game_lib: {
         src: ['src/gamelab/jsHelper/*.js',
-        'src/gamelab/gamelab.main.js',
+          'src/gamelab/gamelab.main.js',
+          'src/gamelab/gamelab.config.js',
           'src/gamelab/meta/*.js',
           'src/gamelab/core/*.js',
           'src/gamelab/objects/**/*.js',
@@ -90,173 +90,162 @@ module.exports = function(grunt) {
   });
 
 
-  //Register Custom Task:: Copy all examples into the docs folder
-  grunt.registerTask('doc-copy-examples', function() {
+  //Register Custom Task:: Copy the game-lib into gamelab-tools
+  grunt.registerTask('copy-to-gamelab-tools', function() {
+    var done = this.async();
+    var source = __dirname + '/dist/gamelab/gamelab.js',
+      target = __dirname + '/../gamelab-tools/gamelab-tools/sprite-builder/Resources/Shared/libraries/gamelab.js';
 
-       var done = this.async();
-
-       var last = exampleFolders[exampleFolders.length -1];
-
-       exampleFolders.forEach(function(folder) {
-
-         var source = __dirname + '/' + folder, target = __dirname +  '/docs/examples/' + folder;
-
-         console.log('Copying::' + source + '--to--' + target);
-
-         var tasks = {
-           first:0,
-           last:1
-         };
-
-         var jobIndex = 0;
-
-         fsExtra.copy(source, target, function (err) {
-           if (err) {
-             console.error(err);
-           } else {
-             console.log("success at copying::" + folder);
-           }
-
-           if(folder == last)
-           {
-             console.log('Done --first copy');
-             jobIndex += 1;
-             if(jobIndex >= 3)
-             {
-               done();
-             }
-           }
-
-         }); //copies directory, even if it has subdirectories or files
+    fsExtra.copy(source, target, function(err) {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log("success at copying::" + target);
+      }
+      done();
+    }); //copies directory, even if it has subdirectories or files
+  });
 
 
-        var res_source = __dirname + '/res', res_target =  __dirname +  '/docs/examples/res';
+  //Register Custom Task:: Copy all examples, tools, games, builders into the docs folder
+  grunt.registerTask('doc-copy-files', function() {
 
-        fsExtra.copy(res_source, res_target, function (err) {
-          if (err) {
-            console.error(err);
-          } else {
-            console.log("success at copying::" + folder);
+    var done = this.async();
+
+    for (var x in folders) {
+      var last = folders[Object.keys(folders).pop()];
+      var folder = folders[x];
+      var source = __dirname + '/' + folder,
+        target = __dirname + '/docs/' + x + '/' + 'html';
+
+      console.log('Copying::' + source + '--to--' + target);
+      var tasks = {
+        first: 0,
+        last: 1
+      };
+      var jobIndex = 0;
+      fsExtra.copy(source, target, function(err) {
+        if (err) {
+          console.error(err);
+        } else {
+          console.log("success at copying::" + folder);
+        }
+
+        if (folder == last) {
+          console.log('Done --first copy');
+          jobIndex += 1;
+          if (jobIndex >= 3) {
+            done();
           }
+        }
+      }); //copies directory, even if it has subdirectories or files
 
-          if(folder == last)
-          {
-            console.log('Done --2nd copy');
-            jobIndex += 1;
-            if(jobIndex >= 3)
-            {
-              done();
-            }
+      var res_source = __dirname + '/res',
+        res_target = __dirname + '/docs/' + x + '/' + 'res';
+      fsExtra.copy(res_source, res_target, function(err) {
+        if (err) {
+          console.error(err);
+        } else {
+          console.log("success at copying::" + folder);
+        }
+
+        if (folder == last) {
+          console.log('Done --2nd copy');
+          jobIndex += 1;
+          if (jobIndex >= 3) {
+            done();
           }
+        }
+      }); //copies directory, even if it has subdirectories or files
 
-        }); //copies directory, even if it has subdirectories or files
+      var dist_source = __dirname + '/dist',
+        dist_target = __dirname + '/docs/' + x + '/' + 'dist';
+      fsExtra.copy(dist_source, dist_target, function(err) {
+        if (err) {
+          console.error(err);
+        } else {
+          console.log("success at copying::" + folder);
+        }
 
-
-        var dist_source = __dirname + '/dist', dist_target =  __dirname +  '/docs/examples/dist';
-
-        fsExtra.copy(dist_source, dist_target, function (err) {
-          if (err) {
-            console.error(err);
-          } else {
-            console.log("success at copying::" + folder);
+        if (folder == last) {
+          console.log('Done --3rd/ last copy');
+          jobIndex += 1;
+          if (jobIndex >= 3) {
+            done();
           }
-
-          if(folder == last)
-          {
-            console.log('Done --3rd/ last copy');
-            jobIndex += 1;
-            if(jobIndex >= 3)
-            {
-              done();
-            }
-          }
-
-        }); //copies directory, even if it has subdirectories or files
-
-       });
-   });
+        }
+      }); //copies directory, even if it has subdirectories or files
+    }
 
 
-   var Examples = [];
+  });
 
-   function CreateExample(path){
-     return {path:path}
-   };
 
-   //Register Custom Task:: Record and list all examples on a single json-file
-   grunt.registerTask('doc-list-examples', function() {
+  var folderFiles = {
+    'gamelab-examples': [],
+    'gamelab-tools': [],
+    'gamelab-games': [],
+    'gamelab-builders': []
+  };
 
-        var done = this.async();
+  function CreateExample(path) {
+    return {
+      path: path
+    }
+  };
 
-        var last = exampleFolders[exampleFolders.length -1];
 
-        exampleFolders.forEach(function(folder) {
+  var examples = [];
 
-          glob(__dirname + '/docs/examples/' + folder + '/**/*.html', { }, function(err, files){
+  //Register Custom Task:: Record and list all examples on a single json-file
+  grunt.registerTask('doc-list-files', function() {
 
-            console.log(JSON.stringify(files));
+    var done = this.async();
 
-            files.forEach(function(f){
+    var last = folders[Object.keys(folders).pop()];
+    var examplesFolder = 'gamelab-examples';
+    var source = __dirname + '/' + examplesFolder,
+      target = __dirname + '/docs/' + examplesFolder + '/' + 'html';
 
-              if(f.endsWith('.dev.html'))
-              {
-                console.log('--Excluding file with .dev.html extension::' + f);
-                return;
-              }
+    glob(__dirname + '/docs/gamelab-examples/html' + '/*.html', {}, function(err, files) {
 
-              console.log('FullPath --' + f);
-                console.log('__dirname --' + __dirname);
+      console.log(JSON.stringify(files));
+      files.forEach(function(f) {
+        if (f.endsWith('.dev.html')) {
+          console.log('--Excluding file with .dev.html extension::' + f);
+          return;
+        }
+        console.log('FullPath --' + f);
+        console.log('__dirname --' + __dirname);
+        while (f.indexOf('/') >= 0) {
+          f = f.replace('/', '\\');
+        }
+        var relpath = f.replace(__dirname + '\\docs\\', './');
+        while (relpath.indexOf('\\') >= 0) {
+          console.log('--path-fix');
+          relpath = relpath.replace('\\', '/');
+        }
+        console.log('got example::  --' + relpath);
+        examples.push(CreateExample(relpath));
+      });
 
-                while(f.indexOf('/') >= 0)
-                {
-                    f = f.replace('/', '\\');
-                }
-
-                var relpath = f.replace(__dirname + '\\docs\\', './');
-
-                while(relpath.indexOf('\\') >= 0)
-                {
-                  console.log('--path-fix');
-                  relpath = relpath.replace('\\', '/');
-
-                }
-
-              console.log('got example::  --' + relpath);
-
-              Examples.push(CreateExample(relpath));
-
-            });
-
-            if(folder == last)
-            {
-              console.log('All done copying');
-
-              fs.writeFile(__dirname + '/docs/examples/examples.json', JSON.stringify(Examples, null, 2), (err) => {
-                  if (err) throw err;
-                  console.log('Data written to file');
-                  done();
-              });
-
-            }
-
-          });
-
-        });
+      console.log('All done copying');
+      fs.writeFile(__dirname + '/docs/' + examplesFolder + '/' + examplesFolder + '.json', JSON.stringify(examples, null, 2), (err) => {
+        if (err) throw err;
+        console.log('Data written to file');
+        console.log('ALL DONE!!!');
+        done();
+      });
     });
+  });
 
 
-
-grunt.registerTask('build', ['concat', 'babel']);
-
-grunt.registerTask('default', ['concat', 'babel']);
-
-grunt.registerTask('doc', ['doc-copy-examples', 'doc-list-examples', 'jsdoc']);
-grunt.registerTask('docs', ['doc-copy-examples', 'doc-list-examples', 'jsdoc']);
-
-grunt.registerTask('hint', ['jshint']);
-
-grunt.registerTask('jshint', ['jshint']);
-
-grunt.registerTask('all', ['concat', 'babel']);
+  grunt.registerTask('build', ['concat', 'babel', 'copy-to-gamelab-tools']);
+  grunt.registerTask('default', ['concat', 'babel', 'copy-to-gamelab-tools']);
+  grunt.registerTask('doc', ['doc-copy-files', 'doc-list-files', 'jsdoc']);
+  grunt.registerTask('docs', ['doc-copy-files', 'doc-list-files', 'jsdoc']);
+  grunt.registerTask('hint', ['jshint']);
+  grunt.registerTask('jshint', ['jshint']);
+  grunt.registerTask('all', ['concat', 'babel']);
 
 };

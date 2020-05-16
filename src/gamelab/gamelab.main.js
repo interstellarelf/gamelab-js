@@ -6,46 +6,6 @@
  Copyright 2018
  **/
 
-/**
- * Main module-object; references all Gamelab classes.
- * */
-
-
-console.dev = function(tag, object) {
-
-  var psuedoType = "--unknown";
-
-  switch (typeof object) {
-    case "string":
-    case "number":
-    case "boolean":
-    case "null":
-      psuedoType = typeof object;
-    default:
-      {
-        if (typeof object == 'object')
-          psuedoType = object.constructor.name;
-      }
-  }
-
-  if (Gamelab.DEV)
-    console.info('gamelab::', tag, {
-      data_type: psuedoType,
-      object: object
-    });
-
-
-};
-
-
-let delay = function(f, duration) {
-  setTimeout(f, duration);
-}
-
-
-let repeat = function(f, duration) {
-  setInterval(f, duration);
-}
 
 //Gamelab: the main module object:
 let Gamelab_Module = function() {
@@ -78,6 +38,17 @@ let Gamelab_Module = function() {
 
     },
 
+    isGameObject(object){
+      object.type = object.constructor.name;
+      return ['Sprite',
+              'BackgroundElement',
+              'BackgroundFill',
+              'Terrain',
+              'Animation',
+              'Frame',
+              'Line2D'].includes(object.type);
+    },
+
     getGameWindow(ix = 0) {
       return this.game_windows[0]
     },
@@ -99,25 +70,29 @@ let Gamelab_Module = function() {
     __gameWindowList: [],
 
     all: function() {
-
       var all_objects = [];
-
       this.game_windows.forEach(function(item) {
-
         all_objects = all_objects.concat(item.drawables);
-
       });
-
       console.info('Gamelab.all():', all_objects);
-
       return all_objects;
-
     },
 
     init: function() {
 
       this.testSquare = new Gamelab.Sprite();
 
+
+
+    },
+
+    onButton:function(gpix=0, callback){
+      if(typeof gpix == 'function')
+      {
+        callback = gpix;
+        gpix = 0;
+      }
+      new Gamelab.GamepadEvent().Gamepads([gpix]).Keys();
     },
 
     objectDestroyed(obj) {
@@ -129,21 +104,15 @@ let Gamelab_Module = function() {
         for (var y in gw.objects) {
           if (gw.objects[y] === obj)
             dead = false;
-
         }
       }
-
       return dead;
-
     },
 
     getObjectById(id) {
-
       for (var x = 0; x < this.all_objects.length; x++) {
         if (this.all_objects[x].id == id) {
-
           return this.all_objects[x];
-
         }
       }
     },
@@ -151,7 +120,6 @@ let Gamelab_Module = function() {
     interlog: function(message, div) //recursive safe :: won't go crazy with recursive logs :: log message every x times this is called
     {
       this.recursionCount++;
-
       if (!isNaN(div) && this.settings.recursionCount % div == 0) {
         //   console.log('Interval Log:'+  message);
       }
@@ -198,140 +166,6 @@ let Gamelab_Module = function() {
 
     },
 
-    Collision: {
-
-      boxesCollide(pos1, size1, pos2, size2) {
-
-        return pos1.x >= pos2.x - size1.x &&
-          pos1.x <= pos2.x + size2.x &&
-          pos1.y >= pos2.y - size1.y &&
-          pos1.y <= pos2.y + size2.y;
-      },
-
-      spriteBoxesCollide(obj1, obj2, gw) {
-        gw = gw || Gamelab.game_windows[0];
-
-        var camPos = new Gamelab.Vector(0, 0, 0);
-
-        obj1.padding = obj1.padding || new Gamelab.Vector(0, 0, 0);
-
-        var paddingX = Math.round(obj1.padding.x * obj1.size.x),
-
-          paddingY = Math.round(obj1.padding.y * obj1.size.y),
-          left = obj1.position.x + paddingX + camPos.x,
-
-          right = obj1.position.x + obj1.size.x - paddingX + camPos.x,
-
-          top = obj1.position.y + camPos.y + paddingY,
-          bottom = obj1.position.y + obj1.size.y - paddingY + camPos.y;
-
-        if (right > obj2.position.x && left < obj2.position.x + obj2.size.x &&
-          bottom > obj2.position.y && top < obj2.position.y + obj2.size.y) {
-
-          return true;
-
-        }
-
-      },
-
-      spriteBoxesCollideTop(obj1, obj2, gw) {
-        gw = gw || Gamelab.game_windows[0];
-
-        var camPos = new Gamelab.Vector(0, 0, 0);
-
-        obj1.padding = obj1.padding || new Gamelab.Vector(0, 0, 0);
-
-        var paddingX = Math.round(obj1.padding.x * obj1.size.x),
-
-          paddingY = Math.round(obj1.padding.y * obj1.size.y),
-          left = obj1.position.x + paddingX + camPos.x,
-
-          right = obj1.position.x + obj1.size.x - paddingX + camPos.x,
-
-          top = obj1.position.y + camPos.y + paddingY,
-          bottom = obj1.position.y + obj1.size.y - paddingY + camPos.y;
-
-        if (right > obj2.position.x && left < obj2.position.x + obj2.size.x &&
-          bottom > obj2.position.y && top < obj2.position.y + obj2.size.y
-        ) {
-
-          return true;
-
-        }
-
-      },
-
-      /*
-       *
-       *  ##Not known to be working -->> Below function
-       *
-       * */
-
-      pixelsCollide(sourceSprite, targetSprite, gw) {
-        gw = gw || Gamelab.game_windows[0];
-
-        var camPos = new Gamelab.Vector(0, 0, 0);
-
-        /* Box model detection, return true on collision */
-        function hitBox(source, target) {
-          /* Source and target objects contain x, y and width, height */
-          return !(
-            ((source.y + source.height) < (target.y)) ||
-            (source.y > (target.y + target.height)) ||
-            ((source.x + source.width) < target.x) ||
-            (source.x > (target.x + target.width))
-          );
-        }
-
-        var source = {
-
-            position: sourceSprite.position,
-
-            pixelMap: sourceSprite.selected_animation.pixelMap
-
-          },
-
-          target = {
-
-            position: targetSprite.position,
-
-            pixelMap: targetSprite.selected_animation.pixelMap
-
-          };
-
-        // Loop through all the pixels in the source image
-        for (var s = 0; s < source.pixelMap.length; s++) {
-          var sourcePixel = source.pixelMap[s];
-          // Add positioning offset
-          var sourceArea = {
-            x: sourcePixel.x + sourceSprite.position.x,
-            y: sourcePixel.y + sourceSprite.position.y,
-            width: 1,
-            height: 1
-          };
-
-          var relatedPixel;
-
-          // Loop through all the pixels in the target image
-          for (var t = 0; t < target.pixelMap.length; t++) {
-            var targetPixel = target.pixelMap[t];
-            // Add positioning offset
-            var targetArea = {
-              x: targetPixel.x + targetSprite.position.x,
-              y: targetPixel.y + targetSprite.position.y,
-              width: 1,
-              height: 1
-            };
-
-            /* Use the earlier aforementioned hitbox function */
-            if (hitBox(sourceArea, targetArea)) {
-              return true;
-            }
-          }
-        }
-      }
-    },
-
     _gameWindow: {},
 
     setGameWindow: function(gameWindow) {
@@ -360,10 +194,7 @@ let Gamelab_Module = function() {
           parent.onComplete(extendor, extendorKey);
 
         }
-
-
       }
-
     },
 
 
@@ -377,6 +208,55 @@ let Gamelab_Module = function() {
 
     },
 
+
+    loadSprites:function(sprites, callback){
+
+      var LEN = sprites.length, COUNT = 0;
+
+      if(sprites instanceof Array)
+      {
+              sprites.forEach(function(spr){
+
+                spr.onLoad(function(){
+
+                  COUNT += 1;
+
+                  if(COUNT >= LEN)
+                  {
+                    callback(sprites);
+                  }
+
+                });
+
+              });
+      }
+
+
+      else if(typeof sprites == 'object')
+      {
+        LEN = Object.keys(sprites).length;
+
+        for(var x in sprites)
+        {
+          var spr = sprites[x];
+          if(spr.constructor.name == 'Sprite' ||
+           spr.constructor.name == 'BoneSprite' ||
+           spr.constructor.name == 'SpriteGroup' ||
+          spr.constructor.name == 'Animation')
+          {
+            spr.onLoad(function(){
+
+              COUNT += 1;
+
+              if(COUNT >= LEN)
+              {
+                callback(sprites);
+              }
+            });
+          }
+        }
+      }
+    },
 
     each: function(list, onResult, onComplete) {
       for (var i in list) {
@@ -799,7 +679,6 @@ function $Q(selector) {
         boolCall = selectorObject,
 
         boolEvent = new Gamelab.BoolEvent().On(boolTrigger).Call(boolCall);
-
     }
 
 
@@ -895,11 +774,12 @@ function $Q(selector) {
 
               console.log('Box collide::' + jstr([this, item2]));
 
-              if (this.hasBoxCollision(item2, padding)) {
+              if(Gamelab.Collision.spriteCollide(this, item2))
+              {
 
-                callback(this, item2);
+               callback(this, item2);
 
-              };
+             };
 
             };
 
@@ -1576,8 +1456,7 @@ Gamelab.file_system = {
       rawFile.onreadystatechange = function() {
         if (rawFile.readyState === 4) {
           if (rawFile.status === 200 || rawFile.status == 0) {
-            var allText = rawFile.responseText;
-            callback(JSON.stringify(allText));
+            callback(rawFile.responseText);
           }
         }
       }
@@ -1706,6 +1585,16 @@ Gamelab.file_system = {
 
 
 };
+
+
+
+
+//reference loadJSON direct from Gamelab::
+Gamelab.loadJSON = Gamelab.file_system.loadJSON;
+//reference loadJSON as loadJson::
+Gamelab.file_system.loadJson = Gamelab.file_system.loadJSON;
+Gamelab.loadJson = Gamelab.loadJSON;
+
 
 
 Gamelab.ready(function(lib) {

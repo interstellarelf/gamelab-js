@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Sprite</title>
+    <script src="../dist/gamelab/gamelab.js"></script>
+    <script src="./../res/libraries/dat.gui.js"></script>
+    <script src="./res/js/sprites/MouseActionSprite.js"></script>
+    <!-- spritebox-example.css style -->
+    <link rel="stylesheet" href="../res/styles/gamelab-example.css">
+
+    <style>
+      @font-face {
+        font-family: baumans;
+        src: url('res/fonts/baumans/Baumans-Regular.ttf');
+      }
+
+      button#rotate {
+        position: absolute;
+        bottom: 11px;
+        left: 20px;
+        width: 140px;
+        height: 32px;
+        padding: 5px;
+        font-size: 14px;
+      }
+    </style>
+
+  </head>
+
+  <body>
+    <header>
+      <img src="../res/images/gamelab-logo.png" alt="" id="logo">
+      <span class="title">Sprite</span>
+    </header>
+
+
+    <button id="rotate" class="mode rotate">Rotate +15 degrees</button>
+
+    <script>
+      var gameWindow = new Gamelab.GameWindow().Background('black');
+
+      var sprite = new Gamelab.Sprite('./res/images/weapons/sabre.png'),
+
+        rectangle = new Gamelab.RectangularLine().Size(200, 200).Gradient('orange', 'orange').Thickness(2);
+
+
+
+      var pointSprites = [];
+
+      for (var x = 0; x < 6; x++) {
+        pointSprites.push(new Gamelab.Sprite('./res/images/point.png'));
+        pointSprites[pointSprites.length - 1].onLoad(function() {
+
+          this.origin = this.size.div(2);
+        });
+        gameWindow.add(pointSprites[pointSprites.length - 1]);
+      }
+
+      sprite.position.x = 300;
+      sprite.position.y = 60;
+
+      new MouseActionSprite(sprite);
+
+      gameWindow.add(sprite);
+
+      Gamelab.ready(function() {
+
+        gameWindow.start();
+
+        document.querySelector('button#rotate').onclick = function() {
+          alert('clicked');
+          sprite.rotation.x += 15;
+        };
+
+        sprite.onClick(gameWindow, function() {
+          alert('clicked');
+        });
+
+        sprite.onHoverUpdate(gameWindow, function(isHovered) {
+          sprite.hovered = isHovered || false;
+        });
+
+        gameWindow.onBeforeDraw(function() {
+
+          sprite.origin = sprite.size.div(2);
+
+          if (sprite.collisionPoints) {
+            console.log('has collisionPoints');
+            pointSprites[0].position = sprite.collisionPoints[0][0].sub(pointSprites[0].size.div(2));
+            pointSprites[1].position = sprite.collisionPoints[0][1].sub(pointSprites[0].size.div(2));
+            pointSprites[2].position = sprite.collisionPoints[0][2].sub(pointSprites[0].size.div(2));
+
+            pointSprites[3].position = sprite.collisionPoints[1][0].sub(pointSprites[0].size.div(2));
+            pointSprites[4].position = sprite.collisionPoints[1][1].sub(pointSprites[0].size.div(2));
+            pointSprites[5].position = sprite.collisionPoints[1][2].sub(pointSprites[0].size.div(2));
+          }
+
+          if (sprite.hovered) {
+            let padding = 4;
+            rectangle.Position(sprite.position);
+            rectangle.Size(sprite.size);
+            rectangle.Rotation(sprite.rotation);
+            rectangle.Origin(sprite.origin);
+            rectangle.draw(gameWindow.ctx);
+          }
+
+        });
+
+      });
+    </script>
+
+  </body>
+
+</html>

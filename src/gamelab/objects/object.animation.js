@@ -37,16 +37,26 @@
 
       //Gamelab.Modifiers.informable(this, args);
 
+      /**
+       * @property {Vector} frameSize the frameSize of the Animation
+       * @memberof Animation
+       **********/
+
+      this.frameSize = this.frameSize || new Gamelab.Vector(args.frameSize || new Gamelab.Vector(0, 0));
+      this.size = this.size || new Gamelab.Vector(args.size || new Gamelab.Vector(0, 0));
+
+      this.type = 'Animation';
+
       if (typeof src == 'string' || src instanceof HTMLCanvasElement) {
         this.src = src;
         this.image = new Gamelab.GameImage(src);
         this.init_singleFrame();
       } else if (args instanceof Gamelab.GameImage) {
-        console.log('Animation(): args are an instance of GameImage');
+        //console.log('Animation(): args are an instance of GameImage');
 
         this.image = args;
       } else if (args instanceof HTMLImageElement) {
-        console.log('Animation(): args was an instance of HTMLImageElement');
+        //console.log('Animation(): args was an instance of HTMLImageElement');
 
         this.image = new Gamelab.GameImage(args);
       } else if (args instanceof Gamelab.Animation) {
@@ -62,12 +72,6 @@
 
       this.visible = args.visible || true;
 
-      /**
-       * @property {Vector} frameSize the frameSize of the Animation
-       * @memberof Animation
-       **********/
-
-      this.frameSize = this.frameSize || new Gamelab.Vector(args.frameSize || new Gamelab.Vector(0, 0));
 
 
       if (args.frameBounds && args.frameBounds.min && args.frameBounds.max) {
@@ -86,6 +90,7 @@
       }
 
       this.scale = 1.0;
+
 
       this.origin = new Gamelab.Vector(0, 0, 0);
 
@@ -120,6 +125,8 @@
 
       this.complete_ext = args.complete_ext || [];
 
+
+      this.Scale(this.scale);
 
       // this.colorMap = this.createColorMap(5);
 
@@ -198,11 +205,11 @@
         this.image = new Gamelab.GameImage(src);
 
       } else if (src instanceof GameImage) {
-        console.log('Animation(): args are an instance of GameImage');
+        //console.log('Animation(): args are an instance of GameImage');
 
         this.image = src;
       } else if (src instanceof HTMLImageElement) {
-        console.log('Animation(): args was an instance of HTMLImageElement');
+        //console.log('Animation(): args are an instance of HTMLImageElement');
 
         this.image = new Gamelab.GameImage(src);
       }
@@ -223,12 +230,12 @@
         this.Size(this.size);
       }
 
-      if(this.frames instanceof Array)
-      this.frames.forEach(function(f){
+      if (this.frames instanceof Array)
+        this.frames.forEach(function(f) {
 
-        f.Scale(s);
+          f.Scale(s);
 
-      });
+        });
 
       return this;
     }
@@ -248,12 +255,12 @@
 
       if (typeof(src) == 'string') {
 
-        console.log('setting GameImage with string:' + src);
+        //console.log('setting GameImage with string:' + src);
         this.src = src;
         this.image = new Gamelab.GameImage(src);
 
       } else if (src instanceof Gamelab.GameImage) {
-        console.log('Animation(): args are an instance of GameImage');
+        //console.log('Animation(): args are an instance of GameImage');
 
         this.image = src;
       } else if (src instanceof HTMLImageElement) {
@@ -286,15 +293,18 @@
 
         //alert('Anime loaded');
 
-        $anime.FrameSize($anime.image.domElement.width, $anime.image.domElement.height)
+        //first run callback assigned by the api-fxns
+        $anime.load_call();
+
+        if ($anime.frameSize.x == 0 && !$anime.__isInit) //indicates zero frame size
+          $anime.FrameSize($anime.image.domElement.width, $anime.image.domElement.height)
           .FrameBounds(new Gamelab.Vector(0, 0), new Gamelab.Vector(0, 0));
 
+        if ($anime.size.x == 0  && !$anime.__isInit) //indicates zero size
+          $anime.Size($anime.frameSize.mult(new Gamelab.Vector($anime.scale, $anime.scale)));
+
+        if(!$anime.__isInit)
         $anime.apply2DFrames();
-
-        $anime.Size($anime.frameSize.mult(new Gamelab.Vector($anime.scale, $anime.scale)));
-
-
-        $anime.load_call();
 
       };
 
@@ -364,6 +374,22 @@
       }
     }
 
+
+    /**
+     * Provides a single and only function to be called whenever this Animation completes. Function should run every time the Animation reaches it's last frame-index.
+     *
+     * @function
+     * @params {Function} call the function to be called on complete
+     * @memberof Animation
+     **********/
+
+    soleComplete(call) {
+      this.complete_ext = [];
+      if (this.complete_ext.indexOf(call) == -1) {
+        this.complete_ext.push(call.bind(this));
+      }
+    }
+
     call_on_run() {
       //call any function extension that is present
       for (var x = 0; x < this.run_ext.length; x++) {
@@ -388,7 +414,7 @@
     FrameSize(w, h) {
       this.frameSize = new Gamelab.Vector(w, h);
       this.__isInit = true;
-      this.run();
+      this.apply2DFrames();
       return this;
     }
 
@@ -397,10 +423,21 @@
       return this;
     }
 
-    FrameBounds(minVector, maxVector, termVector) {
-      this.frameBounds = new Gamelab.VectorFrameBounds(minVector, maxVector, termVector);
+    ResetHang(){
+      this._hang = false;
+      this.cix = this.min_cix;
+    }
+
+    DefineGridFrames(x1, y1, x2, y2, xFinal, yFinal) {
+      var maxFrame;
+
+      if (typeof xFinal == 'number' && typeof yFinal == 'number')
+        maxFrame = new Gamelab.Vector(xFinal, yFinal);
+
+      this.frameBounds = new Gamelab.VectorFrameBounds(
+        new Gamelab.Vector(x1, y1), new Gamelab.Vector(x2, y2), maxFrame);
       this.__isInit = true;
-      this.run();
+      this.apply2DFrames();
       return this;
     }
 
@@ -464,9 +501,6 @@
 
 
     apply2DFrames() {
-
-      console.log('Running apply2DFrames(): --' + this.name);
-
       this.frames = [];
 
       if (!this.size) {
@@ -474,11 +508,9 @@
       }
 
       var fcount = 0;
-
       var quitLoop = false;
 
       for (let y = this.frameBounds.min.y; y <= this.frameBounds.max.y; y++) {
-
         for (let x = this.frameBounds.min.x; x <= this.frameBounds.max.x; x++) {
 
           let framePos = {
@@ -492,9 +524,7 @@
           this.frames.push(f);
 
           if (x >= this.frameBounds.termPoint.x && y >= this.frameBounds.termPoint.y) {
-
             quitLoop = true;
-
             break;
           }
 
@@ -533,7 +563,7 @@
 
     }
 
-    init_colorMap() {
+    init_colorMap(spatialDiv) {
       TypeCode.info('init_colorMap()');
 
       if (!TypeCode.allDefined([this.image, this.image.domElement]))
@@ -541,15 +571,13 @@
 
       this.canvasObject = this.canvasObject || new Gamelab.OffscreenCanvasRendering(this.image);
 
-      this.colorMap = this.colorMap || this.ColoredPixelGrid();
+      this.colorMap = this.colorMap || this.ColoredPixelGrid(spatialDiv);
 
       return this.colorMap;
     }
 
 
-    ColoredPixelGrid() {
-
-      I('ColoredPixelGrid()');
+    ColoredPixelGrid(spatialDiv=5.0) {
 
       var image = this.image.domElement,
 
@@ -557,7 +585,9 @@
 
         grid = [],
 
-        frameSizeDiv = this.selected_frame.frameSize.div(12).round();
+        frameSizeDiv = this.selected_frame.frameSize.div(spatialDiv).round();
+
+
 
       for (var x = 0; x <= image.width; x += frameSizeDiv.x) {
         for (var y = 0; y <= image.height; y += frameSizeDiv.y) {
@@ -565,13 +595,9 @@
           var pixel = ctx.getImageData(x, y, 1, 1);
           // Check that opacity is above zero
           if (pixel.data[3] != 0) {
-
             var vector = new Gamelab.Vector(x, y),
-
               gridObject = {
-
-                position: vector,
-
+                position: vector.sub(frameSizeDiv.div(2.0)),
                 size: frameSizeDiv
               };
 
@@ -591,19 +617,19 @@
      * @memberof Animation
      **********/
 
-    getCurrentPixelMap() {
+    getCurrentPixelMap(spatialDiv) {
 
       TypeCode.info('getCurrentPixelMap()');
       var map = [];
       var frame = this.selected_frame;
       let __inst = this;
 
-      this.colorMap = this.init_colorMap();
+      this.colorMap = this.init_colorMap(spatialDiv);
 
       for (var x in this.colorMap) {
         var c = this.colorMap[x];
 
-        if (Gamelab.Collision.boxesCollide(frame.framePos, frame.frameSize, c.position, c.size)) {
+        if (Gamelab.Collision.boxCollide(frame.framePos, frame.frameSize, c.position, c.size)) {
           map.push(c);
         }
       }
@@ -647,16 +673,22 @@
 
       fun = fun.bind(this);
 
-      let update = this.update.bind(this);
+      let update = this.update_frame.bind(this);
       let __inst = this;
-      this.update = function(__inst) {
+      this.update_frame = function(__inst) {
         update(__inst);
         fun(__inst);
       };
     }
 
-    update(){
-      this.update_frame();
+    soleUpdate(fun) {
+
+      fun = fun.bind(this);
+
+      let __inst = this;
+      this.update_frame = function(__inst) {
+        fun(__inst);
+      };
     }
 
     update_frame() {
@@ -681,7 +713,6 @@
 
     run() {
 
-
       if (this.__frametype == 'single') {
         return 0;
       }
@@ -690,14 +721,7 @@
 
       this.cix += 1;
 
-      //update once:
       this.update_frame();
-
-      if (this.cix % this.frames.length == 0) {
-
-        this.engage();
-
-      }
     }
 
     /**
@@ -714,10 +738,21 @@
         return 0;
       }
 
-      this.apply2DFrames();
+
+      if(!this.applied)
+      {
+        this.apply2DFrames();
+        this.applied = true;
+      }
+
+
 
       //update once:
       //this.update();
+
+  //    console.log('anime-len:' +this.frames.length);
+
+  //    console.log('cix:' +this.cix);
 
       if (this.cix % this.frames.length == 0) {
 
@@ -744,10 +779,10 @@
         return 0;
       }
 
-            //note support of min_cix (eg: min_cix of 1 if top-row starts 1 frame later than bottom)
-            if (this.cix >= this.frames.length - 1 || this.cix < this.min_cix) {
-              this.cix = this.min_cix;
-            }
+      //note support of min_cix (eg: min_cix of 1 if top-row starts 1 frame later than bottom)
+      if (this.cix >= this.frames.length - 1 || this.cix < this.min_cix && !this._hang) {
+        this.cix = this.min_cix;
+      }
 
       let __inst = this;
 
@@ -761,7 +796,7 @@
         .onUpdate(function() {
           //console.log(objects[0].position.x,objects[0].position.y);
 
-            //__inst.cix = Math.ceil(__inst.cix);
+          //__inst.cix = Math.ceil(__inst.cix);
 
           __inst.update_frame();
 
@@ -769,11 +804,14 @@
         .onComplete(function() {
           //console.log(objects[0].position.x, objects[0].position.y);
 
+            if(!__inst._hang)
           __inst.cix = __inst.min_cix;
 
           __inst.call_on_complete();
 
           __inst.isComplete = true;
+
+          __inst.apply2DFrames();
 
         });
 
@@ -787,12 +825,14 @@
 
   /** @memberof Gamelab */
 
+  Animation.prototype.FrameBounds = Animation.prototype.DefineGridFrames;
+
   Gamelab.Animation = Animation;
 
   Gamelab.Animation.continuous = Gamelab.Animation.run; //'continuous is an alternate reference to 'run'.'
 
-  Gamelab.Animation.continue = Gamelab.Animation.run; //'continue is an alternate reference to 'run'.'
+  Gamelab.Animation.update = Gamelab.Animation.update_frame; //alt ref
 
-  Gamelab.Animation.animate = Gamelab.Animation.run; //'animate is an alternate reference to 'run'.'
+  Gamelab.Animation.continue = Gamelab.Animation.run; //'continue is an alternate reference to 'run'.'
 
 })();

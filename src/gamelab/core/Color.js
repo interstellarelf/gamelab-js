@@ -66,7 +66,7 @@ class RGBColor {
     for (var x in matches) {
       var diff = Math.abs(color[x] - this[x]);
 
-      console.log('COLOR-DIFF: --1::' + jstr(this) + ':: --2::' + jstr(color));
+      //console.log('COLOR-DIFF: --1::' + jstr(this) + ':: --2::' + jstr(color));
 
       total_diff += diff;
     }

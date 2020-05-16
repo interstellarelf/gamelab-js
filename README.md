@@ -1,10 +1,10 @@
 -----------------------------------------------------
-![](images/gamelab-logo-small.png)
+![](images/gamelab-logo.png)
 -------------------------------------------------------------------
 ![](images/gamelab-banner.png)
 -------------------------------------------------------------------
 #### Gamelab.js
- -  a javascript library for canvas games.
+ -  Javascript library + tools for web-gl | canvas games
 -------------------------------------------------------------------
 #### Features:
  -  sprites
@@ -12,7 +12,9 @@
  -  particles
  -  sounds
  -  gamepad-input
- -  events
- -  behaviors
+ -  event-system
+ -  game-logic
+ -  tools + resources
 
-This project is open-source under the MIT License.
+gamelab.js is open-source under the MIT License.
+* includes implementations of existing open source libraries

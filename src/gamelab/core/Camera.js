@@ -28,6 +28,13 @@
           **********/
 
       this.position = new Gamelab.Vector(x, y, z);
+
+      this.speed = new Gamelab.Vector(0, 0, 0);
+    }
+
+    update(){
+        this.position.x += this.speed.x;
+        this.position.y += this.speed.y;
     }
 
   }

@@ -12,12 +12,11 @@ $(document).ready(function () {
   currentSectionNav = $('#' + getCurrentSectionName() + '-nav');
 
   if (currentSectionNav.position()) {
-    $('nav').scrollTop(currentSectionNav.position().top - 160);
+    $('nav').scrollTop(currentSectionNav.position().top - 30);
   }
 
   // function to scroll to anchor when clicking an anchor linl
   $('a[href*="#"]:not([href="#"])').click(function () {
-
     /* eslint-disable no-invalid-this */
     if (location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname) {
       target = $(this.hash);

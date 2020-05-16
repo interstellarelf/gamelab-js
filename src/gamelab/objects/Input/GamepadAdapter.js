@@ -1,62 +1,3 @@
-/**
- * @ignore
- * */
-
-class ControllerEventKeys {
-    constructor() {
-        return {
-
-            left_stick: false,
-
-            right_stick: false,
-
-            0: false,
-
-            1: false,
-
-            2: false,
-
-            3: false,
-
-            4: false,
-
-            5: false,
-
-            6: false,
-
-            7: false,
-
-            8: false,
-
-            9: false,
-
-            10: false,
-
-            11: false,
-
-            12: false,
-
-            13: false,
-
-            14: false,
-
-            15: false,
-
-            16: false,
-
-            17: false,
-
-            18: false,
-
-            19: false
-
-        }
-
-    }
-
-}
-
-Gamelab.ControllerEventKeys = ControllerEventKeys;
 
 
 /**
@@ -71,14 +12,31 @@ Gamelab.gamepads = Gamelab.gamepads || [];
 class GamepadAdapter {
 
     constructor() {
-
         this.__gamepads = [];
-
         this.intervals = [];
-
         let controller_stack = this;
-
         let __gamepadMaster = this;
+        this.settings = {};
+        this.settings.xbox_pc = {
+          button_0:'a',
+          button_1:'b',
+          button_2:'x',
+          button_3:'y',
+          button_4:'lb',
+          button_5:'rb',
+          button_6:'lt',
+          button_7:'rt',
+          button_8:'select',
+          button_9:'start',
+          button_10:'left_stick_button',
+          button_11:'right_stick_button',
+          button_12:'up',
+          button_13:'down',
+          button_14:'right',
+          button_15:'left'
+        };
+
+        this.selectSettings('xbox_pc');
 
         this.events = [];
 
@@ -102,15 +60,26 @@ class GamepadAdapter {
                     var events = __gamepadMaster.__gamepads[x] ? __gamepadMaster.__gamepads[x] : {};
 
                     __gamepadMaster.process(__gamepadMaster.gps[x], events);
-
                 }
-
             }, 20);
-
-
         });
+    }
 
+    selectSettings(name)
+    {
+      for(var x in this.settings)
+      {
+        if(x.toLowerCase() == name.toLowerCase())
+        {
+                this.selectedSettings = this.settings[x];
+        }
+      }
+    }
 
+    addButtonSettings(name, settings)
+    {
+      name = name || '#untitled';
+      this.settings[name] = settings;
     }
 
     gamepads() {
@@ -150,6 +119,8 @@ class GamepadAdapter {
 
     GamepadEvents(args) {
 
+        var $adapter = this;
+
         var gp = {};
 
         gp.stick_left = args.stick_left || function (x, y) {
@@ -178,43 +149,65 @@ class GamepadAdapter {
 
         };
 
-        gp.on = function (key, callback) {
 
-            if (this[key] && key !== "on") {
+                gp.normal_key = function(k){ //replace spaces and dashes with _
+                  for(var x = 0; x < 4; x++)
+                  {
+                    if(k.indexOf(' ') >= 0)
+                    {
+                        k = k.replace(' ', '_');
+                    }
+                    if(k.indexOf('-') >= 0)
+                    {
+                        k = k.replace('-', '_');
+                    }
+                  }
 
-                var current_cb = typeof(this[key]) == 'function' ? this[key] : function (x, y) {
-                };
-
-                this[key] = this.extendFunc(callback, current_cb);
-
-
-            }
-
-            else if (key.indexOf('button') >= 0 && key.indexOf('_') >= 0) {
-                var parts = key.split('_');
-
-                var number;
-
-                try {
-
-                    number = parseInt(parts[1]);
-
-
-                    var current_cb = typeof(this['buttons'][number]) == 'function' ? this['buttons'][number] : function (x, y) {
-                    };
-
-                    this['buttons'][number] = this.extendFunc(callback, current_cb);
-
-                }
-                catch (e) {
-                    console.error('could not parse "on" event with ' + key);
-
+                  return k.toLowerCase();
                 }
 
-            }
+                gp.on = function (key, callback) {
+
+                    var settings = $adapter.selectedSettings;
+
+                    key = this.normal_key(key);
 
 
-        }
+                                if (this[key] && key !== "on") {
+
+                                    var current_cb = typeof(this[key]) == 'function' ? this[key] : function (x, y) {
+                                    };
+
+                                    this[key] = this.extendFunc(callback, current_cb);
+                                }
+
+
+                    for(var x in settings)
+                    {
+                        var parts = x.split('_');
+
+                        if(this.normal_key(x) == key || this.normal_key(settings[x]) == key) //its in the settings
+                        {
+
+                                          var number;
+
+                                          try {
+
+                                              number = parseInt(parts[1]);
+
+                                              var current_cb = typeof(this['buttons'][number]) == 'function' ? this['buttons'][number] : function (x, y) {
+                                              };
+
+                                              this['buttons'][number] = this.extendFunc(callback, current_cb);
+
+                                          }
+                                          catch (e) {
+                                              console.error('could not parse "on" event with ' + key);
+
+                                          }
+                        }
+                    }
+                }
 
         gp.constructor = {name: "GamepadEvents"};
 

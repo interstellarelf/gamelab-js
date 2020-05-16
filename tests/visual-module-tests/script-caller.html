@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Script Caller</title>
+    <script src="../../dist/gamelab/gamelab.js"></script>
+    <script src="./../../res/libraries/dat.gui.js"></script>
+    <script src="./res/html/gui-helpers.js"></script>
+
+    <!-- spritebox-example.css style -->
+    <link rel="stylesheet" href="../../res/styles/gamelab-example.css">
+
+    <style>
+
+      span.dgc-title {
+        position: absolute;
+        z-index: 9999;
+        width: 241px;
+        height: 20px;
+        font-size: 12px;
+        top: 0;
+        overflow: visible;
+        background: #111;
+        color: lightgrey;
+        padding-left: 4px;
+        border-bottom: 1px solid #444;
+      }
+    </style>
+
+  </head>
+  <body>
+    <header>
+      <img src="../../res/images/gamelab-logo.png" alt="" id="logo">
+      <span class="title">Script Caller</span>
+    </header>
+    <script>
+
+      var gameWindow = new Gamelab.GameWindow().Background('black');
+
+      var Program = {
+
+        scripts: ['./res/modules/generate/stars.generator.js']
+
+      };
+
+      Gamelab.ready(function () {
+
+        window.addContainer('Select Script', function () {
+          var $box = this;
+          Program.scripts.forEach(function ($s) {
+            var radio = createRadioButton($s.split('/').pop(), function () {
+
+              this.setAttribute('data-src', $s);
+
+              if (confirm('do you want to run ' + this.innerText + '?')) {
+
+                new Gamelab.Module().load(this.getAttribute('data-src'), function (moduleExports) {
+
+                  var instance = new moduleExports();
+
+                });
+
+              }
+            });
+
+            $box.appendChild(radio);
+
+          });
+
+        });
+
+      });
+
+      gameWindow.start();
+    </script>
+
+  </body>
+</html>

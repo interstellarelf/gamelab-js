@@ -55,23 +55,3 @@ class VectorFrameBounds {
 ;
 
 Gamelab.VectorFrameBounds = VectorFrameBounds;
-
-
-var GeoMath = {
-
-        rotatePointsXY:function(x,y,angle) {
-
-            var theta = angle*Math.PI/180;
-
-            var point = {};
-            point.x = x * Math.cos(theta) - y * Math.sin(theta);
-            point.y = x * Math.sin(theta) + y * Math.cos(theta);
-
-            point.z = 0;
-
-            return point
-        }
-
-}
-
-Gamelab.GeoMath = GeoMath;

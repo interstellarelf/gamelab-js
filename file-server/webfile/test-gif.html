@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+
+    <script src="res/libraries/spritebox.js"></script>
+
+    <script src="res/libraries/dat.gui.js"></script>
+
+    <script src="../../src/es6/rest/rest.js"></script>
+
+    <!-- dat.gui.css style -->
+    <link rel="stylesheet" href="res/libraries/dat.gui.css">
+
+    <!-- spritebox-example.css style -->
+    <link rel="stylesheet" href="res/styles/spritebox-example.css">
+
+    <style>
+      header {
+        position: fixed;
+        width: 100%;
+      }
+      div.file-loader {
+        position: fixed;
+        top: 100px;
+        left: 9px;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <header>
+      <img src="../res/images/spritebox-logo.png" alt="" id="logo">
+      <span class="title">Module-Test:: Multi-Image-Load &amp; Texture-Output</span>
+    </header>
+
+    <div class="file-loader">
+
+      <label for="">Image-File(s)</label>
+
+      <input type="file" multiple="multiple" id="image-input" class="images">
+
+    </div>
+
+    <script>
+
+      var gameWindow = new Gamestack.GameWindow().Background('black');
+
+      var outputScript = new Gamestack.Module();
+
+      outputScript.load('res/scripts/image-2d.output.js', function ($M) {
+        $M.start();
+      });
+
+      gameWindow.start();
+    </script>
+
+  </body>
+</html>

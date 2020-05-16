@@ -28,38 +28,45 @@
         left: 200px;
         border: none;
         background: url("images/g.png");
-        background-size: 96% auto;
+        background-size:96% auto;
         width: 40px;
         height: 40px;
         border-radius: 50%;
       }
-      img.logo-main {
-        width: 180px;
-        height: auto;
-      }
-      div#main {
-        background: #101010;
-      }
-      example-link {
-        cursor: pointer;
-      }
-      h3.reference-title {
-        display: none;
+
+
+
+      div#main{
+
+      background:#101010;
+
       }
 
-      h1.page-title{
+
+      example-link{
+
+      cursor:pointer;
+
+      }
+
+      .text.hidden{
         display:none;
       }
 
-    </style>
+      .top-nav-wrapper.no-search ul li.active {
+        border-bottom: none;
+      }
 
+    </style>
 
   </head>
 
   <body>
 
     
-    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+    <span class="text hidden">SEARCH IS DISABLED FOR THIS PAGE</span>
+
     
 
     <input type="checkbox" id="nav-trigger" class="nav-trigger"/>
@@ -69,32 +76,24 @@
 
     <label for="nav-trigger" class="overlay"></label>
 
-    <div class="top-nav-wrapper">
+    <div class="top-nav-wrapper no-search">
       <ul>
         <li >
           <img class="logo" style="cursor:pointer; position:relative; height:34px; width:auto; " src="images/gamelab-logo.png" onclick="window.location='index.html';"></img>
+            <i class="g-icon"></i>
         </li>
 
         
-        <li>
-          <form id="search-form" class="navbar-form" role="search">
-
-            <i class="search-icon-planet"></i>
-            <input type="text" id="search-input" placeholder="Search" class="search-input">
-          </form>
-        </div>
-      </li>
-      
 
     </ul>
   </div>
 
   <nav style="padding-top:30px;">
     <h3 class="reference-title">
-      GamestackJs Documentation
+      Gamelab Documentation
     </h3>
 
-    <h3>Classes</h3><ul><li id="KeyboardEvent-nav"><a href="KeyboardEvent.html">KeyboardEvent</a></li><li id="SpriteFill-nav"><a href="SpriteFill.html">SpriteFill</a></li><li id="GameWindow-nav"><a href="GameWindow.html">GameWindow</a><ul class='methods'><li data-type="method" id="GameWindow-getCanvas-nav"><a href="GameWindow.html#getCanvas">getCanvas</a></li><li data-type="method" id="GameWindow-center-nav"><a href="GameWindow.html#center">center</a></li><li data-type="method" id="GameWindow-GridStyle-nav"><a href="GameWindow.html#GridStyle">GridStyle</a></li><li data-type="method" id="GameWindow-onUpdate-nav"><a href="GameWindow.html#onUpdate">onUpdate</a></li><li data-type="method" id="GameWindow-update-nav"><a href="GameWindow.html#update">update</a></li><li data-type="method" id="GameWindow-onBeforeDraw-nav"><a href="GameWindow.html#onBeforeDraw">onBeforeDraw</a></li><li data-type="method" id="GameWindow-onAfterDraw-nav"><a href="GameWindow.html#onAfterDraw">onAfterDraw</a></li><li data-type="method" id="GameWindow-Size-nav"><a href="GameWindow.html#Size">Size</a></li><li data-type="method" id="GameWindow-add-nav"><a href="GameWindow.html#add">add</a></li><li data-type="method" id="GameWindow-Background-nav"><a href="GameWindow.html#Background">Background</a></li><li data-type="method" id="GameWindow-remove-nav"><a href="GameWindow.html#remove">remove</a></li><li data-type="method" id="GameWindow-animate-nav"><a href="GameWindow.html#animate">animate</a></li><li data-type="method" id="GameWindow-start-nav"><a href="GameWindow.html#start">start</a></li></ul></li><li id="Camera-nav"><a href="Camera.html">Camera</a></li><li id="Animation-nav"><a href="Animation.html">Animation</a><ul class='methods'><li data-type="method" id="Animation-Frame#createColorMap-nav"><a href="Animation.html#.Frame#createColorMap">Frame#createColorMap</a></li><li data-type="method" id="Animation-init_singleFrame-nav"><a href="Animation.html#init_singleFrame">init_singleFrame</a></li><li data-type="method" id="Animation-onLoad-nav"><a href="Animation.html#onLoad">onLoad</a></li><li data-type="method" id="Animation-onRun-nav"><a href="Animation.html#onRun">onRun</a></li><li data-type="method" id="Animation-onComplete-nav"><a href="Animation.html#onComplete">onComplete</a></li><li data-type="method" id="Animation-ReverseFrames-nav"><a href="Animation.html#ReverseFrames">ReverseFrames</a></li><li data-type="method" id="Animation-SingleFrame-nav"><a href="Animation.html#SingleFrame">SingleFrame</a></li><li data-type="method" id="Animation-getCurrentPixelMap-nav"><a href="Animation.html#getCurrentPixelMap">getCurrentPixelMap</a></li><li data-type="method" id="Animation-setFrame-nav"><a href="Animation.html#setFrame">setFrame</a></li><li data-type="method" id="Animation-onUpdate-nav"><a href="Animation.html#onUpdate">onUpdate</a></li><li data-type="method" id="Animation-run-nav"><a href="Animation.html#run">run</a></li><li data-type="method" id="Animation-animate-nav"><a href="Animation.html#animate">animate</a></li><li data-type="method" id="Animation-engage-nav"><a href="Animation.html#engage">engage</a></li></ul></li><li id="Frame-nav"><a href="Frame.html">Frame</a></li><li id="Sound-nav"><a href="Sound.html">Sound</a></li><li id="GamepadEvent-nav"><a href="GamepadEvent.html">GamepadEvent</a></li><li id="Module-nav"><a href="Module.html">Module</a></li><li id="SpriteBrush-nav"><a href="SpriteBrush.html">SpriteBrush</a></li><li id="BoneSprite-nav"><a href="BoneSprite.html">BoneSprite</a></li><li id="VectorFrameBounds-nav"><a href="VectorFrameBounds.html">VectorFrameBounds</a></li><li id="GameImage-nav"><a href="GameImage.html">GameImage</a></li><li id="BoolEvent-nav"><a href="BoolEvent.html">BoolEvent</a><ul class='methods'><li data-type="method" id="BoolEvent-On-nav"><a href="BoolEvent.html#On">On</a></li><li data-type="method" id="BoolEvent-Call-nav"><a href="BoolEvent.html#Call">Call</a></li></ul></li><li id="InputEvent-nav"><a href="InputEvent.html">InputEvent</a></li><li id="Renderable-nav"><a href="Renderable.html">Renderable</a></li><li id="Rectangle-nav"><a href="Rectangle.html">Rectangle</a></li></ul>
+    <h3>Examples</h3><ul><li id="<example-link href='._gamelab-examples/html/boss-room-01.html' >boss-room-01</example-link>-nav"><example-link href='./gamelab-examples/html/boss-room-01.html' >boss-room-01</example-link></li><li id="<example-link href='._gamelab-examples/html/canvas-lightning.html' >canvas-lightning</example-link>-nav"><example-link href='./gamelab-examples/html/canvas-lightning.html' >canvas-lightning</example-link></li><li id="<example-link href='._gamelab-examples/html/image-effect-builder.html' >image-effect-builder</example-link>-nav"><example-link href='./gamelab-examples/html/image-effect-builder.html' >image-effect-builder</example-link></li><li id="<example-link href='._gamelab-examples/html/image-sequence-sprite.html' >image-sequence-sprite</example-link>-nav"><example-link href='./gamelab-examples/html/image-sequence-sprite.html' >image-sequence-sprite</example-link></li><li id="<example-link href='._gamelab-examples/html/level-test.html' >level-test</example-link>-nav"><example-link href='./gamelab-examples/html/level-test.html' >level-test</example-link></li><li id="<example-link href='._gamelab-examples/html/meme-generator.html' >meme-generator</example-link>-nav"><example-link href='./gamelab-examples/html/meme-generator.html' >meme-generator</example-link></li><li id="<example-link href='._gamelab-examples/html/particle.html' >particle</example-link>-nav"><example-link href='./gamelab-examples/html/particle.html' >particle</example-link></li><li id="<example-link href='._gamelab-examples/html/rectangle-block-terrain-generator.html' >rectangle-block-terrain-generator</example-link>-nav"><example-link href='./gamelab-examples/html/rectangle-block-terrain-generator.html' >rectangle-block-terrain-generator</example-link></li><li id="<example-link href='._gamelab-examples/html/run-gun-frog.html' >run-gun-frog</example-link>-nav"><example-link href='./gamelab-examples/html/run-gun-frog.html' >run-gun-frog</example-link></li><li id="<example-link href='._gamelab-examples/html/space-game.html' >space-game</example-link>-nav"><example-link href='./gamelab-examples/html/space-game.html' >space-game</example-link></li><li id="<example-link href='._gamelab-examples/html/sprite-jungle-gym.html' >sprite-jungle-gym</example-link>-nav"><example-link href='./gamelab-examples/html/sprite-jungle-gym.html' >sprite-jungle-gym</example-link></li><li id="<example-link href='._gamelab-examples/html/sprite.mouse-events.html' >sprite</example-link>-nav"><example-link href='./gamelab-examples/html/sprite.mouse-events.html' >sprite</example-link></li><li id="<example-link href='._gamelab-examples/html/sprite.pixel-rays.html' >sprite</example-link>-nav"><example-link href='./gamelab-examples/html/sprite.pixel-rays.html' >sprite</example-link></li><li id="<example-link href='._gamelab-examples/html/title-sequence.html' >title-sequence</example-link>-nav"><example-link href='./gamelab-examples/html/title-sequence.html' >title-sequence</example-link></li><li id="<example-link href='._gamelab-examples/html/zipmeister.html' >zipmeister</example-link>-nav"><example-link href='./gamelab-examples/html/zipmeister.html' >zipmeister</example-link></li></ul><h3>Classes</h3><ul><li id="GamepadEvent-nav"><a href="GamepadEvent.html">GamepadEvent</a></li><li id="SpriteGroup-nav"><a href="SpriteGroup.html">SpriteGroup</a></li><li id="GameWindow-nav"><a href="GameWindow.html">GameWindow</a><ul class='methods'><li data-type="method" id="GameWindow-getCanvas-nav"><a href="GameWindow.html#getCanvas">getCanvas</a></li><li data-type="method" id="GameWindow-center-nav"><a href="GameWindow.html#center">center</a></li><li data-type="method" id="GameWindow-GridStyle-nav"><a href="GameWindow.html#GridStyle">GridStyle</a></li><li data-type="method" id="GameWindow-onUpdate-nav"><a href="GameWindow.html#onUpdate">onUpdate</a></li><li data-type="method" id="GameWindow-onResize-nav"><a href="GameWindow.html#onResize">onResize</a></li><li data-type="method" id="GameWindow-update-nav"><a href="GameWindow.html#update">update</a></li><li data-type="method" id="GameWindow-onBeforeDraw-nav"><a href="GameWindow.html#onBeforeDraw">onBeforeDraw</a></li><li data-type="method" id="GameWindow-onAfterDraw-nav"><a href="GameWindow.html#onAfterDraw">onAfterDraw</a></li><li data-type="method" id="GameWindow-Size-nav"><a href="GameWindow.html#Size">Size</a></li><li data-type="method" id="GameWindow-add-nav"><a href="GameWindow.html#add">add</a></li><li data-type="method" id="GameWindow-Background-nav"><a href="GameWindow.html#Background">Background</a></li><li data-type="method" id="GameWindow-remove-nav"><a href="GameWindow.html#remove">remove</a></li><li data-type="method" id="GameWindow-run-nav"><a href="GameWindow.html#run">run</a></li><li data-type="method" id="GameWindow-start-nav"><a href="GameWindow.html#start">start</a></li></ul></li><li id="BoolEvent-nav"><a href="BoolEvent.html">BoolEvent</a><ul class='methods'><li data-type="method" id="BoolEvent-On-nav"><a href="BoolEvent.html#On">On</a></li><li data-type="method" id="BoolEvent-Call-nav"><a href="BoolEvent.html#Call">Call</a></li></ul></li><li id="Camera-nav"><a href="Camera.html">Camera</a></li><li id="Animation-nav"><a href="Animation.html">Animation</a><ul class='methods'><li data-type="method" id="Animation-init_singleFrame-nav"><a href="Animation.html#init_singleFrame">init_singleFrame</a></li><li data-type="method" id="Animation-onLoad-nav"><a href="Animation.html#onLoad">onLoad</a></li><li data-type="method" id="Animation-onRun-nav"><a href="Animation.html#onRun">onRun</a></li><li data-type="method" id="Animation-onComplete-nav"><a href="Animation.html#onComplete">onComplete</a></li><li data-type="method" id="Animation-soleComplete-nav"><a href="Animation.html#soleComplete">soleComplete</a></li><li data-type="method" id="Animation-ReverseFrames-nav"><a href="Animation.html#ReverseFrames">ReverseFrames</a></li><li data-type="method" id="Animation-SingleFrame-nav"><a href="Animation.html#SingleFrame">SingleFrame</a></li><li data-type="method" id="Animation-getCurrentPixelMap-nav"><a href="Animation.html#getCurrentPixelMap">getCurrentPixelMap</a></li><li data-type="method" id="Animation-setFrame-nav"><a href="Animation.html#setFrame">setFrame</a></li><li data-type="method" id="Animation-onUpdate-nav"><a href="Animation.html#onUpdate">onUpdate</a></li><li data-type="method" id="Animation-run-nav"><a href="Animation.html#run">run</a></li><li data-type="method" id="Animation-animate-nav"><a href="Animation.html#animate">animate</a></li><li data-type="method" id="Animation-engage-nav"><a href="Animation.html#engage">engage</a></li><li data-type="method" id="Animation-Frame#createColorMap-nav"><a href="Animation.html#.Frame#createColorMap">Frame#createColorMap</a></li></ul></li><li id="Module-nav"><a href="Module.html">Module</a></li><li id="Sprite-nav"><a href="Sprite.html">Sprite</a><ul class='methods'><li data-type="method" id="Sprite-onLoad-nav"><a href="Sprite.html#onLoad">onLoad</a></li><li data-type="method" id="Sprite-Clone-nav"><a href="Sprite.html#Clone">Clone</a></li><li data-type="method" id="Sprite-Add-nav"><a href="Sprite.html#Add">Add</a></li><li data-type="method" id="Sprite-Life-nav"><a href="Sprite.html#Life">Life</a></li><li data-type="method" id="Sprite-init-nav"><a href="Sprite.html#init">init</a></li><li data-type="method" id="Sprite-addInitializer-nav"><a href="Sprite.html#addInitializer">addInitializer</a></li><li data-type="method" id="Sprite-get_id-nav"><a href="Sprite.html#get_id">get_id</a></li><li data-type="method" id="Sprite-create_id-nav"><a href="Sprite.html#create_id">create_id</a></li><li data-type="method" id="Sprite-getSizeByMax-nav"><a href="Sprite.html#getSizeByMax">getSizeByMax</a></li><li data-type="method" id="Sprite-SingleFrame-nav"><a href="Sprite.html#SingleFrame">SingleFrame</a></li><li data-type="method" id="Sprite-LifeSpan-nav"><a href="Sprite.html#LifeSpan">LifeSpan</a></li><li data-type="method" id="Sprite-Life-nav"><a href="Sprite.html#Life">Life</a></li><li data-type="method" id="Sprite-isDead-nav"><a href="Sprite.html#isDead">isDead</a></li><li data-type="method" id="Sprite-die-nav"><a href="Sprite.html#die">die</a></li><li data-type="method" id="Sprite-onScreen-nav"><a href="Sprite.html#onScreen">onScreen</a></li><li data-type="method" id="Sprite-update-nav"><a href="Sprite.html#update">update</a></li><li data-type="method" id="Sprite-onUpdate-nav"><a href="Sprite.html#onUpdate">onUpdate</a></li><li data-type="method" id="Sprite-travelLineOnLoop-nav"><a href="Sprite.html#travelLineOnLoop">travelLineOnLoop</a></li><li data-type="method" id="Sprite-shoot-nav"><a href="Sprite.html#shoot">shoot</a></li><li data-type="method" id="Sprite-subsprite-nav"><a href="Sprite.html#subsprite">subsprite</a></li><li data-type="method" id="Sprite-animate-nav"><a href="Sprite.html#animate">animate</a></li><li data-type="method" id="Sprite-onAnimationComplete-nav"><a href="Sprite.html#onAnimationComplete">onAnimationComplete</a></li><li data-type="method" id="Sprite-center-nav"><a href="Sprite.html#center">center</a></li><li data-type="method" id="Sprite-overlap_x-nav"><a href="Sprite.html#overlap_x">overlap_x</a></li><li data-type="method" id="Sprite-overlap_y-nav"><a href="Sprite.html#overlap_y">overlap_y</a></li><li data-type="method" id="Sprite-collide_stop_x-nav"><a href="Sprite.html#collide_stop_x">collide_stop_x</a></li><li data-type="method" id="Sprite-restoreFrom-nav"><a href="Sprite.html#restoreFrom">restoreFrom</a></li></ul></li><li id="Frame-nav"><a href="Frame.html">Frame</a></li><li id="Sound-nav"><a href="Sound.html">Sound</a></li><li id="InputEvent-nav"><a href="InputEvent.html">InputEvent</a></li><li id="Renderable-nav"><a href="Renderable.html">Renderable</a></li><li id="SpriteFill-nav"><a href="SpriteFill.html">SpriteFill</a></li><li id="SpriteBrush-nav"><a href="SpriteBrush.html">SpriteBrush</a></li><li id="BoneSprite-nav"><a href="BoneSprite.html">BoneSprite</a></li><li id="VectorFrameBounds-nav"><a href="VectorFrameBounds.html">VectorFrameBounds</a></li><li id="GameImage-nav"><a href="GameImage.html">GameImage</a></li><li id="Rectangle-nav"><a href="Rectangle.html">Rectangle</a></li><li id="KeyboardEvent-nav"><a href="KeyboardEvent.html">KeyboardEvent</a></li></ul>
   </nav>
 
   <div id="main">
@@ -256,7 +255,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line5568">line 5568</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6024">line 6024</a>
         </li>
       </ul>
     </dd>
@@ -417,7 +416,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line5606">line 5606</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6035">line 6035</a>
         </li>
       </ul>
     </dd>
@@ -538,7 +537,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line5616">line 5616</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6074">line 6074</a>
         </li>
       </ul>
     </dd>
@@ -659,7 +658,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line5645">line 5645</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6104">line 6104</a>
         </li>
       </ul>
     </dd>
@@ -683,152 +682,6 @@
 
     
       <h3 class="subsection-title">Methods</h3>
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#createColorMap">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="createColorMap">
-      <span class="type-signature">(static) </span>Frame#createColorMap<span class="signature">(unitDimen)</span><span class="type-signature"></span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>Creates and returns a ColorMap for this animation, allowing opacity-based pixel-collision.</p>
-  </div>
-
-
-
-
-
-
-
-  <h5>Parameters:</h5>
-  
-
-<table class="params">
-  <thead>
-    <tr>
-      
-        <th>Name</th>
-      
-
-      <th>Type</th>
-
-      
-
-      
-
-      <th class="last">Description</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>unitDimen</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      number
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          <p>a Colormap grid-unit-size --A larger unitDimen decreases accuracy, and results in faster-processing.</p>
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line4824">line 4824</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       
         
@@ -895,7 +748,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line5815">line 5815</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6276">line 6276</a>
         </li>
       </ul>
     </dd>
@@ -986,7 +839,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line5857">line 5857</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6321">line 6321</a>
         </li>
       </ul>
     </dd>
@@ -1077,7 +930,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line5880">line 5880</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6344">line 6344</a>
         </li>
       </ul>
     </dd>
@@ -1168,7 +1021,98 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line5896">line 5896</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6360">line 6360</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#soleComplete">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="soleComplete">
+      <span class="type-signature"></span>soleComplete<span class="signature">()</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Provides a single and only function to be called whenever this Animation completes. Function should run every time the Animation reaches it's last frame-index.</p>
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6376">line 6376</a>
         </li>
       </ul>
     </dd>
@@ -1259,7 +1203,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line5968">line 5968</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6459">line 6459</a>
         </li>
       </ul>
     </dd>
@@ -1405,7 +1349,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line5982">line 5982</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6473">line 6473</a>
         </li>
       </ul>
     </dd>
@@ -1496,7 +1440,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6130">line 6130</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6612">line 6612</a>
         </li>
       </ul>
     </dd>
@@ -1642,7 +1586,7 @@
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6159">line 6159</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6641">line 6641</a>
         </li>
       </ul>
     </dd>
@@ -1747,12 +1691,14 @@
         <td class="description last">
           <p>the function to be appended to sprite.update</p>
 <ul>
-<li><p>@example
+<li>
+<p>@example
 // extend the behavior of your animation
 myAnime.onUpdate(function(spr)</p>
-<pre class="prettyprint source"><code>            console.log('extended update'); //runs automatically whenever animation.update runs
+<pre><code>            console.log('extended update'); //runs automatically whenever animation.update runs
 
-           });</code></pre></li>
+           });</code></pre>
+</li>
 </ul>
           
         </td>
@@ -1797,7 +1743,7 @@ myAnime.onUpdate(function(spr)</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6182">line 6182</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6664">line 6664</a>
         </li>
       </ul>
     </dd>
@@ -1889,7 +1835,7 @@ Also works as a single call at any time during game-update.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6218">line 6218</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6706">line 6706</a>
         </li>
       </ul>
     </dd>
@@ -1980,7 +1926,7 @@ Also works as a single call at any time during game-update.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6246">line 6246</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6726">line 6726</a>
         </li>
       </ul>
     </dd>
@@ -2126,7 +2072,153 @@ Also works as a single call at any time during game-update.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6273">line 6273</a>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line6764">line 6764</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#createColorMap">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="createColorMap">
+      <span class="type-signature">(static) </span>Frame#createColorMap<span class="signature">(unitDimen)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Creates and returns a ColorMap for this animation, allowing opacity-based pixel-collision.</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>unitDimen</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      number
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>a Colormap grid-unit-size --A larger unitDimen decreases accuracy, and results in faster-processing.</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line7124">line 7124</a>
         </li>
       </ul>
     </dd>
@@ -2169,29 +2261,11 @@ Also works as a single call at any time during game-update.</p>
   <br class="clear">
 
   
-  <div class="modal fade" id="searchResults">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Search results</h4>
-        </div>
-        <div class="modal-body"></div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-      <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-  </div>
-  
 
   <footer>
     Documentation generated by
     <a href="https://github.com/jsdoc3/jsdoc">JSDoc
-      3.5.5</a>
+      3.6.3</a>
   </footer>
 
   <script src="scripts/linenumber.js"></script>
@@ -2199,31 +2273,46 @@ Also works as a single call at any time during game-update.</p>
 
   <script>
 
-    $(document).ready(function () {
-      console.log('doc-ready::');
-    });
+    var g = {rotation:0};
+
+    var DisplayUpdates = {
+
+      Logo:{
+        start: function () {
+
+        setInterval(function () {
+
+            g.rotation += 1.0;
+
+          var GDom = document.querySelector('i.g-icon');
+
+            GDom.style.transform = `rotate(${g.rotation}deg)`;
+
+        }, 20);
+
+        }
+      }
+
+    };
+
+
+  $(document).ready(function(){
+
+      console.log('Document-Ready::');
+      DisplayUpdates.Logo.start();
+
+  });
+
   </script>
 
-  
-  <script type="text/javascript">
-    $(document).ready(function () {
-      SearcherDisplay.init();
 
-      $('#search-form').submit(function (e) {
 
-        //alert('form submit'); localStorage.setItem('searchValue', $('#search-input').val());
-        SearcherDisplay.startSearch();
-        e.preventDefault();
-        return false;
-
-      });
-    });
-  </script>
   
 
   <script type="text/x-docstrap-searchdb">
     <%= searchableDocuments %>
   </script>
+
 
 </body>
 </html>

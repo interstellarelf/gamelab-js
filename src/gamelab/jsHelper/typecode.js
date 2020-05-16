@@ -94,6 +94,7 @@ let TypeCode = {
     }
   },
 
+
   //obj's are all of type or return false
   psuedoTypeCheck: function(obj, psuedotype = [], throwing = false) //obj is type or is encapsulated into type
   {

@@ -72,6 +72,14 @@ function single_numeric_x(x, y, z)
       }
     }
 
+    copy(){
+      return new Gamelab.Vector(this);
+    }
+
+    negate(){
+      return new Gamelab.Vector(-this.x, -this.y, -this.z);
+    }
+
     /**
      * Subtracts another Vector from this vector and returns a vector for the resulting difference.
      *
@@ -97,6 +105,8 @@ function single_numeric_x(x, y, z)
       var v = new Gamelab.Vector(x, y, z);
       return new Gamelab.Vector(this.x + v.x, this.y + v.y, this.z + v.z);
     }
+
+
 
     /**
      * Multiplies another Vector by this vector and returns a vector for the resulting product.
@@ -193,6 +203,13 @@ function single_numeric_x(x, y, z)
        return new Gamelab.Vector(Math.ceil(this.x * d) / d, Math.ceil(this.y * d) / d, Math.ceil(this.z  * d) / d);
      }
 
+
+     above_zero_xy(){
+
+       return this.x > 0 && this.y > 0;
+
+     }
+
     /**
      * Creates new vector, with the negated x,y,z values (-x-y-z), returns the resulting vector
      *
@@ -203,6 +220,26 @@ function single_numeric_x(x, y, z)
 
     neg() {
       return new Gamelab.Vector(-this.x, -this.y, -this.z);
+    }
+
+    seek(x, y, speedValue=1.0)
+    {
+      var targetInc;
+
+      if(typeof x == 'object' && typeof y == 'number')
+      {
+        speedValue = y;
+        y = undefined;
+        targetInc = new Gamelab.Vector(x).sub(this).mult(speedValue);
+      }
+      else{
+        targetInc = new Gamelab.Vector(x, y).sub(this).mult(speedValue);
+      }
+      return this.add(targetInc);
+    }
+
+    half(){
+      return this.div(2);
     }
 
     /**
@@ -226,7 +263,7 @@ function single_numeric_x(x, y, z)
      * @returns {number} the specific distance between this and the argument-vector
      **********/
 
-    trig_distance_xy(v) {
+    distance(v) {
       var dist = this.sub(v);
       return Math.sqrt(dist.x * dist.x + dist.y * dist.y);
     }
@@ -263,7 +300,7 @@ function single_numeric_x(x, y, z)
      * @memberof Vector
      **********/
 
-    rotationalSpeedPoint(rotation, speed) {
+    rotationalSpeedPoints(rotation, speed) {
       var r = rotation;
       if (isNaN(speed)) {
         speed = 1;
@@ -356,15 +393,6 @@ function single_numeric_x(x, y, z)
       point.z = 0;
 
       return new Gamelab.Vector(point.x, point.y, point.z);
-    },
-
-    rotatePosition3D(x, y, z, $rot) {
-
-      var pos1 = this.rotatePointsXY(x, z, $rot.y);
-      var pos2 = this.rotatePointsXY(pos1.x, y, $rot.z);
-      //var pos3 = this.rotatePointsXY(y, z, $rot.x);
-
-      return new Gamelab.Vector(pos2.x, pos3.x, pos3.y);
     }
 
   }

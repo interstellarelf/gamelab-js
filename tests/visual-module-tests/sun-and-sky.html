@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Sun And Sky</title>
+    <script src="../../dist/gamelab/gamelab.js"></script>
+    <script src="./../../res/libraries/dat.gui.js"></script>
+
+
+    <!-- spritebox-example.css style -->
+    <link rel="stylesheet" href="../../res/styles/gamelab-example.css">
+
+    <style>
+
+      span.dgc-title {
+        position: absolute;
+        z-index: 9999;
+        width: 241px;
+        height: 20px;
+        font-size: 12px;
+        top: 0;
+        overflow: visible;
+        background: #111;
+        color: lightgrey;
+        padding-left: 4px;
+        border-bottom: 1px solid #444;
+      }
+
+    </style>
+
+  </head>
+  <body>
+    <header>
+      <img src="../../res/images/gamelab-logo.png" alt="" id="logo">
+      <span class="title">Sun and Sky</span>
+    </header>
+    <script>
+
+
+      var gameWindow = new Gamelab.GameWindow().Background('black');
+
+
+      var starsModule = new Gamelab.Module().load('./res/modules/generate/stars.generator.js', function(construct){
+
+        var spaceInstance = new construct();
+
+      });
+
+
+      var sunModule = new Gamelab.Module().load('./res/modules/space-horizon.module.js', function(construct){
+
+        var sunInstance = new construct();
+
+      });
+
+
+      Gamelab.ready(function () {
+
+
+
+      });
+
+
+      gameWindow.start();
+
+
+    </script>
+
+  </body>
+</html>

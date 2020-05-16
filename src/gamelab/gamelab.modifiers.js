@@ -77,15 +77,10 @@ Gamelab.FeatureInject = function(constructor, args) {
     var props = TypeCode.getProtoFuncs(Gamelab.FeatureInjectors[x]);
 
     for (var y = 0; y < props.length; y++) {
-
       console.log(x + ":" + props[y]);
-
       for (var z in GClassFeatures)
         if (GClassFeatures[z] && GClassFeatures[z].featureSymbols.hasKey(props[y])) {
-
-
           Gamelab.FeatureInjectors[x][props[y]](Gamelab[z].prototype, args);
-
         }
     }
   }
@@ -225,6 +220,67 @@ class VectorFunctions {
     obj.Rotate = obj.Rot;
 
     obj.Rotation = obj.Rot;
+
+  }
+
+  relative_spatial(obj){
+
+
+        obj.Size = function(x, y, z) {
+
+          if (typeof(x) == 'object')
+            this.size = new Gamelab.Vector(x);
+
+          else if (!isNaN(x) && !isNaN(y)) //has minimum of numeric x and y
+            this.size = new Gamelab.Vector(x, y, z);
+
+          else //use x accross the vector
+            this.size = new Gamelab.Vector(x, x, x);
+
+          return this;
+        };
+
+        obj.Pos = function(x, y, z) {
+
+          var bpx = 0;
+          if(this.basePosition &&  this.basePosition.x)
+          bpx = this.basePosition.x;
+
+          if (typeof(x) == 'object')
+            this.position = new Gamelab.Vector(bpx + x);
+
+          else if (!isNaN(x) && !isNaN(y)) //has minimum of numeric x and y
+            this.position = new Gamelab.Vector(bpx + x, y, z);
+
+          else //use x accross the vector
+            this.position = new Gamelab.Vector(bpx + x, x, x);
+
+          return this;
+        };
+
+        obj.Rot = function(x, y, z) {
+
+          var bx = 0;
+          if(this.baseRotation &&  this.baseRotation.x)
+          bx = this.baseRotation.x;
+
+          if (typeof(x) == 'object')
+            this.rotation = new Gamelab.Vector(bx + x);
+
+          else if (!isNaN(x) && !isNaN(y)) //has minimum of numeric x and y
+            this.rotation = new Gamelab.Vector(bx + x, y, z);
+
+          else //use x accross the vector
+            this.rotation = new Gamelab.Vector(bx + x, x, x);
+
+          return this;
+        };
+
+        obj.Position = obj.Pos;
+
+        obj.Rotate = obj.Rot;
+
+        obj.Rotation = obj.Rot;
 
   }
 
