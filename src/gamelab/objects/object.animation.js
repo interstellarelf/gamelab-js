@@ -17,7 +17,7 @@
    *
    * @example
    * //constructor call with chainable function-calls: Creates multi-frame Animation from src, then sets properties with chainable-function-calls.
-   * var multiFrameAnime = new Gamelab.Animation('../images/characters/full/spaceman1.png') //constructor is called
+   * var multiFrameAnime = new Gamelab.GridAnimation('../images/characters/full/spaceman1.png') //constructor is called
    * .FrameSize(130, 130)
    * .FrameBounds(new Gamelab.Vector(9, 0), new Gamelab.Vector(23, 0), new Gamelab.Vector(23, 0))
    * .Seesaw() //The Animation will play back-and-forth repeatedly (cycle through frames forwards, then backwards and so on.
@@ -29,14 +29,10 @@
    * var singleFrameAnime = new Animation('directory/myFile.png');
    */
 
-  class Animation {
-
+  class GridAnimation {
     constructor(src = {}) {
-
       var args = typeof(src) == 'object' ? src : {};
-
       //Gamelab.Modifiers.informable(this, args);
-
       /**
        * @property {Vector} frameSize the frameSize of the Animation
        * @memberof Animation
@@ -53,16 +49,12 @@
         this.init_singleFrame();
       } else if (args instanceof Gamelab.GameImage) {
         //console.log('Animation(): args are an instance of GameImage');
-
         this.image = args;
       } else if (args instanceof HTMLImageElement) {
         //console.log('Animation(): args was an instance of HTMLImageElement');
-
         this.image = new Gamelab.GameImage(args);
-      } else if (args instanceof Gamelab.Animation) {
-
+      } else if (args instanceof Gamelab.GridAnimation) {
         this.image = args.image;
-
       } else if (typeof(args) == 'object' && args.src) {
         this.src = args.src;
         this.image = new Gamelab.GameImage(args.src);
@@ -72,25 +64,18 @@
 
       this.visible = args.visible || true;
 
-
-
       if (args.frameBounds && args.frameBounds.min && args.frameBounds.max) {
-
         /**
          * @property {VectorFrameBounds} frameBounds the frameBounds of the Animation, has three Vectors
          * @memberof Animation
          **********/
-
         this.frameBounds = new Gamelab.VectorFrameBounds(args.frameBounds.min, args.frameBounds.max, args.frameBounds.termPoint);
 
       } else {
-
         this.frameBounds = new Gamelab.VectorFrameBounds(new Gamelab.Vector(0, 0, 0), new Gamelab.Vector(0, 0, 0), new Gamelab.Vector(0, 0, 0));
-
       }
 
       this.scale = 1.0;
-
 
       this.origin = new Gamelab.Vector(0, 0, 0);
 
@@ -112,24 +97,15 @@
        **********/
 
       this.selected_frame = this.frames[0] || false;
-
       this.timer = 0;
-
       this.duration = args.duration || 2000;
-
       this.seesaw_mode = args.seesaw_mode || false;
-
       this.reverse_frames = args.reverse_frames || false;
-
       this.run_ext = args.run_ext || [];
-
       this.complete_ext = args.complete_ext || [];
 
-
       this.Scale(this.scale);
-
       // this.colorMap = this.createColorMap(5);
-
     }
 
     set img_src(value) {
@@ -156,9 +132,7 @@
       this.position = new Gamelab.Vector(x, y, z);
 
       this.frames.forEach(function($f) {
-
         $f.position = new Gamelab.Vector(x, y, z);
-
       });
 
       return this;
@@ -196,21 +170,20 @@
       return this;
     }
 
+    add(frame) {
+      this.frames.push(frame);
+    }
+
     Src(src, options = {}) {
-
       if (typeof src == 'string') {
-
         console.log('setting GameImage with string:' + src);
         this.src = src;
         this.image = new Gamelab.GameImage(src);
-
       } else if (src instanceof GameImage) {
         //console.log('Animation(): args are an instance of GameImage');
-
         this.image = src;
       } else if (src instanceof HTMLImageElement) {
         //console.log('Animation(): args are an instance of HTMLImageElement');
-
         this.image = new Gamelab.GameImage(src);
       }
 
@@ -218,62 +191,45 @@
         this.init_singleFrame();
 
       return this;
-
     }
 
     Scale(s) {
-
       this.scale = s;
-
       if (this.image && this.image.domElement && this.image.domElement.width > 0) {
         this.size = new Gamelab.Vector(this.image.domElement.width * s, this.image.domElement.height * s).round();
         this.Size(this.size);
       }
-
       if (this.frames instanceof Array)
         this.frames.forEach(function(f) {
-
           f.Scale(s);
-
         });
-
       return this;
     }
 
     Size(x, y, z) {
-
       this.size = new Gamelab.Vector(x, y, z);
-
       this.frames.forEach(function(f) {
         f.size = new Gamelab.Vector(x, y, z);
       });
-
       return this;
     }
 
     Image(src) {
 
       if (typeof(src) == 'string') {
-
         //console.log('setting GameImage with string:' + src);
         this.src = src;
         this.image = new Gamelab.GameImage(src);
-
       } else if (src instanceof Gamelab.GameImage) {
         //console.log('Animation(): args are an instance of GameImage');
-
         this.image = src;
       } else if (src instanceof HTMLImageElement) {
         console.log('Animation(): args was an instance of HTMLImageElement');
 
         this.image = new Gamelab.GameImage(src);
       }
-
       this.init_singleFrame();
-
-
       return this;
-
     }
 
 
@@ -300,18 +256,15 @@
           $anime.FrameSize($anime.image.domElement.width, $anime.image.domElement.height)
           .FrameBounds(new Gamelab.Vector(0, 0), new Gamelab.Vector(0, 0));
 
-        if ($anime.size.x == 0  && !$anime.__isInit) //indicates zero size
+        if ($anime.size.x == 0 && !$anime.__isInit) //indicates zero size
           $anime.Size($anime.frameSize.mult(new Gamelab.Vector($anime.scale, $anime.scale)));
 
-        if(!$anime.__isInit)
-        $anime.apply2DFrames();
+        if (!$anime.__isInit)
+          $anime.apply2DFrames();
 
       };
-
       Gamelab.log('Animation():set single-frame animation');
-
       return this;
-
     }
 
     /*****
@@ -423,9 +376,20 @@
       return this;
     }
 
-    ResetHang(){
+    ResetHang() {
       this._hang = false;
       this.cix = this.min_cix;
+    }
+
+    FrameBounds(min, max, termPoint) {
+      if (max && !termPoint) {
+        termPoint = max;
+      }
+      this.frameBounds = new Gamelab.VectorFrameBounds(
+        new Gamelab.Vector(min), new Gamelab.Vector(max), termPoint);
+      this.__isInit = true;
+      this.apply2DFrames();
+      return this;
     }
 
     DefineGridFrames(x1, y1, x2, y2, xFinal, yFinal) {
@@ -577,7 +541,7 @@
     }
 
 
-    ColoredPixelGrid(spatialDiv=5.0) {
+    ColoredPixelGrid(spatialDiv = 5.0) {
 
       var image = this.image.domElement,
 
@@ -586,7 +550,6 @@
         grid = [],
 
         frameSizeDiv = this.selected_frame.frameSize.div(spatialDiv).round();
-
 
 
       for (var x = 0; x <= image.width; x += frameSizeDiv.x) {
@@ -667,12 +630,8 @@
      *                   });
      *
      **********/
-
-
     onUpdate(fun) {
-
       fun = fun.bind(this);
-
       let update = this.update_frame.bind(this);
       let __inst = this;
       this.update_frame = function(__inst) {
@@ -680,29 +639,20 @@
         fun(__inst);
       };
     }
-
     soleUpdate(fun) {
-
       fun = fun.bind(this);
-
       let __inst = this;
       this.update_frame = function(__inst) {
         fun(__inst);
       };
     }
-
     update_frame() {
-
       this.selected_frame = this.frames[Math.round(this.cix) % this.frames.length];
     }
-
     reset() {
-
       this.apply2DFrames();
-
       this.cix = 0;
     }
-
     /**
      * Applies a continuous animation. Use this in parent-sprite's update if continuous animation is required.
      * Also works as a single call at any time during game-update.
@@ -710,54 +660,33 @@
      * @function
      * @memberof Animation
      **********/
-
     run() {
-
       if (this.__frametype == 'single') {
         return 0;
       }
-
       this.apply2DFrames();
-
       this.cix += 1;
-
       this.update_frame();
     }
-
     /**
      * animate():: same as run()
      *
      * @function
      * @memberof Animation
      **********/
-
     animate() {
-
 
       if (this.__frametype == 'single') {
         return 0;
       }
 
-
-      if(!this.applied)
-      {
+      if (!this.applied) {
         this.apply2DFrames();
         this.applied = true;
       }
 
-
-
-      //update once:
-      //this.update();
-
-  //    console.log('anime-len:' +this.frames.length);
-
-  //    console.log('cix:' +this.cix);
-
       if (this.cix % this.frames.length == 0) {
-
         this.engage();
-
       }
     }
 
@@ -770,11 +699,8 @@
      **********/
 
     engage(duration) {
-
       this.call_on_run();
-
       duration = duration || this.duration || this.frames.length * 20;
-
       if (this.__frametype == 'single') {
         return 0;
       }
@@ -783,56 +709,44 @@
       if (this.cix >= this.frames.length - 1 || this.cix < this.min_cix && !this._hang) {
         this.cix = this.min_cix;
       }
-
       let __inst = this;
 
       //we have a target
       this.tween = new TWEEN.Tween(this)
         .easing(__inst.curve || TWEEN.Easing.Linear.None)
-
         .to({
           cix: this.min_cix + (this.frames.length - 1)
         }, duration)
         .onUpdate(function() {
           //console.log(objects[0].position.x,objects[0].position.y);
-
           //__inst.cix = Math.ceil(__inst.cix);
-
           __inst.update_frame();
-
         })
         .onComplete(function() {
           //console.log(objects[0].position.x, objects[0].position.y);
-
-            if(!__inst._hang)
-          __inst.cix = __inst.min_cix;
-
+          if (!__inst._hang)
+            __inst.cix = __inst.min_cix;
           __inst.call_on_complete();
-
           __inst.isComplete = true;
-
           __inst.apply2DFrames();
-
         });
-
 
       if (this.cix == this.min_cix)
         this.tween.start();
-
 
     }
   };
 
   /** @memberof Gamelab */
 
-  Animation.prototype.FrameBounds = Animation.prototype.DefineGridFrames;
+  Gamelab.GridAnimation = GridAnimation;
 
-  Gamelab.Animation = Animation;
+  Gamelab.Animation = GridAnimation;
 
-  Gamelab.Animation.continuous = Gamelab.Animation.run; //'continuous is an alternate reference to 'run'.'
+  Gamelab.GridAnimation.continuous = Gamelab.GridAnimation.run; //'continuous is an alternate reference to 'run'.'
 
-  Gamelab.Animation.update = Gamelab.Animation.update_frame; //alt ref
+  Gamelab.GridAnimation.update = Gamelab.GridAnimation.update_frame; //alt ref
 
-  Gamelab.Animation.continue = Gamelab.Animation.run; //'continue is an alternate reference to 'run'.'
+  Gamelab.GridAnimation.continue = Gamelab.GridAnimation.run; //'continue is an alternate reference to 'run'.'
 
 })();

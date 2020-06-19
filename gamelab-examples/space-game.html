@@ -97,15 +97,10 @@
         Background = Gamelab.Background;
 
         for (var x = 1; x <= 12; x++) {
-
           if (x <= 4)
-
-            backgroundStars.push(new Background('res/images/solar_system_pack/Stars/star (' + x + ').png'));
-
+          backgroundStars.push(new Background('res/images/solar_system_pack/Stars/star (' + x + ').png'));
           backgroundPlanets.push(new Background('res/images/solar_system_pack/Planets/planet (' + x + ').png'));
-
           backgroundNebulas.push(new Background('res/images/solar_system_pack/Nebula/nebula (' + x + ').png'));
-
           meteorites.push(new Sprite('res/images/solar_system_pack/Meteors/meteorite (' + x + ').png'));
         };
 
@@ -203,7 +198,12 @@
 
               });
 
-              meteor.explosion.life = (meteor.explosion.anime.frames.length - 1) * 1;
+              if(meteor.explosion.anime)
+              {
+                  meteor.explosion.life = (meteor.explosion.anime.frames.length - 1) * 1;
+              }
+
+
 
               console.log('EXP-LIFE::' + meteor.explosion.life);
 

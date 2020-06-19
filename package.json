@@ -5,7 +5,9 @@
   "main": "main.js",
   "scripts": {
     "test": "npm-run-all  -p -r serve static",
-    "start": "npm-run-all  -p -r serve static"
+    "start": "npm-run-all  -p -r serve static",
+    "serve":"node index.js",
+    "static":"http-server"
   },
   "keywords": [
     "2D",

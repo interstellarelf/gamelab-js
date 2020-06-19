@@ -1,14 +1,24 @@
 class Background extends Sprite {
   constructor() {
-    super(arguments);
+    super(...arguments);
+    this.backgroundTextureArrays = [];
   }
   Repeat(x, y) {
     this.repeat = new Gamelab.Vector(x, y);
     return this;
   }
+  OverlayImage(src, scale, asBorder, asBorderPadding) {
+
+  }
   ScrollCycle(value) {
     this.scrollCycle = value;
     return this;
+  }
+  appendBackgroundTextureArray(backgroundTextures, params) {
+    for (var x in params) {
+      backgroundTextures[x] = params[x];
+    }
+    this.backgroundTextureArrays.push(backgroundTextures);
   }
   draw(ctx, camera) {
     var sprite;
@@ -112,7 +122,23 @@ class Background extends Sprite {
         x -= camera_pos.x * scrollFactor || 0;
         y -= camera_pos.y * scrollFactor || 0;
         //  console.log('sprite:: canvas draw!! ');
-        return Gamelab.Canvas.draw_image_frame(this.image.domElement, new Gamelab.Vector(0, 0), this.size, new Gamelab.Vector2D(Math.round(x + (origin.x)), Math.round(y + (origin.y))), new Gamelab.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin, this.opacity, this.globalCompositeOperation || false);
+
+        let imageFrameArgs = {
+          image: sprite.image.domElement,
+          framePos: frame.framePos || new Gamelab.Vector(0, 0),
+          frameSize: frame.frameSize || sprite.size,
+          position: new Gamelab.Vector2D(Math.round(x + (origin.x)), Math.round(y + (origin.y))),
+          size: new Gamelab.Vector2D(realWidth, realHeight),
+          rotation: rotation % 360,
+          canvasContext: ctx,
+          flipX: sprite.flipX,
+          flipY: sprite.flipY,
+          origin: origin,
+          globalAlpha: sprite.opacity,
+          globalComposite: sprite.globalCompositeOperation || false
+        };
+
+        return Gamelab.Canvas.draw_image_frame(imageFrameArgs);
       }
 
 
@@ -155,9 +181,25 @@ class Background extends Sprite {
               //console.log('drawing with origin:' + origin.x + ':' + origin.y);
             }
 
+            if (frame && frame.image) {
 
-            if (frame && frame.image)
-              Gamelab.Canvas.draw_image_frame(sprite.effectCanvas ? sprite.effectCanvas : frame.image.domElement, frame.framePos, frame.frameSize, new Gamelab.Vector2D(Math.round(xpos + (origin.x)), Math.round(ypos + (origin.y))), new Gamelab.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin, this.opacity, this.globalCompositeOperation || false);
+              let imageFrameArgs = {
+                image: sprite.effectCanvas ? sprite.effectCanvas : frame.image.domElement,
+                framePos: frame.framePos || new Gamelab.Vector(0, 0),
+                frameSize: frame.frameSize || sprite.size,
+                position: new Gamelab.Vector2D(Math.round(xpos + (origin.x)), Math.round(ypos + (origin.y))),
+                size: new Gamelab.Vector2D(realWidth, realHeight),
+                rotation: rotation % 360,
+                canvasContext: ctx,
+                flipX: sprite.flipX,
+                flipY: sprite.flipY,
+                origin: origin,
+                globalAlpha: sprite.opacity,
+                globalComposite: sprite.globalCompositeOperation || false
+              };
+
+              Gamelab.Canvas.draw_image_frame(imageFrameArgs);
+            }
 
           });
 
@@ -170,17 +212,28 @@ class Background extends Sprite {
           pos.y -= camera_pos.y * scrollFactor || 0;
           sprite.realPosition = pos;
           if (frame.image.domElement instanceof HTMLImageElement || frame.image.domElement instanceof HTMLCanvasElement) {
-            Gamelab.Canvas.draw_image_frame(this.effectCanvas ? this.effectCanvas : frame.image.domElement, frame.framePos, frame.frameSize, new Gamelab.Vector2D(Math.round(pos.x + (origin.x)), Math.round(pos.y + (origin.y))), new Gamelab.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin, this.opacity, this.globalCompositeOperation || false);
+
+            let imageFrameArgs = {
+              image: sprite.effectCanvas ? sprite.effectCanvas : frame.image.domElement,
+              framePos: frame.framePos || new Gamelab.Vector(0, 0),
+              frameSize: frame.frameSize || sprite.size,
+              position: new Gamelab.Vector2D(Math.round(pos.x + (origin.x)), Math.round(pos.y + (origin.y))),
+              size: new Gamelab.Vector2D(realWidth, realHeight),
+              rotation: rotation % 360,
+              canvasContext: ctx,
+              flipX: sprite.flipX,
+              flipY: sprite.flipY,
+              origin: origin,
+              globalAlpha: sprite.opacity,
+              globalComposite: sprite.globalCompositeOperation || false
+            };
+
+            Gamelab.Canvas.draw_image_frame(imageFrameArgs);
           }
-
         }
-
       }
     }
-
   }
-
-
 }
 
 

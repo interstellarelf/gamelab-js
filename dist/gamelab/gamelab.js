@@ -1310,6 +1310,22 @@ Gamelab.InputSystem = {
       var gs_key_string = 'key_' + String.fromCharCode(e.keyCode),
           evt_object = Gamelab.InputSystem['keymap'][gs_key_string] || Gamelab.InputSystem['keymap'][gs_key_string.toLowerCase()];
 
+      if (e.keyCode == 32) {
+        gs_key_string = 'key_space';
+      }
+
+      if (e.keyCode == 18) {
+        gs_key_string = 'key_alt';
+      }
+
+      if (e.keyCode == 9) {
+        gs_key_string = 'key_tab';
+      }
+
+      if (e.keyCode == 16) {
+        gs_key_string = 'key_shift';
+      }
+
       if (evt_object) {
         evt_object.down = e.type == 'keydown';
       }
@@ -1672,20 +1688,18 @@ var Screen = {
     return new Gamelab.Vector(Gamelab.WIDTH / 2, Gamelab.HEIGHT / 2).round();
   }
 
-};
-;
+};;
 
 Gamelab.config = Gamelab.config || {
   DEV: true,
   maxErrors: 50
 };
-;
-/**************************
-  EventInterfaceMap: StringKeys:
-
-    * (must implement without option)
-    @ (may implement optional)
-*****************************/
+; /**************************
+   EventInterfaceMap: StringKeys:
+  
+     * (must implement without option)
+     @ (may implement optional)
+  *****************************/
 
 var EventInterfaceMap = { //className / must have named functions whyen carrying Symbol of className
 
@@ -1737,7 +1751,7 @@ var EventInterfaceMap = { //className / must have named functions whyen carrying
 
   Circle: ['@spatial'],
 
-  Animation: ['@anchored', '@framedriven', '@effectdriven', '@data'],
+  GridAnimation: ['@anchored', '@framedriven', '@effectdriven', '@data'],
 
   Line2d: ['@spatial', '@pointarrayflippable', '@selftransposable', '@data'],
 
@@ -1822,8 +1836,7 @@ var UIObjectPrefabs = {
 
   Sprite: ['Side-Scroll-Player', 'Collider', 'Spaceship', 'Robot']
 
-};
-;
+};;
 ;(function () {
 
   /**
@@ -1943,9 +1956,7 @@ var Circle = function () {
 }();
 
 Gamelab.Circle = Circle;
-;
-
-//http://www.blackpawn.com/texts/pointinpoly/
+; //http://www.blackpawn.com/texts/pointinpoly/
 function pointInTriangle(point, triangle) {
   //compute vectors & dot products
   var cx = point.x,
@@ -2017,7 +2028,7 @@ var Collision = {
 
 
   /* Collide Sprites NO-Rotation */
-  spriteCollide: function spriteCollide(obj1, obj2, gw) {
+  spriteBoxCollide: function spriteBoxCollide(obj1, obj2, gw) {
     gw = gw || Gamelab.game_windows[0];
     var scale = gw.scale || 1.0;
     var camPos = new Gamelab.Vector(0, 0, 0);
@@ -2049,7 +2060,10 @@ var Collision = {
     for (var x = 0; x < spritesX.length; x++) {
       for (var y = 0; y < spritesY.length; y++) {
         if (this.spriteCollide(spritesX[x], spritesY[y])) {
-          collisions.push({ object: spritesX[x], collider: spritesY[y] });
+          collisions.push({
+            object: spritesX[x],
+            collider: spritesY[y]
+          });
         }
       }
     }
@@ -2095,8 +2109,7 @@ var Collision = {
   }
 };
 
-Gamelab.Collision = Collision;
-;
+Gamelab.Collision = Collision;;
 //RGBColor:: Color object
 
 var RGBColor = function () {
@@ -2689,7 +2702,6 @@ for (var x in ColorStrings) {
   Gamelab.UI.getCurveCanvasList = getCurveCanvasList;
   Gamelab.UI.getCurveImageList = getCurveImageList;
 })();;
-
 var FeildSpan = function FeildSpan(a, b) {
   var transition = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'linear';
   var duration = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 500;
@@ -2736,8 +2748,12 @@ var FeildSpan = function FeildSpan(a, b) {
 
     var curveMethod;
 
-    for (var x in Twix.Curves) {
-      if (x.toLowerCase() == option.transition.toLowerCase()) curveMethod = Twix.Curves[x].None || Twix.Curves[x].In;
+    for (var x in Gamelab.EasingCurves) {
+      for (var y in Gamelab.EasingCurves[x]) {
+        if (y.toLowerCase() == option.transition.toLowerCase() && x == 'None' || x == 'In') {
+          curveMethod = Gamelab.EasingCurves[x][y] || Gamelab.EasingCurves[x][y];
+        }
+      }
     }
 
     if (tvalue == 'random-once' && this.testValue !== undefined) {
@@ -2886,8 +2902,7 @@ var ColorFeildSpan = function ColorFeildSpan(a, b) {
 };
 
 Gamelab.FeildSpan = FeildSpan;
-Gamelab.ColorFeildSpan = ColorFeildSpan;
-;
+Gamelab.ColorFeildSpan = ColorFeildSpan;;
 var FiringClock = function () {
   function FiringClock() {
     _classCallCheck(this, FiringClock);
@@ -3675,6 +3690,54 @@ var GameWindow = function () {
       } else this.animate(time);
     }
   }, {
+    key: 'drawOnce',
+    value: function drawOnce() {
+
+      if (!this.engaged) return;
+
+      if (this.frameInterval) {
+        frameInterval = this.frameInterval;
+      }
+
+      if (this.drawFromWindows instanceof Array) {
+        this.drawFromWindows.forEach(function (w) {
+          this.draw(w);
+        });
+        return;
+      }
+
+      if (this.getComplete && this.getComplete()) {
+        return;
+      }
+
+      var __inst = this;
+
+      if (this.__stats) {
+        this.__stats.begin();
+        this.__statsMS.begin();
+        this.__statsMB.update();
+      }
+
+      Gamelab.isAtPlay = true;
+
+      this.update();
+
+      if (!this.isPaused()) {
+        if (window.TWEEN) TWEEN.update(time);
+
+        if (this.settings.hasOwnProperty('autoClear') && this.settings.autoClear == false) {} else {
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        }
+
+        this.draw();
+
+        if (this.__stats) {
+          this.__stats.end();
+          this.__statsMS.end();
+        }
+      }
+    }
+  }, {
     key: 'animate',
     value: function animate(time, frameInterval) {
 
@@ -3791,13 +3854,31 @@ var GameWindow = function () {
   return GameWindow;
 }();
 
-Gamelab.GameWindow = GameWindow;
-; /**
-  * Creates a new Module
-  * @param   {string} uri the uri that the .js file is located at
-  * @param   {Function} callback=function(){} The callback to call after the module is loaded
-  * @returns {Module} a Gamelab.Module object
-  * */
+Gamelab.GameWindow = GameWindow;;
+var GSEvent = function GSEvent() {
+  var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+  _classCallCheck(this, GSEvent);
+};
+
+Gamelab.GSEvent = GSEvent;
+Gamelab.Event = GSEvent;
+
+var GSEventLink = function GSEventLink(extendedObject, extendedKey, extendor, extendorKey) {
+  _classCallCheck(this, GSEventLink);
+
+  this.parent_id = extendedObject.id, this.child_id = extendor.id, this.parent_key = extendedKey, this.child_key = extendorKey;
+};
+
+;
+
+Gamelab.GSEventLink = GSEventLink;
+Gamelab.EventLink = GSEventLink;; /**
+                                  * Creates a new Module
+                                  * @param   {string} uri the uri that the .js file is located at
+                                  * @param   {Function} callback=function(){} The callback to call after the module is loaded
+                                  * @returns {Module} a Gamelab.Module object
+                                  * */
 
 var Module = function () {
   function Module(uri, callback) {
@@ -3816,15 +3897,20 @@ var Module = function () {
       reader.readAsText(fileObject);
     }
   }, {
+    key: 'onInstanceCallback',
+    value: function onInstanceCallback(uri, callback) {
+      var moduleInstance;
+      this.load(uri, function (inst) {
+        moduleInstance = new inst();
+        callback(moduleInstance);
+      });
+    }
+  }, {
     key: 'load',
     value: function load(uri, callback) {
-
       var __object = this;
-
       this.uri = uri;
-
       callback = callback || function () {};
-
       callback = callback.bind(this);
 
       var script = document.createElement('SCRIPT'),
@@ -3838,24 +3924,19 @@ var Module = function () {
         executeNow = true;
         script.appendChild(document.createTextNode(data));
       }
-
       //be sure the window.module is set to new {}
       window.module = window.module || {};
-
       //define onload fxn
       script.onload = function () {
-
         var construct = window.module.exports;
         callback(construct, uri);
       };
-
       if (executeNow) {
         setTimeout(function () {
           var construct = window.module.exports;
           callback(construct, uri);
         }, 250);
       }
-
       //append to the document
       document.head.appendChild(script);
     }
@@ -3874,20 +3955,28 @@ var Code = function () {
   }
 
   _createClass(Code, [{
+    key: 'run',
+    value: function run(callback) {
+      if (typeof callback == 'string') {
+        callback = new Function('return function run(){' + callback + '}();');
+      }
+      //get string contents after the name
+      var fxnString = callback.toString().split('()')[1];
+      //add generic name
+      fxnString = '\n function run()' + fxnString;
+      var script = document.createElement('SCRIPT');
+      script.innerHTML = fxnString + '\n  run();';
+      document.head.appendChild(script);
+    }
+  }, {
     key: 'loadAndRun',
     value: function loadAndRun(uri, callback) {
-
       var __object = this;
-
       this.uri = uri;
-
       callback = callback || function () {};
-
       callback = callback.bind(this);
-
       var script = document.createElement('SCRIPT');
       script.src = uri;
-
       //be sure the window.module is set to new {}
       window.module = window.module || {};
 
@@ -3898,7 +3987,6 @@ var Code = function () {
         if (typeof construct == 'function') {
           value = window.module.exports();
         }
-
         callback(value, construct, uri);
       };
       //append to the document
@@ -3909,8 +3997,46 @@ var Code = function () {
   return Code;
 }();
 
+Code.call = Code.run;
+Code.loadAndCall = Code.loadAndRun;
 Gamelab.Code = Code;
-;
+
+Gamelab.ScopeInterface = function (scope) {
+  var testInterface = document.createElement('div');
+  testInterface.style.position = 'fixed';
+  testInterface.style.display = 'block';
+  testInterface.style.top = '58px';
+  testInterface.style.right = '4%';
+  testInterface.style.width = '40%';
+  testInterface.style.height = '40%';
+  testInterface.style.zIndex = '9999';
+  testInterface.style.padding = '7px';
+  testInterface.style.background = '#222';
+  testInterface.style.border = '1px solid lightgrey';
+  var testInput = document.createElement('textarea');
+  testInput.style.backgroundColor = '#000';
+  testInput.style.height = '80%';
+  testInput.style.width = '96%';
+  testInput.style.color = 'lightgrey';
+  var submitRow = document.createElement('span');
+  var submit = document.createElement('button');
+  submit.style.backgroundColor = '#222';
+  submit.style.color = 'lightgrey';
+  submit.style.border = '1px solid lightgrey';
+  submit.style.marginTop = '4px';
+  submitRow.appendChild(submit);
+  submit.innerText = 'Run Code';
+
+  submit.onclick = function () {
+    console.log('testing-interface-value:' + testInput.value);
+    var value = testInput.value;
+    new Gamelab.Code().run(value);
+  };
+
+  testInterface.appendChild(testInput);
+  testInterface.appendChild(submit);
+  document.body.appendChild(testInterface);
+};;
 
 var Mouse = function () {
   function Mouse(domElement) {
@@ -4274,6 +4400,94 @@ var Scriptable = function () {
 
 Gamelab.Scriptable = Scriptable;
 ;
+var State = function () {
+  function State(object, stateName, fallbackState) {
+    _classCallCheck(this, State);
+
+    this.object = object;
+    this.stateName = stateName;
+    //list of boolean fxns which cancel the state
+    this.triggers = [];
+    //fxn to be called when triggered
+    this.triggerCall = function () {};
+    //list of boolean fxns which trigger the state
+    this.cancellators = [];
+    //fxn to be called when cancelled
+    this.cancelCall = function () {};
+    //error-protection: use limit on number of list-Members
+    this.listLimit = 10;
+    this.fallbackState = fallbackState;
+  }
+
+  _createClass(State, [{
+    key: 'onTrigger',
+    value: function onTrigger(call) {
+      this.triggerCall = call || function () {
+        clog('--empty trigger call');
+      };
+    }
+  }, {
+    key: 'onCancel',
+    value: function onCancel(call) {
+      this.cancelCall = call || function () {
+        clog('--empty cancel call');
+      };
+    }
+  }, {
+    key: 'defineTrigger',
+    value: function defineTrigger(triggerFxn) {
+      this.triggers.push(triggerFxn);
+      return this;
+    }
+  }, {
+    key: 'defineCancellator',
+    value: function defineCancellator(cancelFxn) {
+      this.cancellators.push(cancelFxn);
+      return this;
+    }
+  }, {
+    key: 'isTriggered',
+    value: function isTriggered() {
+      for (var x = 0; x < this.triggers.length; x++) {
+        if (this.triggers[x]()) {
+          return true;
+        }
+      }
+      return false;
+    }
+  }, {
+    key: 'isCancelled',
+    value: function isCancelled() {
+      for (var x = 0; x < this.triggers.length; x++) {
+        if (this.cancellators[x]) {
+          return true;
+        }
+      }
+      return false;
+    }
+  }]);
+
+  return State;
+}();
+
+var StateMachine = function () {
+  function StateMachine() {
+    _classCallCheck(this, StateMachine);
+
+    this.states = [];
+  }
+
+  _createClass(StateMachine, [{
+    key: 'add',
+    value: function add(state) {
+      this.states.push(state);
+    }
+  }]);
+
+  return StateMachine;
+}();
+
+;
 
 var Texel = function Texel(x, y, w, h) {
   _classCallCheck(this, Texel);
@@ -4336,6 +4550,61 @@ var TexelArray = function () {
 Gamelab.Texel = Texel;
 Gamelab.TexelArray = TexelArray;
 ;
+var ThreeJsWindow = function () {
+  function ThreeJsWindow(container) {
+    _classCallCheck(this, ThreeJsWindow);
+
+    if (!THREE in window) {
+      return console.error('Needs three.js library in window.');
+    }
+    var scene = this.scene = new THREE.Scene();
+    var camera = this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1.0, 5000);
+    var renderer = this.renderer = new THREE.WebGLRenderer();
+    var defaultLight = this.defaultLight = new THREE.AmbientLight(0xffffff); // soft white light
+    scene.add(defaultLight);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.background = new THREE.Color(0xffffff);
+    if (typeof container == 'string') {
+      container = document.querySelector(container);
+    }
+    if (container instanceof HTMLCollection) {
+      container = container[0];
+    }
+    if (!(container instanceof HTMLElement)) {
+      container = document.body;
+    }
+    container.appendChild(renderer.domElement);
+  }
+
+  _createClass(ThreeJsWindow, [{
+    key: 'add',
+    value: function add(object) {
+      this.scene.add(object);
+    }
+  }, {
+    key: 'animate',
+    value: function animate() {
+      var $window = this;
+      requestAnimationFrame(function () {
+        $window.animate();
+      });
+      this.renderer.render(this.scene, this.camera);
+    }
+  }, {
+    key: 'start',
+    value: function start() {
+      this.animate();
+    }
+  }]);
+
+  return ThreeJsWindow;
+}();
+
+Gamelab.ThreeJsWindow = ThreeJsWindow;
+var ThreeJSWindow = ThreeJsWindow;
+Gamelab.ThreeJSWindow = ThreeJSWindow;
+var ThreejsWindow = ThreeJsWindow;
+Gamelab.ThreejsWindow = ThreejsWindow;;
 
 var Trigonometry = {
 
@@ -4813,505 +5082,424 @@ Gamelab.Trigonometry = Trigonometry;
 
   Gamelab.VectorMath = VectorMath;
 })();
-;(function () {
-  console.log('GSEvent class... creating');
+; /**
+  * returns BoolEvent --allows code to run whenever a conditional-function returns true
+  * @param   {onBool} onBool the function to be tested each update
+  * @param   {call} call the function to be called when onBool returns true;
+  
+  * @returns {BoolEvent} a Gamelab.BoolEvent object
+  */
 
-  var GSEvent = function GSEvent() {
+var BooleanEvent = function (_GSEvent) {
+  _inherits(BooleanEvent, _GSEvent);
 
-    //  Gamelab.Modifiers.informable(this, args);
+  function BooleanEvent(onBool, callback) {
+    _classCallCheck(this, BooleanEvent);
 
-    var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var _this2 = _possibleConstructorReturn(this, (BooleanEvent.__proto__ || Object.getPrototypeOf(BooleanEvent)).call(this, {}));
 
-    _classCallCheck(this, GSEvent);
-  };
-
-  var MouseMoveEvent = function () {
-    function MouseMoveEvent(callback) {
-      _classCallCheck(this, MouseMoveEvent);
-
-      callback = callback || function (x, y) {};
-
-      this.Callback(callback);
-    }
-
-    _createClass(MouseMoveEvent, [{
-      key: 'Callback',
-      value: function Callback(cb) {
-        Gamelab.InputSystem.extend('mousemove', function (x, y) {
-
-          cb(x, y);
-        });
-      }
-    }]);
-
-    return MouseMoveEvent;
-  }();
-
-  ;
-
-  Gamelab.MouseMoveEvent = MouseMoveEvent;
-
-  var MousePosEvent = function () {
-    function MousePosEvent(callback) {
-      _classCallCheck(this, MousePosEvent);
-
-      callback = callback || function (x, y) {};
-
-      this.Callback(callback);
-    }
-
-    _createClass(MousePosEvent, [{
-      key: 'Callback',
-      value: function Callback(cb) {
-        Gamelab.InputSystem.extend('mousepos', function (x, y) {
-
-          cb(x, y);
-        });
-      }
-    }]);
-
-    return MousePosEvent;
-  }();
-
-  ;
-
-  Gamelab.MousePosEvent = MousePosEvent;
-
-  var MouseLeftClickEvent = function () {
-    function MouseLeftClickEvent(callback) {
-      _classCallCheck(this, MouseLeftClickEvent);
-
-      callback = callback || function (x, y) {};
-
-      this.Callback(callback);
-    }
-
-    _createClass(MouseLeftClickEvent, [{
-      key: 'Callback',
-      value: function Callback(cb) {
-
-        Gamelab.InputSystem.extend('leftclick', function (x, y) {
-
-          cb(x, y);
-        });
-      }
-    }]);
-
-    return MouseLeftClickEvent;
-  }();
-
-  ;
-
-  Gamelab.MouseLeftClickEvent = MouseLeftClickEvent;
-
-  var MouseRightClickEvent = function () {
-    function MouseRightClickEvent(callback) {
-      _classCallCheck(this, MouseRightClickEvent);
-
-      callback = callback || function (x, y) {};
-
-      this.Callback(callback);
-    }
-
-    _createClass(MouseRightClickEvent, [{
-      key: 'Callback',
-      value: function Callback(cb) {
-
-        Gamelab.InputSystem.extend('rightclick', function (x, y) {
-
-          cb(x, y);
-        });
-      }
-    }]);
-
-    return MouseRightClickEvent;
-  }();
-
-  ;
-
-  Gamelab.MouseRightClickEvent = MouseRightClickEvent;
-
-  function GSEventLink(extendedObject, extendedKey, extendor, extendorKey) {
-    this.parent_id = extendedObject.id, this.child_id = extendor.id, this.parent_key = extendedKey, this.child_key = extendorKey;
-  };
+    _this2.bool = onBool || function () {
+      console.info('CustomBoolEvent():needs .on function(){}. --Add this as 1st argument or via chainable On() function returning bool argument');
+    };
+    /*Defaults to false to avoid broken code*/
+    _this2.callback = callback || function () {
+      console.info('CustomBoolEvent():needs .callback function(){} --Add this as 2nd argument or via chainable Call() function');
+    };
+    Gamelab.gs_events.push(_this2);
+    return _this2;
+  }
 
   /**
-   * Creates an instance of InputEvent
-   * <info-bit> Gamelab.InputEvent runs a callback function when a specified input is triggered</info-bit>
-   *
-   * <tip is="p">Instead of calling
-   *
-   * @param   {Object} args object of arguments
-   * @param   {number} args.btnix the index of controller-button to be applied
-   * @param   {number} args.gpix the index of pc-gamepad --the 1st gamepad will have index 0
-   * @param   {number} args.stickix the controller-stick-index to be applied
-   * @param   {Array} args.keys array of strings for keys to be applied
-   * @param   {Function} args.callback the function to call when InputEvent is triggered
-   * @returns {Gamelab.InputEvent} a Gamelab.InputEvent object
+   * applies a boolFunction to be tested for true each update
+   * @param   {boolFunction} boolFunction the function to be tested each update --replaces the value of boolEvent.onBool
+     * @returns {BoolEvent} the current instance of BoolEvent, reference to 'this' keyword
    */
 
-  var InputEvent = function (_GSEvent) {
-    _inherits(InputEvent, _GSEvent);
-
-    function InputEvent(args) {
-      _classCallCheck(this, InputEvent);
-
-      var _this2 = _possibleConstructorReturn(this, (InputEvent.__proto__ || Object.getPrototypeOf(InputEvent)).call(this, args));
-
-      var btnix = args.btnix || args.button_ix || false,
-          gpix = args.gpix || args.gamepad_ix || 0,
-          callback = args.callback || function () {};
-
-      var six = args.stickix || args.six || args.stick_ix || false;
-
-      var inputKey = six !== false ? 'stick_' + six : btnix !== false ? 'button_' + btnix : false;
-
-      //Keys:
-
-      var keyboardKeys = TypeCode.arrayWrap(args.keys || []);
-
-      //Run the Q() function
-
-      if (keyboardKeys instanceof Array) {
-
-        Gamelab.each(keyboardKeys, function (ix, keyitem) {
-
-          Gamelab.InputSystem.extendKey('key_' + keyitem.toLowerCase(), function () {
-
-            callback(keyitem.toLowerCase());
-          });
-        });
-      }
-
-      if (inputKey && gpix >= 0) {
-
-        Gamelab.GamepadAdapter.on(inputKey, gpix, function (x, y) {
-
-          callback(x, y);
-        });
-      }
-      return _this2;
-    }
-
-    return InputEvent;
-  }(GSEvent);
-
-  ;
-
-  /**
-   *
-   * @extends InputEvent
-   *
-   * Creates an instance of KeyboardEvent
-   * <info-bit> Gamelab.KeyboardEvent runs a callback function when keyboard-keys are pressed</info-bit>
-   * @param   {Array | string} keys the Array of keys or single string-key for this event
-   * @param   {Function} callback the callback-function to be called when this event is triggered
-     * @returns {Gamelab.KeyboardEvent}
-   */
-
-  var KeyboardEvent = function (_InputEvent) {
-    _inherits(KeyboardEvent, _InputEvent);
-
-    function KeyboardEvent() {
-      var keys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : keys instanceof Array ? keys : [keys];
-      var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-
-      _classCallCheck(this, KeyboardEvent);
-
-      var _this3 = _possibleConstructorReturn(this, (KeyboardEvent.__proto__ || Object.getPrototypeOf(KeyboardEvent)).call(this, {}));
-
-      _this3.keys = keys;
-
-      _this3.callback = callback;
-
-      return _this3;
-    }
-
-    _createClass(KeyboardEvent, [{
-      key: 'init',
-      value: function init() {
-        var keyboardKeys = this.keys;
-
-        var __inst = this;
-
-        if (keyboardKeys instanceof Array) {
-
-          Gamelab.each(keyboardKeys, function (ix, keyitem) {
-
-            Gamelab.InputSystem.extendKey('key_' + keyitem.toLowerCase(), function () {
-
-              __inst.callback(keyitem.toLowerCase());
-            });
-          });
-        }
-      }
-    }, {
-      key: 'Keys',
-      value: function Keys() {
-        var keys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-
-        this.keys = TypeCode.arrayWrap(keys);
-
-        return this;
-      }
-    }, {
-      key: 'Call',
-      value: function Call() {
-        var callback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-
-        this.callback = callback;
-
-        this.init();
-
-        return this;
-      }
-    }]);
-
-    return KeyboardEvent;
-  }(InputEvent);
-
-  ;
-
-  /**
-   *
-   * @extends InputEvent
-   *
-   * Creates an instance of GamepadEvent
-   * <info-bit> Gamelab.GamepadEvent runs a callback function when any specified gamepad-buttons or gamepad-sticks are pressed</info-bit>
-   * @param   {Array | string} gamepadKeys the Array of gamepadKeys or single string-key, representing gamepad-buttons or gamepad-sticks for this event
-   * @param   {Function} callback the callback-function to be called when this event is triggered
-     * @returns {Gamelab.GamepadEvent}
-   */
-
-  var GamepadEvent = function (_InputEvent2) {
-    _inherits(GamepadEvent, _InputEvent2);
-
-    function GamepadEvent() {
-      _classCallCheck(this, GamepadEvent);
-
-      var _this4 = _possibleConstructorReturn(this, (GamepadEvent.__proto__ || Object.getPrototypeOf(GamepadEvent)).call(this, {}));
-
-      _this4.gps = [0];
-      _this4.keys = [];
-
-      _this4.callback = function () {};
-
-      return _this4;
-    }
-
-    _createClass(GamepadEvent, [{
-      key: 'Gamepads',
-      value: function Gamepads() {
-        var gps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-
-
-        this.gps = TypeCode.arrayWrap(gps);
-
-        return this;
-      }
-    }, {
-      key: 'init',
-      value: function init() {
-
-        var gamepadKeys = TypeCode.arrayWrap(this.keys || []);
-
-        var __inst = this;
-
-        Gamelab.GamepadAdapter.on(gamepadKeys, this.gps, function (x, y) {
-
-          __inst.callback(x, y);
-        });
-      }
-    }, {
-      key: 'Keys',
-      value: function Keys() {
-        var keys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-
-
-        this.keys = TypeCode.arrayWrap(keys);
-
-        for (var x = 0; x < this.keys.length; x++) {
-          if (typeof this.keys[x] == 'number') {
-            //must change to a string
-            this.keys[x] = this.keys[x] + '';
-          }
-        }
-
-        return this;
-      }
-    }, {
-      key: 'Call',
-      value: function Call() {
-        var callback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-
-        this.callback = callback;
-
-        this.init();
-
-        return this;
-      }
-    }]);
-
-    return GamepadEvent;
-  }(InputEvent);
-
-  ;
-
-  var CollisionEvent = function (_GSEvent2) {
-    _inherits(CollisionEvent, _GSEvent2);
-
-    function CollisionEvent() {
-      var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      _classCallCheck(this, CollisionEvent);
-
-      return _possibleConstructorReturn(this, (CollisionEvent.__proto__ || Object.getPrototypeOf(CollisionEvent)).call(this, args));
+  _createClass(BooleanEvent, [{
+    key: 'On',
+    value: function On(boolFunction) {
+      this.bool = boolFunction;
+      return this;
     }
 
     /**
-     * applies objects and siblings to be compared for the CollisionEvent instance
-     * @memberof CollisionEvent
-     * @param   {Array} objects the main-objects for collision processing
-     * @param   {Array} siblings the comparable-objects for collision processing
-     * @returns {CollisionEvent} the current instance of CollisionEvent, reference to 'this' keyword
-     */
-
-    _createClass(CollisionEvent, [{
-      key: 'OnCollision',
-      value: function OnCollision(objects, siblings) {
-
-        this.objects = TypeCode.arrayWrap(objects || this.objects || []);
-
-        this.siblings = TypeCode.arrayWrap(siblings || this.siblings || []);
-
-        return this;
-      }
-
-      /**
-       * applies a callback to be called whenever the onBool function returns true
-       * @memberof CollisionEvent
-       * @param   {callbackFunction} callbackFunction the function to be called --replaces the value of collisionEvent.callback
-         * @returns {CollisionEvent} the current instance of CollisionEvent, reference to 'this' keyword
-       */
-
-    }, {
-      key: 'Call',
-      value: function Call(callbackFunction) {
-
-        this.callback = callbackFunction || this.callback || function () {};
-
-        var $collision = this;
-
-        this.objects.forEach(function ($obj) {
-
-          $obj.onUpdate(function () {
-
-            var $sprite = this;
-
-            $collision.siblings.forEach(function ($sib) {
-              if ($sprite.hasBoxCollision($sib)) {
-                $collision.callback($sprite, $sib);
-              }
-            });
-          });
-        });
-
-        return this;
-      }
-    }]);
-
-    return CollisionEvent;
-  }(GSEvent);
-
-  ;
-
-  /**
-   * returns BoolEvent --allows code to run whenever a conditional-function returns true
-   * @param   {onBool} onBool the function to be tested each update
-   * @param   {call} call the function to be called when onBool returns true;
-     * @returns {BoolEvent} a Gamelab.BoolEvent object
-   */
-
-  var BoolEvent = function (_GSEvent3) {
-    _inherits(BoolEvent, _GSEvent3);
-
-    function BoolEvent(onBool, callback) {
-      _classCallCheck(this, BoolEvent);
-
-      var _this6 = _possibleConstructorReturn(this, (BoolEvent.__proto__ || Object.getPrototypeOf(BoolEvent)).call(this, {}));
-
-      _this6.bool = onBool || function () {
-        console.info('CustomBoolEvent():needs .on function(){}. --Add this as 1st argument or via chainable On() function returning bool argument');
-      };
-      /*Defaults to false to avoid broken code*/
-
-      _this6.callback = callback || function () {
-        console.info('CustomBoolEvent():needs .callback function(){} --Add this as 2nd argument or via chainable Call() function');
-      };
-
-      Gamelab.gs_events.push(_this6);
-
-      return _this6;
-    }
-
-    /**
-     * applies a boolFunction to be tested for true each update
-     * @param   {boolFunction} boolFunction the function to be tested each update --replaces the value of boolEvent.onBool
+     * applies a callback to be called whenever the onBool function returns true
+     * @memberof BoolEvent
+     * @param   {callbackFunction} callbackFunction the function to be called --replaces the value of boolEvent.callback
        * @returns {BoolEvent} the current instance of BoolEvent, reference to 'this' keyword
      */
 
-    _createClass(BoolEvent, [{
-      key: 'On',
-      value: function On(boolFunction) {
+  }, {
+    key: 'Call',
+    value: function Call(callbackFunction) {
+      this.callback = callbackFunction || this.callback || function () {};
+      return this;
+    }
+  }]);
 
-        this.bool = boolFunction;
+  return BooleanEvent;
+}(GSEvent);
 
-        return this;
-      }
-
-      /**
-       * applies a callback to be called whenever the onBool function returns true
-       * @memberof BoolEvent
-       * @param   {callbackFunction} callbackFunction the function to be called --replaces the value of boolEvent.callback
-         * @returns {BoolEvent} the current instance of BoolEvent, reference to 'this' keyword
-       */
-
-    }, {
-      key: 'Call',
-      value: function Call(callbackFunction) {
-
-        this.callback = callbackFunction || this.callback || function () {};
-
-        return this;
-      }
-    }]);
-
-    return BoolEvent;
-  }(GSEvent);
-
-  ;
-
-  BoolEvent.Bool = BoolEvent.On;
-
-  Gamelab.GSEvent = GSEvent;
-
-  Gamelab.Event = GSEvent;
-
-  Gamelab.GSEventLink = GSEventLink;
-
-  Gamelab.InputEvent = InputEvent;
-
-  Gamelab.GamepadEvent = GamepadEvent;
-
-  Gamelab.KeyboardEvent = KeyboardEvent;
-
-  Gamelab.CollisionEvent = CollisionEvent;
-
-  Gamelab.BoxCollisionEvent = CollisionEvent;
-
-  Gamelab.BoolEvent = BoolEvent;
-})();
 ;
+
+BooleanEvent.Boolean = BooleanEvent.Boolean = BooleanEvent.On;
+Gamelab.BooleanEvent = BooleanEvent;;
+var CollisionEvent = function (_GSEvent2) {
+  _inherits(CollisionEvent, _GSEvent2);
+
+  function CollisionEvent() {
+    var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _classCallCheck(this, CollisionEvent);
+
+    return _possibleConstructorReturn(this, (CollisionEvent.__proto__ || Object.getPrototypeOf(CollisionEvent)).call(this, args));
+  }
+
+  /**
+   * applies objects and siblings to be compared for the CollisionEvent instance
+   * @memberof CollisionEvent
+   * @param   {Array} objects the main-objects for collision processing
+   * @param   {Array} siblings the comparable-objects for collision processing
+   * @returns {CollisionEvent} the current instance of CollisionEvent, reference to 'this' keyword
+   */
+
+  _createClass(CollisionEvent, [{
+    key: 'OnCollision',
+    value: function OnCollision(objects, siblings) {
+      this.objects = TypeCode.arrayWrap(objects || this.objects || []);
+      this.siblings = TypeCode.arrayWrap(siblings || this.siblings || []);
+      return this;
+    }
+
+    /**
+     * applies a callback to be called whenever the onBool function returns true
+     * @memberof CollisionEvent
+     * @param   {callbackFunction} callbackFunction the function to be called --replaces the value of collisionEvent.callback
+       * @returns {CollisionEvent} the current instance of CollisionEvent, reference to 'this' keyword
+     */
+
+  }, {
+    key: 'Call',
+    value: function Call(callbackFunction) {
+      this.callback = callbackFunction || this.callback || function () {};
+      var $collision = this;
+      this.objects.forEach(function ($obj) {
+        $obj.onUpdate(function () {
+          var $sprite = this;
+          $collision.siblings.forEach(function ($sib) {
+            if (Gamelab.Collision.spriteBoxCollide($sprite, $sib)) {
+              $collision.callback($sprite, $sib);
+            }
+          });
+        });
+      });
+
+      return this;
+    }
+  }]);
+
+  return CollisionEvent;
+}(GSEvent);
+
+;
+
+Gamelab.CollisionEvent = CollisionEvent;
+Gamelab.BoxCollisionEvent = CollisionEvent;; /**
+                                             * Creates an instance of InputEvent
+                                             * <info-bit> Gamelab.InputEvent runs a callback function when a specified input is triggered</info-bit>
+                                             *
+                                             * <tip is="p">Instead of calling
+                                             *
+                                             * @param   {Object} args object of arguments
+                                             * @param   {number} args.btnix the index of controller-button to be applied
+                                             * @param   {number} args.gpix the index of pc-gamepad --the 1st gamepad will have index 0
+                                             * @param   {number} args.stickix the controller-stick-index to be applied
+                                             * @param   {Array} args.keys array of strings for keys to be applied
+                                             * @param   {Function} args.callback the function to call when InputEvent is triggered
+                                             * @returns {Gamelab.InputEvent} a Gamelab.InputEvent object
+                                             */
+
+var InputEvent = function (_GSEvent3) {
+  _inherits(InputEvent, _GSEvent3);
+
+  function InputEvent(args) {
+    _classCallCheck(this, InputEvent);
+
+    var _this4 = _possibleConstructorReturn(this, (InputEvent.__proto__ || Object.getPrototypeOf(InputEvent)).call(this, args));
+
+    var btnix = args.btnix || args.button_ix || false,
+        gpix = args.gpix || args.gamepad_ix || 0,
+        callback = args.callback || function () {};
+
+    var six = args.stickix || args.six || args.stick_ix || false;
+    var inputKey = six !== false ? 'stick_' + six : btnix !== false ? 'button_' + btnix : false;
+
+    //Keys:
+    var keyboardKeys = TypeCode.arrayWrap(args.keys || []);
+
+    //Run the Q() function
+    if (keyboardKeys instanceof Array) {
+      Gamelab.each(keyboardKeys, function (ix, keyitem) {
+        Gamelab.InputSystem.extendKey('key_' + keyitem.toLowerCase(), function () {
+          callback(keyitem.toLowerCase());
+        });
+      });
+    }
+
+    if (inputKey && gpix >= 0) {
+      Gamelab.GamepadAdapter.on(inputKey, gpix, function (x, y) {
+        callback(x, y);
+      });
+    }
+    return _this4;
+  }
+
+  return InputEvent;
+}(GSEvent);
+
+;
+
+Gamelab.InputEvent = InputEvent;
+
+/**
+ *
+ * @extends InputEvent
+ *
+ * Creates an instance of KeyboardEvent
+ * <info-bit> Gamelab.KeyboardEvent runs a callback function when keyboard-keys are pressed</info-bit>
+ * @param   {Array | string} keys the Array of keys or single string-key for this event
+ * @param   {Function} callback the callback-function to be called when this event is triggered
+
+ * @returns {Gamelab.KeyboardEvent}
+ */
+
+var KeyboardEvent = function (_InputEvent) {
+  _inherits(KeyboardEvent, _InputEvent);
+
+  function KeyboardEvent() {
+    var keys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : keys instanceof Array ? keys : [keys];
+    var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
+    _classCallCheck(this, KeyboardEvent);
+
+    var _this5 = _possibleConstructorReturn(this, (KeyboardEvent.__proto__ || Object.getPrototypeOf(KeyboardEvent)).call(this, {}));
+
+    _this5.keys = keys;
+    _this5.callback = callback;
+    return _this5;
+  }
+
+  _createClass(KeyboardEvent, [{
+    key: 'init',
+    value: function init() {
+      var keyboardKeys = this.keys;
+      var __inst = this;
+
+      if (keyboardKeys instanceof Array) {
+        Gamelab.each(keyboardKeys, function (ix, keyitem) {
+          Gamelab.InputSystem.extendKey('key_' + keyitem.toLowerCase(), function () {
+            __inst.callback(keyitem.toLowerCase());
+          });
+        });
+      }
+    }
+  }, {
+    key: 'Keys',
+    value: function Keys() {
+      var keys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+      this.keys = TypeCode.arrayWrap(keys);
+      return this;
+    }
+  }, {
+    key: 'Call',
+    value: function Call() {
+      var callback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+
+      this.callback = callback;
+      this.init();
+      return this;
+    }
+  }]);
+
+  return KeyboardEvent;
+}(InputEvent);
+
+;
+
+Gamelab.KeyboardEvent = KeyboardEvent;
+
+/**
+ *
+ * @extends InputEvent
+ *
+ * Creates an instance of GamepadEvent
+ * <info-bit> Gamelab.GamepadEvent runs a callback function when any specified gamepad-buttons or gamepad-sticks are pressed</info-bit>
+ * @param   {Array | string} gamepadKeys the Array of gamepadKeys or single string-key, representing gamepad-buttons or gamepad-sticks for this event
+ * @param   {Function} callback the callback-function to be called when this event is triggered
+
+ * @returns {Gamelab.GamepadEvent}
+ */
+
+var GamepadEvent = function (_InputEvent2) {
+  _inherits(GamepadEvent, _InputEvent2);
+
+  function GamepadEvent() {
+    _classCallCheck(this, GamepadEvent);
+
+    var _this6 = _possibleConstructorReturn(this, (GamepadEvent.__proto__ || Object.getPrototypeOf(GamepadEvent)).call(this, {}));
+
+    _this6.gps = [0];
+    _this6.keys = [];
+    _this6.callback = function () {};
+    return _this6;
+  }
+
+  _createClass(GamepadEvent, [{
+    key: 'Gamepads',
+    value: function Gamepads() {
+      var gps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+      this.gps = TypeCode.arrayWrap(gps);
+      return this;
+    }
+  }, {
+    key: 'init',
+    value: function init() {
+      var gamepadKeys = TypeCode.arrayWrap(this.keys || []);
+      var __inst = this;
+      Gamelab.GamepadAdapter.on(gamepadKeys, this.gps, function (x, y) {
+        __inst.callback(x, y);
+      });
+    }
+  }, {
+    key: 'Keys',
+    value: function Keys() {
+      var keys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+      this.keys = TypeCode.arrayWrap(keys);
+      for (var x = 0; x < this.keys.length; x++) {
+        if (typeof this.keys[x] == 'number') {
+          //must change to a string
+          this.keys[x] = this.keys[x] + '';
+        }
+      }
+      return this;
+    }
+  }, {
+    key: 'Call',
+    value: function Call() {
+      var callback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+
+      this.callback = callback;
+      this.init();
+      return this;
+    }
+  }]);
+
+  return GamepadEvent;
+}(InputEvent);
+
+;
+
+Gamelab.GamepadEvent = GamepadEvent;;
+var MouseLeftClickEvent = function () {
+  function MouseLeftClickEvent(callback) {
+    _classCallCheck(this, MouseLeftClickEvent);
+
+    callback = callback || function (x, y) {};
+
+    this.Callback(callback);
+  }
+
+  _createClass(MouseLeftClickEvent, [{
+    key: 'Callback',
+    value: function Callback(cb) {
+      Gamelab.InputSystem.extend('leftclick', function (x, y) {
+        cb(x, y);
+      });
+    }
+  }]);
+
+  return MouseLeftClickEvent;
+}();
+
+;
+
+Gamelab.MouseLeftClickEvent = MouseLeftClickEvent;;
+var MouseMoveEvent = function () {
+  function MouseMoveEvent(callback) {
+    _classCallCheck(this, MouseMoveEvent);
+
+    callback = callback || function (x, y) {};
+
+    this.Callback(callback);
+  }
+
+  _createClass(MouseMoveEvent, [{
+    key: 'Callback',
+    value: function Callback(cb) {
+      Gamelab.InputSystem.extend('mousemove', function (x, y) {
+
+        cb(x, y);
+      });
+    }
+  }]);
+
+  return MouseMoveEvent;
+}();
+
+;
+
+Gamelab.MouseMoveEvent = MouseMoveEvent;;
+var MousePosEvent = function () {
+  function MousePosEvent(callback) {
+    _classCallCheck(this, MousePosEvent);
+
+    callback = callback || function (x, y) {};
+
+    this.Callback(callback);
+  }
+
+  _createClass(MousePosEvent, [{
+    key: 'Callback',
+    value: function Callback(cb) {
+      Gamelab.InputSystem.extend('mousepos', function (x, y) {
+        cb(x, y);
+      });
+    }
+  }]);
+
+  return MousePosEvent;
+}();
+
+;
+
+Gamelab.MousePosEvent = MousePosEvent;;
+var MouseRightClickEvent = function () {
+  function MouseRightClickEvent(callback) {
+    _classCallCheck(this, MouseRightClickEvent);
+
+    callback = callback || function (x, y) {};
+
+    this.Callback(callback);
+  }
+
+  _createClass(MouseRightClickEvent, [{
+    key: 'Callback',
+    value: function Callback(cb) {
+      Gamelab.InputSystem.extend('rightclick', function (x, y) {
+        cb(x, y);
+      });
+    }
+  }]);
+
+  return MouseRightClickEvent;
+}();
+
+;
+
+Gamelab.MouseRightClickEvent = MouseRightClickEvent;;
 
 /**
  * Creates an instance of GamepadAdapter: --instead use the existing: Gamelab.GamepadAdapter, a working instance of this class.
@@ -5877,7 +6065,7 @@ Gamelab.Audio = Audio;
    *
    * @example
    * //constructor call with chainable function-calls: Creates multi-frame Animation from src, then sets properties with chainable-function-calls.
-   * var multiFrameAnime = new Gamelab.Animation('../images/characters/full/spaceman1.png') //constructor is called
+   * var multiFrameAnime = new Gamelab.GridAnimation('../images/characters/full/spaceman1.png') //constructor is called
    * .FrameSize(130, 130)
    * .FrameBounds(new Gamelab.Vector(9, 0), new Gamelab.Vector(23, 0), new Gamelab.Vector(23, 0))
    * .Seesaw() //The Animation will play back-and-forth repeatedly (cycle through frames forwards, then backwards and so on.
@@ -5889,16 +6077,14 @@ Gamelab.Audio = Audio;
    * var singleFrameAnime = new Animation('directory/myFile.png');
    */
 
-  var Animation = function () {
-    function Animation() {
+  var GridAnimation = function () {
+    function GridAnimation() {
       var src = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-      _classCallCheck(this, Animation);
+      _classCallCheck(this, GridAnimation);
 
       var args = (typeof src === 'undefined' ? 'undefined' : _typeof(src)) == 'object' ? src : {};
-
       //Gamelab.Modifiers.informable(this, args);
-
       /**
        * @property {Vector} frameSize the frameSize of the Animation
        * @memberof Animation
@@ -5915,14 +6101,11 @@ Gamelab.Audio = Audio;
         this.init_singleFrame();
       } else if (args instanceof Gamelab.GameImage) {
         //console.log('Animation(): args are an instance of GameImage');
-
         this.image = args;
       } else if (args instanceof HTMLImageElement) {
         //console.log('Animation(): args was an instance of HTMLImageElement');
-
         this.image = new Gamelab.GameImage(args);
-      } else if (args instanceof Gamelab.Animation) {
-
+      } else if (args instanceof Gamelab.GridAnimation) {
         this.image = args.image;
       } else if ((typeof args === 'undefined' ? 'undefined' : _typeof(args)) == 'object' && args.src) {
         this.src = args.src;
@@ -5934,15 +6117,12 @@ Gamelab.Audio = Audio;
       this.visible = args.visible || true;
 
       if (args.frameBounds && args.frameBounds.min && args.frameBounds.max) {
-
         /**
          * @property {VectorFrameBounds} frameBounds the frameBounds of the Animation, has three Vectors
          * @memberof Animation
          **********/
-
         this.frameBounds = new Gamelab.VectorFrameBounds(args.frameBounds.min, args.frameBounds.max, args.frameBounds.termPoint);
       } else {
-
         this.frameBounds = new Gamelab.VectorFrameBounds(new Gamelab.Vector(0, 0, 0), new Gamelab.Vector(0, 0, 0), new Gamelab.Vector(0, 0, 0));
       }
 
@@ -5968,25 +6148,18 @@ Gamelab.Audio = Audio;
        **********/
 
       this.selected_frame = this.frames[0] || false;
-
       this.timer = 0;
-
       this.duration = args.duration || 2000;
-
       this.seesaw_mode = args.seesaw_mode || false;
-
       this.reverse_frames = args.reverse_frames || false;
-
       this.run_ext = args.run_ext || [];
-
       this.complete_ext = args.complete_ext || [];
 
       this.Scale(this.scale);
-
       // this.colorMap = this.createColorMap(5);
     }
 
-    _createClass(Animation, [{
+    _createClass(GridAnimation, [{
       key: 'Origin',
       value: function Origin(x, y, z) {
         this.origin = new Gamelab.Vector(x, y, z);
@@ -6005,7 +6178,6 @@ Gamelab.Audio = Audio;
         this.position = new Gamelab.Vector(x, y, z);
 
         this.frames.forEach(function ($f) {
-
           $f.position = new Gamelab.Vector(x, y, z);
         });
 
@@ -6047,23 +6219,24 @@ Gamelab.Audio = Audio;
         return this;
       }
     }, {
+      key: 'add',
+      value: function add(frame) {
+        this.frames.push(frame);
+      }
+    }, {
       key: 'Src',
       value: function Src(src) {
         var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-
         if (typeof src == 'string') {
-
           console.log('setting GameImage with string:' + src);
           this.src = src;
           this.image = new Gamelab.GameImage(src);
         } else if (src instanceof GameImage) {
           //console.log('Animation(): args are an instance of GameImage');
-
           this.image = src;
         } else if (src instanceof HTMLImageElement) {
           //console.log('Animation(): args are an instance of HTMLImageElement');
-
           this.image = new Gamelab.GameImage(src);
         }
 
@@ -6074,31 +6247,23 @@ Gamelab.Audio = Audio;
     }, {
       key: 'Scale',
       value: function Scale(s) {
-
         this.scale = s;
-
         if (this.image && this.image.domElement && this.image.domElement.width > 0) {
           this.size = new Gamelab.Vector(this.image.domElement.width * s, this.image.domElement.height * s).round();
           this.Size(this.size);
         }
-
         if (this.frames instanceof Array) this.frames.forEach(function (f) {
-
           f.Scale(s);
         });
-
         return this;
       }
     }, {
       key: 'Size',
       value: function Size(x, y, z) {
-
         this.size = new Gamelab.Vector(x, y, z);
-
         this.frames.forEach(function (f) {
           f.size = new Gamelab.Vector(x, y, z);
         });
-
         return this;
       }
     }, {
@@ -6106,22 +6271,18 @@ Gamelab.Audio = Audio;
       value: function Image(src) {
 
         if (typeof src == 'string') {
-
           //console.log('setting GameImage with string:' + src);
           this.src = src;
           this.image = new Gamelab.GameImage(src);
         } else if (src instanceof Gamelab.GameImage) {
           //console.log('Animation(): args are an instance of GameImage');
-
           this.image = src;
         } else if (src instanceof HTMLImageElement) {
           console.log('Animation(): args was an instance of HTMLImageElement');
 
           this.image = new Gamelab.GameImage(src);
         }
-
         this.init_singleFrame();
-
         return this;
       }
 
@@ -6154,9 +6315,7 @@ Gamelab.Audio = Audio;
 
           if (!$anime.__isInit) $anime.apply2DFrames();
         };
-
         Gamelab.log('Animation():set single-frame animation');
-
         return this;
       }
 
@@ -6279,6 +6438,17 @@ Gamelab.Audio = Audio;
       value: function ResetHang() {
         this._hang = false;
         this.cix = this.min_cix;
+      }
+    }, {
+      key: 'FrameBounds',
+      value: function FrameBounds(min, max, termPoint) {
+        if (max && !termPoint) {
+          termPoint = max;
+        }
+        this.frameBounds = new Gamelab.VectorFrameBounds(new Gamelab.Vector(min), new Gamelab.Vector(max), termPoint);
+        this.__isInit = true;
+        this.apply2DFrames();
+        return this;
       }
     }, {
       key: 'DefineGridFrames',
@@ -6525,9 +6695,7 @@ Gamelab.Audio = Audio;
     }, {
       key: 'onUpdate',
       value: function onUpdate(fun) {
-
         fun = fun.bind(this);
-
         var update = this.update_frame.bind(this);
         var __inst = this;
         this.update_frame = function (__inst) {
@@ -6538,9 +6706,7 @@ Gamelab.Audio = Audio;
     }, {
       key: 'soleUpdate',
       value: function soleUpdate(fun) {
-
         fun = fun.bind(this);
-
         var __inst = this;
         this.update_frame = function (__inst) {
           fun(__inst);
@@ -6549,18 +6715,14 @@ Gamelab.Audio = Audio;
     }, {
       key: 'update_frame',
       value: function update_frame() {
-
         this.selected_frame = this.frames[Math.round(this.cix) % this.frames.length];
       }
     }, {
       key: 'reset',
       value: function reset() {
-
         this.apply2DFrames();
-
         this.cix = 0;
       }
-
       /**
        * Applies a continuous animation. Use this in parent-sprite's update if continuous animation is required.
        * Also works as a single call at any time during game-update.
@@ -6572,18 +6734,13 @@ Gamelab.Audio = Audio;
     }, {
       key: 'run',
       value: function run() {
-
         if (this.__frametype == 'single') {
           return 0;
         }
-
         this.apply2DFrames();
-
         this.cix += 1;
-
         this.update_frame();
       }
-
       /**
        * animate():: same as run()
        *
@@ -6604,15 +6761,7 @@ Gamelab.Audio = Audio;
           this.applied = true;
         }
 
-        //update once:
-        //this.update();
-
-        //    console.log('anime-len:' +this.frames.length);
-
-        //    console.log('cix:' +this.cix);
-
         if (this.cix % this.frames.length == 0) {
-
           this.engage();
         }
       }
@@ -6628,11 +6777,8 @@ Gamelab.Audio = Audio;
     }, {
       key: 'engage',
       value: function engage(duration) {
-
         this.call_on_run();
-
         duration = duration || this.duration || this.frames.length * 20;
-
         if (this.__frametype == 'single') {
           return 0;
         }
@@ -6641,7 +6787,6 @@ Gamelab.Audio = Audio;
         if (this.cix >= this.frames.length - 1 || this.cix < this.min_cix && !this._hang) {
           this.cix = this.min_cix;
         }
-
         var __inst = this;
 
         //we have a target
@@ -6649,19 +6794,13 @@ Gamelab.Audio = Audio;
           cix: this.min_cix + (this.frames.length - 1)
         }, duration).onUpdate(function () {
           //console.log(objects[0].position.x,objects[0].position.y);
-
           //__inst.cix = Math.ceil(__inst.cix);
-
           __inst.update_frame();
         }).onComplete(function () {
           //console.log(objects[0].position.x, objects[0].position.y);
-
           if (!__inst._hang) __inst.cix = __inst.min_cix;
-
           __inst.call_on_complete();
-
           __inst.isComplete = true;
-
           __inst.apply2DFrames();
         });
 
@@ -6677,24 +6816,23 @@ Gamelab.Audio = Audio;
       }
     }]);
 
-    return Animation;
+    return GridAnimation;
   }();
 
   ;
 
   /** @memberof Gamelab */
 
-  Animation.prototype.FrameBounds = Animation.prototype.DefineGridFrames;
+  Gamelab.GridAnimation = GridAnimation;
 
-  Gamelab.Animation = Animation;
+  Gamelab.Animation = GridAnimation;
 
-  Gamelab.Animation.continuous = Gamelab.Animation.run; //'continuous is an alternate reference to 'run'.'
+  Gamelab.GridAnimation.continuous = Gamelab.GridAnimation.run; //'continuous is an alternate reference to 'run'.'
 
-  Gamelab.Animation.update = Gamelab.Animation.update_frame; //alt ref
+  Gamelab.GridAnimation.update = Gamelab.GridAnimation.update_frame; //alt ref
 
-  Gamelab.Animation.continue = Gamelab.Animation.run; //'continue is an alternate reference to 'run'.'
-})();
-;
+  Gamelab.GridAnimation.continue = Gamelab.GridAnimation.run; //'continue is an alternate reference to 'run'.'
+})();;
 var Bone = function () {
   function Bone() {
     _classCallCheck(this, Bone);
@@ -6745,6 +6883,60 @@ var Bone = function () {
 
 Gamelab.Bone = Bone;
 
+var Bone3D = function () {
+  function Bone3D() {
+    _classCallCheck(this, Bone3D);
+
+    this.parent = undefined;
+    this.target = undefined;
+    this.offset = new Gamelab.Vector(0, 0);
+  }
+
+  _createClass(Bone3D, [{
+    key: 'getRotatedOffset',
+    value: function getRotatedOffset() {
+      //  console.log('Parent-Rotation:' + this.parentAnimation.rotation.x);
+      //apply rotation, convert radians to degrees
+      if (!this.parent || !this.parent.member) {
+        return console.error('cannot update bone3d without parent and parent.member ');
+      }
+
+      var scale = this.target.threejsScale;
+
+      var previousOffset = this.parent.rotOffset || new Gamelab.Vector(0, 0, 0);
+
+      var rotatedOffset = Gamelab.VectorMath.rotatePointsXY(this.offset.x, this.offset.y, this.parent.rotation.z),
+          targetRotOffset = new Gamelab.Vector(0, 0, 0).add(this.parent.origin).sub(this.target.origin).add(rotatedOffset);
+      var rotOffset = targetRotOffset;
+      return rotOffset;
+    }
+  }, {
+    key: 'Parent',
+    value: function Parent(p) {
+      this.parent = p;
+      return this;
+    }
+  }, {
+    key: 'Target',
+    value: function Target(t) {
+      this.target = t;
+      return this;
+    }
+  }, {
+    key: 'Offset',
+    value: function Offset(o) {
+      this.offset = o;
+      return this;
+    }
+  }]);
+
+  return Bone3D;
+}();
+
+Gamelab.Bone3D = Bone3D;
+var Bone3d = Bone3D;
+Gamelab.Bone3D = Bone3D;
+
 var BoneState = function BoneState(boneList) {
   _classCallCheck(this, BoneState);
 
@@ -6759,8 +6951,7 @@ var BoneState = function BoneState(boneList) {
   });
 };
 
-Gamelab.BoneState = BoneState;
-;
+Gamelab.BoneState = BoneState;;
 
 var Box2D = function () {
   function Box2D(pos, size) {
@@ -7061,8 +7252,7 @@ Gamelab.Box2D = Box2D;
   }();
 
   Gamelab.Frame = Frame;
-})();
-;
+})();;
 var Line2d = function (_Scriptable) {
   _inherits(Line2d, _Scriptable);
 
@@ -8122,7 +8312,7 @@ var Sprite = function () {
     value: function handleCanvasArgs(src) {
       if (src instanceof HTMLCanvasElement) {
         this.src = src;
-        this.selected_animation = new Gamelab.Animation(src);
+        this.selected_animation = new Gamelab.GridAnimation(src);
         this.image = this.selected_animation.image;
         this.animations = [];
         this.animations.push(this.selected_animation);
@@ -8136,7 +8326,7 @@ var Sprite = function () {
           this.name = this.name || srcTail.split('.')[0];
         }
 
-        this.selected_animation = new Gamelab.Animation(src);
+        this.selected_animation = new Gamelab.GridAnimation(src);
         this.image = this.selected_animation.image;
         this.animations = [];
         this.animations.push(this.selected_animation);
@@ -8146,9 +8336,9 @@ var Sprite = function () {
   }, {
     key: 'handleAnimationArgs',
     value: function handleAnimationArgs(args) {
-      if (args instanceof Gamelab.Animation) //instantiate from animation
+      if (args instanceof Gamelab.GridAnimation) //instantiate from animation
         {
-          console.info('args was Gamelab.Animation', args);
+          console.info('args was Gamelab.GridAnimation', args);
           args = {
             selected_animation: args,
             image: args.image,
@@ -8491,7 +8681,7 @@ var Sprite = function () {
 
       var __inst = this;
 
-      //Apply / instantiate Sound(), Gamelab.Motion(), and Gamelab.Animation() args...
+      //Apply / instantiate Sound(), Gamelab.Motion(), and Gamelab.GridAnimation() args...
 
 
       Gamelab.each(this.shots, function (ix, item) {
@@ -8507,7 +8697,7 @@ var Sprite = function () {
       });
 
       Gamelab.each(this.animations, function (ix, item) {
-        __inst.animations[ix] = new Gamelab.Animation(item);
+        __inst.animations[ix] = new Gamelab.GridAnimation(item);
       });
 
       Gamelab.each(this.particles, function (ix, item) {
@@ -8523,7 +8713,7 @@ var Sprite = function () {
       if (!this.selected_animation && args.selected_animation) {
 
         //console.dev('applying animation:' + jstr(args.selected_animation));
-        this.selected_animation = new Gamelab.Animation(args.selected_animation);
+        this.selected_animation = new Gamelab.GridAnimation(args.selected_animation);
 
         this.animations = [];
         if (this.animations.indexOf(this.selected_animation) == -1) this.animations.push(this.selected_animation);
@@ -8557,7 +8747,7 @@ var Sprite = function () {
     value: function Clone(sprite) {
       console.log('using Clone() function');
       var clone = new Gamelab.Sprite(sprite.src);
-      clone.Anime(new Gamelab.Animation(sprite.anime));
+      clone.Anime(new Gamelab.GridAnimation(sprite.anime));
       clone.apply_args(sprite);
       return clone;
     }
@@ -8827,7 +9017,7 @@ var Sprite = function () {
     key: 'Add',
     value: function Add(object) {
 
-      if (object instanceof Gamelab.Animation) {
+      if (object instanceof Gamelab.GridAnimation) {
         this.animations.add(object);
       }
 
@@ -9088,7 +9278,7 @@ var Sprite = function () {
       if (this.image.domElement instanceof HTMLCanvasElement) {
         if (_obj.size && _obj.size.x !== 0 && _obj.size.y !== 0) {} else {
           __inst.size = new Gamelab.Vector(__inst.image.domElement.width, __inst.image.domElement.height);
-          __inst.selected_animation = new Gamelab.Animation(this.image.domElement).FrameSize(__inst.size);
+          __inst.selected_animation = new Gamelab.GridAnimation(this.image.domElement).FrameSize(__inst.size);
           __inst.animations = [];
           __inst.animations.push(__inst.selected_animation);
           __inst.Scale(__inst.scale || 1.0);
@@ -9103,7 +9293,7 @@ var Sprite = function () {
 
         if (_obj.size && _obj.size.x !== 0 && _obj.size.y !== 0) {} else {
           __inst.size = new Gamelab.Vector(__inst.image.domElement.width, __inst.image.domElement.height);
-          __inst.selected_animation = new Gamelab.Animation(__inst.image).FrameSize(__inst.size);
+          __inst.selected_animation = new Gamelab.GridAnimation(__inst.image).FrameSize(__inst.size);
           __inst.animations = [];
           __inst.animations.push(__inst.selected_animation);
           __inst.Scale(__inst.scale || 1.0);
@@ -9211,7 +9401,7 @@ var Sprite = function () {
       x -= camera_pos.x * scrollFactor || 0;
       y -= camera_pos.y * scrollFactor || 0;
 
-      return x + sprite.size.x > -1000 - w && x < w + 1000 && y + sprite.size.y > 0 - 1000 - h && y < h + 1000;
+      return x + sprite.size.x > -1000 - w && x < w + 1000 && y + sprite.size.y > -1000 - h && y < h + 1000;
     }
 
     /*****************************
@@ -9419,7 +9609,7 @@ var Sprite = function () {
      * @function
      * @memberof Sprite
      * @param {Object} options an object of arguments
-     * @param {Gamelab.Animation} animation the animation to fire from the Sprite
+     * @param {Gamelab.GridAnimation} animation the animation to fire from the Sprite
      * @param {number} speed the speed of the shot that is projected
      * @param {Gamelab.Vector} position the initial position of the shot: defaults to current Sprite position
      * @param {Gamelab.Vector} size the Vector size of the shot
@@ -9433,7 +9623,7 @@ var Sprite = function () {
       gw = gw || Gamelab.game_windows[0];
       this.prep_key = 'shoot';
 
-      var animation = options.bullet || options.animation || options.anime || new Gamelab.Animation();
+      var animation = options.bullet || options.animation || options.anime || new Gamelab.GridAnimation();
       var speed = options.speed || options.velocity || 1;
 
       var size = options.size || new Gamelab.Vector(10, 10, 0);
@@ -9510,7 +9700,7 @@ var Sprite = function () {
 
       gw = gw || Gamelab.game_windows[0];
 
-      var animation = options.animation || new Gamelab.Animation();
+      var animation = options.animation || new Gamelab.GridAnimation();
       var position = options.position || new Gamelab.Vector(this.position);
       var offset = options.offset || new Gamelab.Vector(0, 0, 0);
       var size = new Gamelab.Vector(options.size || this.size);
@@ -9853,8 +10043,854 @@ var Sprite = function () {
 
 ;
 
-Gamelab.Sprite = Sprite;
+Gamelab.Sprite = Sprite;;Gamelab.assign3DGroupMesh = function (key, mesh, sprite) {
+  Gamelab.ThreejsGroups = Gamelab.ThreejsGroups || [];
+  Gamelab.ThreejsGroups[key] = Gamelab.ThreejsGroups[key] || new THREE.Object3D();
+  Gamelab.ThreejsGroups[key].countOps = Gamelab.ThreejsGroups[key].countOps || 1.0;
+  Gamelab.ThreejsGroups[key].countOps += 1.0;
+  Gamelab.ThreejsGroups[key].add(mesh);
+  mesh.layer = sprite.layer;
+  return Gamelab.ThreejsGroups[key];
+};
+
+var Sprite3d = function Sprite3d(gamelabSprite, scale) {
+  _classCallCheck(this, Sprite3d);
+
+  var sprite = gamelabSprite,
+      texture = new THREE.TextureLoader().load(sprite.src);
+  texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
+  var w = sprite.image.domElement.width,
+      h = sprite.image.domElement.height;
+  var geometry = new THREE.PlaneGeometry(w, h, 1, 1);
+  var material = new THREE.MeshPhongMaterial({
+    map: texture,
+    transparent: true
+  });
+  //material.colorWrite = false;
+  material.side = THREE.DoubleSide;
+  var mesh = new THREE.Mesh(geometry, material);
+
+  material.needsUpdate = true;
+
+  sprite.threejsScale = scale * sprite.scale;
+
+  mesh.scale.set(sprite.threejsScale, sprite.threejsScale, 1);
+
+  // Add to pivot group
+  var member = new THREE.Object3D();
+
+  if (gamelabSprite.memberOffset) {
+    sprite.memberOffset = gamelabSprite.memberOffset;
+  }
+
+  if (gamelabSprite.meshScaleOffset) {
+    sprite.meshScaleOffset = gamelabSprite.meshScaleOffset;
+  }
+
+  member.add(mesh);
+
+  sprite.member = member;
+
+  sprite.builderGroup = sprite.builderGroup || 'MASTER';
+
+  sprite.threejsGroup = Gamelab.assign3DGroupMesh(sprite.builderGroup, sprite.member, sprite);
+
+  sprite.threejsMesh = mesh;
+
+  var realSize = new Gamelab.Vector(sprite.image.domElement.width, sprite.image.domElement.height, 1).mult(sprite.threejsScale);
+
+  sprite.threejsGroup.position.x = sprite.position.x - realSize.x;
+  sprite.threejsGroup.position.y = sprite.position.y - realSize.y;
+  sprite.threejsGroup.position.z = sprite.position.z - 500;
+
+  sprite.threejsGroup.needsUpdate = true;
+
+  sprite.applyBoneTargetOffset = function () {
+    if (this.children instanceof Array) {
+      this.children.forEach(function (child) {
+        if (child.target && child.target.boneOffset && child instanceof Bone3D) {
+          child.Offset(child.target.boneOffset);
+          child.target.rotOffset = child.getRotatedOffset();
+          if (child.parent.rotOffset) {
+            child.target.rotOffset = child.target.rotOffset.add(child.parent.rotOffset);
+          }
+        }
+      });
+    }
+  };
+
+  sprite.onUpdate(function () {
+    var maxRadians = 6.28,
+        halfMaxRadians = maxRadians / 2.0;
+    var realSize = new Gamelab.Vector(this.image.domElement.width, this.image.domElement.height, 1).mult(this.threejsScale);
+    this.threejsPosition = this.position.mult(this.threejsScale);
+
+    this.realSize = realSize;
+
+    this.threejsMesh.position.x = realSize.x / 2.0;
+    this.threejsMesh.position.y = realSize.y / 2.0;
+
+    if (this.meshScaleOffset) {
+      this.threejsMesh.position.x += this.meshScaleOffset.x * this.realSize.x;
+      this.threejsMesh.position.y += this.meshScaleOffset.y * this.realSize.y;
+    }
+
+    this.member.position.x = 0;
+    this.member.position.y = 0;
+    this.member.position.z = 0;
+
+    if (this.memberOffset) {
+      this.member.position.x += this.memberOffset.x * this.threejsScale;
+      this.member.position.y += this.memberOffset.y * this.threejsScale;
+      this.member.position.z += this.memberOffset.z * this.threejsScale;
+    }
+
+    this.applyBoneTargetOffset();
+
+    if (this.rotOffset) {
+      this.member.position.x += this.rotOffset.x * this.threejsScale;
+      this.member.position.y += this.rotOffset.y * this.threejsScale;
+      this.member.position.z += this.rotOffset.z * this.threejsScale;
+      this.member.position.z += this.rotOffset.z * this.threejsScale;
+    } else {
+      this.member.position.z = 0;
+    }
+
+    this.memberIndex = this.memberIndex || 1;
+
+    this.member.position.z += this.flipX ? this.layer * -0.1 : this.layer * 0.1;
+
+    this.member.position.z += this.threejsPosition.z;
+
+    this.threejsGroup.position.x = this.threejsPosition.x - realSize.x;
+    this.threejsGroup.position.y = -this.threejsPosition.y + realSize.y;
+    this.threejsGroup.position.z = this.threejsPosition.z - 500;
+
+    var originSize = this.origin.mult(this.threejsScale),
+        originDiff = realSize.sub(originSize);
+
+    var halfSizeDiff = realSize.half().sub(originSize);
+
+    this.threejsMesh.position.x -= originDiff.x;
+    this.threejsMesh.position.y -= originDiff.y;
+
+    if (this.groupType == 'singular') {
+      this.threejsGroup.position.x += realSize.x / 2.0;
+    }
+
+    if (this.flipX) {
+      this.threejsGroup.rotation.y = halfMaxRadians;
+      this.threejsGroup.position.x -= realSize.x / 2.0;
+    } else {
+      this.threejsGroup.position.x += realSize.x / 2.0;
+    }
+
+    if (this.flipY) {
+      this.threejsGroup.rotation.x = halfMaxRadians;
+      this.threejsGroup.position.y -= realSize.y / 2.0;
+    } else {
+      this.threejsGroup.position.y += realSize.y / 2.0;
+    }
+
+    this.rotation.z += this.rotSpeed * 10.0 || 0;
+
+    this.member.rotation.x = THREE.Math.degToRad(this.rotation.x);
+    this.member.rotation.y = THREE.Math.degToRad(this.rotation.y);
+    this.member.rotation.z = THREE.Math.degToRad(this.rotation.z);
+  });
+
+  return {
+    group: sprite.threejsGroup,
+    member: sprite.member
+  };
+};
+
+var Sprite3D = Sprite3d;
+
+Gamelab.Sprite3d = Sprite3d;
+Gamelab.Sprite3D = Sprite3D;
+
+var SpriteController = function () {
+  function SpriteController() {
+    _classCallCheck(this, SpriteController);
+
+    this.sprites = [];
+  }
+
+  _createClass(SpriteController, [{
+    key: 'get',
+    value: function get(index) {
+      return this.sprites[index];
+    }
+  }, {
+    key: 'add',
+    value: function add(sprite) {
+      this.sprites.push(sprite);
+    }
+  }]);
+
+  return SpriteController;
+}();
+
 ;
+
+Gamelab.SpriteController = SpriteController;;(function () {
+  console.log('Animation class... creating');
+
+  /**
+   *
+   * Creates an instance of Animation with one or more Frames.
+   *
+   * <example-marker data-class='Animation' data-info='Use JQuery fnxs to load content into the div outside of this p-element. Do not use iframe' > </example-marker>
+   *
+   * @param   {string=} [src] the src-image-path for this Animation
+   * @returns {Animation} an Animation object
+   *
+   * @example
+   *
+   * //constructor call: Creates a single-frame Animation from src
+   * var singleFrameAnime = new Animation('directory/myFile.png');
+   *
+   * @example
+   * //constructor call with chainable function-calls: Creates multi-frame Animation from src, then sets properties with chainable-function-calls.
+   * var multiFrameAnime = new Gamelab.StaticAnimation('../images/characters/full/spaceman1.png') //constructor is called
+   * .FrameSize(130, 130)
+   * .FrameBounds(new Gamelab.Vector(9, 0), new Gamelab.Vector(23, 0), new Gamelab.Vector(23, 0))
+   * .Seesaw() //The Animation will play back-and-forth repeatedly (cycle through frames forwards, then backwards and so on.
+   * .Duration(900); //Animation lasts 900 millis OR just under 1 second
+   *
+   *  @design
+   *
+   * //single-responsibility : to define a list of frames, then progress that list of frames with a 'selected_frame' property
+   * var singleFrameAnime = new Animation('directory/myFile.png');
+   */
+
+  var StaticAnimation = function () {
+    function StaticAnimation() {
+      var src = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      _classCallCheck(this, StaticAnimation);
+
+      var args = (typeof src === 'undefined' ? 'undefined' : _typeof(src)) == 'object' ? src : {};
+      //Gamelab.Modifiers.informable(this, args);
+      /**
+       * @property {Vector} frameSize the frameSize of the Animation
+       * @memberof Animation
+       **********/
+
+      this.frameSize = this.frameSize || new Gamelab.Vector(args.frameSize || new Gamelab.Vector(0, 0));
+      this.size = this.size || new Gamelab.Vector(args.size || new Gamelab.Vector(0, 0));
+
+      this.type = 'Animation';
+
+      if (typeof src == 'string' || src instanceof HTMLCanvasElement) {
+        this.src = src;
+        this.image = new Gamelab.GameImage(src);
+        this.init_singleFrame();
+      } else if (args instanceof Gamelab.GameImage) {
+        //console.log('Animation(): args are an instance of GameImage');
+        this.image = args;
+      } else if (args instanceof HTMLImageElement) {
+        //console.log('Animation(): args was an instance of HTMLImageElement');
+        this.image = new Gamelab.GameImage(args);
+      } else if (args instanceof Gamelab.GridAnimation) {
+        this.image = args.image;
+      } else if ((typeof args === 'undefined' ? 'undefined' : _typeof(args)) == 'object' && args.src) {
+        this.src = args.src;
+        this.image = new Gamelab.GameImage(args.src);
+      }
+
+      this.min_cix = 0;
+
+      this.visible = args.visible || true;
+
+      if (args.frameBounds && args.frameBounds.min && args.frameBounds.max) {
+        /**
+         * @property {VectorFrameBounds} frameBounds the frameBounds of the Animation, has three Vectors
+         * @memberof Animation
+         **********/
+        this.frameBounds = new Gamelab.VectorFrameBounds(args.frameBounds.min, args.frameBounds.max, args.frameBounds.termPoint);
+      } else {
+        this.frameBounds = new Gamelab.VectorFrameBounds(new Gamelab.Vector(0, 0, 0), new Gamelab.Vector(0, 0, 0), new Gamelab.Vector(0, 0, 0));
+      }
+
+      this.scale = 1.0;
+
+      this.origin = new Gamelab.Vector(0, 0, 0);
+
+      this.position = new Gamelab.Vector(0, 0);
+
+      this.rotation = new Gamelab.Vector(0, 0, 0);
+
+      this.frameOffset = this.getArg(args, 'frameOffset', new Gamelab.Vector(0, 0, 0));
+
+      this.flipX = this.getArg(args, 'flipX', false);
+
+      this.cix = 0;
+
+      /**
+       * @property {Frame} selected_frame the selected_frame of the Animation, a Gamelab.Frame
+       * @memberof Animation
+       **********/
+
+      this.selected_frame = false;
+      this.timer = 0;
+      this.duration = args.duration || 2000;
+      this.seesaw_mode = args.seesaw_mode || false;
+      this.reverse_frames = args.reverse_frames || false;
+      this.run_ext = args.run_ext || [];
+      this.complete_ext = args.complete_ext || [];
+
+      this.Scale(this.scale);
+      // this.colorMap = this.createColorMap(5);
+    }
+
+    _createClass(StaticAnimation, [{
+      key: 'Origin',
+      value: function Origin(x, y, z) {
+        this.origin = new Gamelab.Vector(x, y, z);
+        this.frames.forEach(function ($f) {
+          $f.origin = new Gamelab.Vector(x, y, z);
+        });
+        if (this.selected_frame) {
+          this.selected_frame.origin = new Gamelab.Vector(x, y, z);
+        }
+        return this;
+      }
+    }, {
+      key: 'Position',
+      value: function Position(x, y, z) {
+        this.position = new Gamelab.Vector(x, y, z);
+
+        this.frames.forEach(function ($f) {
+          $f.position = new Gamelab.Vector(x, y, z);
+        });
+
+        return this;
+      }
+    }, {
+      key: 'Size',
+      value: function Size(x, y) {
+
+        this.size = new Gamelab.Vector(x, y);
+        this.frames.forEach(function (f) {
+
+          f.Size(x, y);
+        });
+        return this;
+      }
+    }, {
+      key: 'Bone',
+      value: function Bone(b) {
+        this.bone = b;
+        return this;
+      }
+    }, {
+      key: 'ParentBone',
+      value: function ParentBone(b) {
+        this.parentBone = b;
+        return this;
+      }
+    }, {
+      key: 'Rotation',
+      value: function Rotation(x, y, z) {
+
+        this.rotation = new Gamelab.Vector(x, y, z);
+
+        this.frames.forEach(function ($frame) {
+          $frame.Rotation(x, y, z);
+        });
+
+        return this;
+      }
+    }, {
+      key: 'add',
+      value: function add(frame) {
+        this.frames.push(frame);
+      }
+    }, {
+      key: 'Src',
+      value: function Src(src) {
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+        if (typeof src == 'string') {
+          console.log('setting GameImage with string:' + src);
+          this.src = src;
+          this.image = new Gamelab.GameImage(src);
+        } else if (src instanceof GameImage) {
+          //console.log('Animation(): args are an instance of GameImage');
+          this.image = src;
+        } else if (src instanceof HTMLImageElement) {
+          //console.log('Animation(): args are an instance of HTMLImageElement');
+          this.image = new Gamelab.GameImage(src);
+        }
+
+        if (!options.frameBounds) this.init_singleFrame();
+
+        return this;
+      }
+    }, {
+      key: 'Scale',
+      value: function Scale(s) {
+        this.scale = s;
+        if (this.image && this.image.domElement && this.image.domElement.width > 0) {
+          this.size = new Gamelab.Vector(this.image.domElement.width * s, this.image.domElement.height * s).round();
+          this.Size(this.size);
+        }
+        if (this.frames instanceof Array) this.frames.forEach(function (f) {
+          f.Scale(s);
+        });
+        return this;
+      }
+    }, {
+      key: 'Size',
+      value: function Size(x, y, z) {
+        this.size = new Gamelab.Vector(x, y, z);
+        this.frames.forEach(function (f) {
+          f.size = new Gamelab.Vector(x, y, z);
+        });
+        return this;
+      }
+    }, {
+      key: 'Image',
+      value: function Image(src) {
+
+        if (typeof src == 'string') {
+          //console.log('setting GameImage with string:' + src);
+          this.src = src;
+          this.image = new Gamelab.GameImage(src);
+        } else if (src instanceof Gamelab.GameImage) {
+          //console.log('Animation(): args are an instance of GameImage');
+          this.image = src;
+        } else if (src instanceof HTMLImageElement) {
+          console.log('Animation(): args was an instance of HTMLImageElement');
+
+          this.image = new Gamelab.GameImage(src);
+        }
+        this.init_singleFrame();
+        return this;
+      }
+
+      /*****
+       * Overridable / Extendable functions
+       * -allows stacking of external object-function calls
+       ******/
+
+      /**
+       * Provides a function to be called when this Animation.image loads.
+       *
+       * @function
+       * @params {Function} call the function to be called on load
+       * @memberof Animation
+       **********/
+
+    }, {
+      key: 'onLoad',
+      value: function onLoad(call) {
+        var $anime = this;
+        call = call || function () {};
+        this.load_call = call;
+        this.image.domElement.onload = function () {
+          call.bind($anime).call();
+        };
+      }
+
+      /**
+       * Provides a function to be called whenever this Animation starts. Function should run every time the Animation reaches frame-index 0
+       *
+       * @function
+       * @params {Function} call the function to be called on start
+       * @memberof Animation
+       **********/
+
+    }, {
+      key: 'onRun',
+      value: function onRun(call) {
+
+        if (this.run_ext.indexOf(call) == -1) {
+          this.run_ext.push(call.bind(this));
+        }
+      }
+
+      /**
+       * Provides a function to be called whenever this Animation completes. Function should run every time the Animation reaches it's last frame-index.
+       *
+       * @function
+       * @params {Function} call the function to be called on complete
+       * @memberof Animation
+       **********/
+
+    }, {
+      key: 'onComplete',
+      value: function onComplete(call) {
+
+        if (this.complete_ext.indexOf(call) == -1) {
+          this.complete_ext.push(call.bind(this));
+        }
+      }
+
+      /**
+       * Provides a single and only function to be called whenever this Animation completes. Function should run every time the Animation reaches it's last frame-index.
+       *
+       * @function
+       * @params {Function} call the function to be called on complete
+       * @memberof Animation
+       **********/
+
+    }, {
+      key: 'soleComplete',
+      value: function soleComplete(call) {
+        this.complete_ext = [];
+        if (this.complete_ext.indexOf(call) == -1) {
+          this.complete_ext.push(call.bind(this));
+        }
+      }
+    }, {
+      key: 'call_on_run',
+      value: function call_on_run() {
+        //call any function extension that is present
+        for (var x = 0; x < this.run_ext.length; x++) {
+          this.run_ext[x](this);
+        }
+      }
+    }, {
+      key: 'call_on_complete',
+      value: function call_on_complete() {
+        //call any function extension that is present
+        for (var x = 0; x < this.complete_ext.length; x++) {
+          this.complete_ext[x](this);
+        }
+      }
+    }, {
+      key: 'Visible',
+      value: function Visible(v) {
+        this.visible = v;
+        return this;
+      }
+    }, {
+      key: 'FrameSize',
+      value: function FrameSize(w, h) {
+        this.frameSize = new Gamelab.Vector(w, h);
+        this.__isInit = true;
+        return this;
+      }
+    }, {
+      key: 'Hang',
+      value: function Hang() {
+        this._hang = true;
+        return this;
+      }
+    }, {
+      key: 'ResetHang',
+      value: function ResetHang() {
+        this._hang = false;
+        this.cix = this.min_cix;
+      }
+    }, {
+      key: 'FrameOffset',
+      value: function FrameOffset(x, y) {
+        this.frameOffset = new Gamelab.Vector(x, y);
+        return this;
+      }
+    }, {
+      key: 'Seesaw',
+      value: function Seesaw() {
+        if (!this.seesaw_mode) {
+          this.seesaw_mode = true;
+        }
+        return this;
+      }
+    }, {
+      key: 'Duration',
+      value: function Duration(millis) {
+        this.duration = millis;
+        return this;
+      }
+
+      /**
+       * Reverses all frames of the animation. Frames are then expected to run backwards.
+       *
+       * @function
+       * @memberof Animation
+       **********/
+
+    }, {
+      key: 'ReverseFrames',
+      value: function ReverseFrames() {
+
+        this.reverse_frames = true;
+        return this;
+      }
+
+      /**
+       * Sets the animation a a single frame / full-image. Use before img is loaded
+       *
+       * @function
+       * @param {Vector} frameSize optional size param
+       * @memberof Animation
+       **********/
+
+    }, {
+      key: 'SingleFrame',
+      value: function SingleFrame() {
+        this.init_singleFrame();
+        return this;
+      }
+    }, {
+      key: 'getArg',
+      value: function getArg(args, key, fallback) {
+
+        if (args.hasOwnProperty(key)) {
+          return args[key];
+        } else {
+          return fallback;
+        }
+      }
+    }, {
+      key: 'init',
+      value: function init() {
+        return this;
+      }
+    }, {
+      key: 'scaleOf',
+      value: function scaleOf(sized_Object) {
+
+        var s = TypeCode.getPreferredPropertyByKey(sized_Object, 'size', 'argument had nested size variable. Using this instead.');
+
+        return s.div(this.frameSize);
+      }
+    }, {
+      key: 'init_colorMap',
+      value: function init_colorMap(spatialDiv) {
+        TypeCode.info('init_colorMap()');
+
+        if (!TypeCode.allDefined([this.image, this.image.domElement])) return [];
+
+        this.canvasObject = this.canvasObject || new Gamelab.OffscreenCanvasRendering(this.image);
+        this.colorMap = this.colorMap || this.ColoredPixelGrid(spatialDiv);
+        return this.colorMap;
+      }
+    }, {
+      key: 'ColoredPixelGrid',
+      value: function ColoredPixelGrid() {
+        var spatialDiv = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 5.0;
+
+
+        var image = this.image.domElement,
+            ctx = this.canvasObject.ctx,
+            grid = [],
+            frameSizeDiv = this.selected_frame.frameSize.div(spatialDiv).round();
+
+        for (var x = 0; x <= image.width; x += frameSizeDiv.x) {
+          for (var y = 0; y <= image.height; y += frameSizeDiv.y) {
+            // Fetch pixel at current position
+            var pixel = ctx.getImageData(x, y, 1, 1);
+            // Check that opacity is above zero
+            if (pixel.data[3] != 0) {
+              var vector = new Gamelab.Vector(x, y),
+                  gridObject = {
+                position: vector.sub(frameSizeDiv.div(2.0)),
+                size: frameSizeDiv
+              };
+
+              grid.push(gridObject);
+            }
+          }
+        }
+
+        return grid;
+      }
+
+      /**
+       * Returns the existing ColorMap for this animation.
+       *
+       * @function
+       * @memberof Animation
+       **********/
+
+    }, {
+      key: 'getCurrentPixelMap',
+      value: function getCurrentPixelMap(spatialDiv) {
+
+        TypeCode.info('getCurrentPixelMap()');
+        var map = [];
+        var frame = this.selected_frame;
+        var __inst = this;
+
+        this.colorMap = this.init_colorMap(spatialDiv);
+
+        for (var x in this.colorMap) {
+          var c = this.colorMap[x];
+
+          if (Gamelab.Collision.boxCollide(frame.framePos, frame.frameSize, c.position, c.size)) {
+            map.push(c);
+          }
+        }
+        return map;
+      }
+
+      /**
+       * Sets the frame to a specific array-index.
+       *
+       * @function
+       * @param {number} ix the frame-index to apply.
+       * @memberof Animation
+       **********/
+
+    }, {
+      key: 'setFrame',
+      value: function setFrame(ix) {
+        this.selected_frame = this.frames[ix];
+      }
+
+      /**
+       * extends the update of this animation with a new function to be called during the update
+       * --repeated calls will extend, (not replace) the update --Allows multiple extensions of the update
+       * @function
+       * @memberof Animation
+       * @param {function} fun the function to be appended to sprite.update
+       *
+       *  * @example
+       * // extend the behavior of your animation
+       * myAnime.onUpdate(function(spr)
+       *
+       *                    console.log('extended update'); //runs automatically whenever animation.update runs
+       *
+       *                   });
+       *
+       **********/
+
+    }, {
+      key: 'onUpdate',
+      value: function onUpdate(fun) {
+        fun = fun.bind(this);
+        var update = this.update_frame.bind(this);
+        var __inst = this;
+        this.update_frame = function (__inst) {
+          update(__inst);
+          fun(__inst);
+        };
+      }
+    }, {
+      key: 'soleUpdate',
+      value: function soleUpdate(fun) {
+        fun = fun.bind(this);
+        var __inst = this;
+        this.update_frame = function (__inst) {
+          fun(__inst);
+        };
+      }
+    }, {
+      key: 'update_frame',
+      value: function update_frame() {
+        this.selected_frame = this.frames[Math.round(this.cix) % this.frames.length];
+      }
+    }, {
+      key: 'reset',
+      value: function reset() {
+        this.cix = 0;
+      }
+      /**
+       * Applies a continuous animation. Use this in parent-sprite's update if continuous animation is required.
+       * Also works as a single call at any time during game-update.
+       *
+       * @function
+       * @memberof Animation
+       **********/
+
+    }, {
+      key: 'run',
+      value: function run() {
+        if (this.__frametype == 'single') {
+          return 0;
+        }
+        this.cix += 1;
+        this.update_frame();
+      }
+      /**
+       * animate():: same as run()
+       *
+       * @function
+       * @memberof Animation
+       **********/
+
+    }, {
+      key: 'animate',
+      value: function animate() {
+
+        if (this.__frametype == 'single') {
+          return 0;
+        }
+
+        if (!this.applied) {
+          this.applied = true;
+        }
+
+        if (this.cix % this.frames.length == 0) {
+          this.engage();
+        }
+      }
+
+      /**
+       * Engages, or updates the animation for a one full frame-cycle.
+       *
+       * @function
+       * @param {number} duration the number of milliseconds the animation should take.
+       * @memberof Animation
+       **********/
+
+    }, {
+      key: 'engage',
+      value: function engage(duration) {
+        this.call_on_run();
+        duration = duration || this.duration || this.frames.length * 20;
+        if (this.__frametype == 'single') {
+          return 0;
+        }
+
+        //note support of min_cix (eg: min_cix of 1 if top-row starts 1 frame later than bottom)
+        if (this.cix >= this.frames.length - 1 || this.cix < this.min_cix && !this._hang) {
+          this.cix = this.min_cix;
+        }
+        var __inst = this;
+
+        //we have a target
+        this.tween = new TWEEN.Tween(this).easing(__inst.curve || TWEEN.Easing.Linear.None).to({
+          cix: this.min_cix + (this.frames.length - 1)
+        }, duration).onUpdate(function () {
+          //console.log(objects[0].position.x,objects[0].position.y);
+          //__inst.cix = Math.ceil(__inst.cix);
+          __inst.update_frame();
+        }).onComplete(function () {
+          //console.log(objects[0].position.x, objects[0].position.y);
+          if (!__inst._hang) __inst.cix = __inst.min_cix;
+          __inst.call_on_complete();
+          __inst.isComplete = true;
+        });
+
+        if (this.cix == this.min_cix) this.tween.start();
+      }
+    }, {
+      key: 'img_src',
+      set: function set(value) {
+        this.src = value;
+      },
+      get: function get() {
+        return this.src;
+      }
+    }]);
+
+    return StaticAnimation;
+  }();
+
+  ;
+
+  /** @memberof Gamelab */
+  Gamelab.StaticAnimation = StaticAnimation;
+  Gamelab.StaticAnimation.continuous = Gamelab.StaticAnimation.run; //'continuous is an alternate reference to 'run'.'
+  Gamelab.StaticAnimation.update = Gamelab.StaticAnimation.update_frame; //alt ref
+  Gamelab.StaticAnimation.continue = Gamelab.StaticAnimation.run; //'continue is an alternate reference to 'run'.'
+})();;
 var Text = function () {
   function Text(value) {
     _classCallCheck(this, Text);
@@ -10107,7 +11143,10 @@ var Background = function (_Sprite) {
   function Background() {
     _classCallCheck(this, Background);
 
-    return _possibleConstructorReturn(this, (Background.__proto__ || Object.getPrototypeOf(Background)).call(this, arguments));
+    var _this9 = _possibleConstructorReturn(this, (Background.__proto__ || Object.getPrototypeOf(Background)).apply(this, arguments));
+
+    _this9.backgroundTextureArrays = [];
+    return _this9;
   }
 
   _createClass(Background, [{
@@ -10117,10 +11156,21 @@ var Background = function (_Sprite) {
       return this;
     }
   }, {
+    key: 'OverlayImage',
+    value: function OverlayImage(src, scale, asBorder, asBorderPadding) {}
+  }, {
     key: 'ScrollCycle',
     value: function ScrollCycle(value) {
       this.scrollCycle = value;
       return this;
+    }
+  }, {
+    key: 'appendBackgroundTextureArray',
+    value: function appendBackgroundTextureArray(backgroundTextures, params) {
+      for (var x in params) {
+        backgroundTextures[x] = params[x];
+      }
+      this.backgroundTextureArrays.push(backgroundTextures);
     }
   }, {
     key: 'draw',
@@ -10220,7 +11270,23 @@ var Background = function (_Sprite) {
           x -= camera_pos.x * scrollFactor || 0;
           y -= camera_pos.y * scrollFactor || 0;
           //  console.log('sprite:: canvas draw!! ');
-          return Gamelab.Canvas.draw_image_frame(this.image.domElement, new Gamelab.Vector(0, 0), this.size, new Gamelab.Vector2D(Math.round(x + origin.x), Math.round(y + origin.y)), new Gamelab.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin, this.opacity, this.globalCompositeOperation || false);
+
+          var imageFrameArgs = {
+            image: sprite.image.domElement,
+            framePos: frame.framePos || new Gamelab.Vector(0, 0),
+            frameSize: frame.frameSize || sprite.size,
+            position: new Gamelab.Vector2D(Math.round(x + origin.x), Math.round(y + origin.y)),
+            size: new Gamelab.Vector2D(realWidth, realHeight),
+            rotation: rotation % 360,
+            canvasContext: ctx,
+            flipX: sprite.flipX,
+            flipY: sprite.flipY,
+            origin: origin,
+            globalAlpha: sprite.opacity,
+            globalComposite: sprite.globalCompositeOperation || false
+          };
+
+          return Gamelab.Canvas.draw_image_frame(imageFrameArgs);
         }
 
         if (!(sprite.selected_animation && sprite.selected_animation.selected_frame)) {
@@ -10261,7 +11327,25 @@ var Background = function (_Sprite) {
                 //console.log('drawing with origin:' + origin.x + ':' + origin.y);
               }
 
-              if (frame && frame.image) Gamelab.Canvas.draw_image_frame(sprite.effectCanvas ? sprite.effectCanvas : frame.image.domElement, frame.framePos, frame.frameSize, new Gamelab.Vector2D(Math.round(xpos + origin.x), Math.round(ypos + origin.y)), new Gamelab.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin, this.opacity, this.globalCompositeOperation || false);
+              if (frame && frame.image) {
+
+                var _imageFrameArgs4 = {
+                  image: sprite.effectCanvas ? sprite.effectCanvas : frame.image.domElement,
+                  framePos: frame.framePos || new Gamelab.Vector(0, 0),
+                  frameSize: frame.frameSize || sprite.size,
+                  position: new Gamelab.Vector2D(Math.round(xpos + origin.x), Math.round(ypos + origin.y)),
+                  size: new Gamelab.Vector2D(realWidth, realHeight),
+                  rotation: rotation % 360,
+                  canvasContext: ctx,
+                  flipX: sprite.flipX,
+                  flipY: sprite.flipY,
+                  origin: origin,
+                  globalAlpha: sprite.opacity,
+                  globalComposite: sprite.globalCompositeOperation || false
+                };
+
+                Gamelab.Canvas.draw_image_frame(_imageFrameArgs4);
+              }
             });
           } else {
             var fx = frame.position.x,
@@ -10272,7 +11356,23 @@ var Background = function (_Sprite) {
             pos.y -= camera_pos.y * scrollFactor || 0;
             sprite.realPosition = pos;
             if (frame.image.domElement instanceof HTMLImageElement || frame.image.domElement instanceof HTMLCanvasElement) {
-              Gamelab.Canvas.draw_image_frame(this.effectCanvas ? this.effectCanvas : frame.image.domElement, frame.framePos, frame.frameSize, new Gamelab.Vector2D(Math.round(pos.x + origin.x), Math.round(pos.y + origin.y)), new Gamelab.Vector2D(realWidth, realHeight), rotation % 360, ctx, sprite.flipX, sprite.flipY, origin, this.opacity, this.globalCompositeOperation || false);
+
+              var _imageFrameArgs5 = {
+                image: sprite.effectCanvas ? sprite.effectCanvas : frame.image.domElement,
+                framePos: frame.framePos || new Gamelab.Vector(0, 0),
+                frameSize: frame.frameSize || sprite.size,
+                position: new Gamelab.Vector2D(Math.round(pos.x + origin.x), Math.round(pos.y + origin.y)),
+                size: new Gamelab.Vector2D(realWidth, realHeight),
+                rotation: rotation % 360,
+                canvasContext: ctx,
+                flipX: sprite.flipX,
+                flipY: sprite.flipY,
+                origin: origin,
+                globalAlpha: sprite.opacity,
+                globalComposite: sprite.globalCompositeOperation || false
+              };
+
+              Gamelab.Canvas.draw_image_frame(_imageFrameArgs5);
             }
           }
         }
@@ -10283,21 +11383,19 @@ var Background = function (_Sprite) {
   return Background;
 }(Sprite);
 
-Gamelab.Background = Background;
-; /**
-  * Creates a new BoneSprite.
-  *
-  * <info-bit>Gamelab.BoneSprite is a container for 2D Animations.
-  * -apply Sprite class to create a 2D game-object.
-  *
-  * BoneSprites are a group of moving animations.</info-bit>
-  * <iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/Sprite.html'> </iframe>
-  
-  * @param   {string} src the srcPath for the image of the Sprite
-  * @param   {number} scale=1.0 the scale to be applied to size of each animation-frame
-  *
-  * @returns {Sprite} a Gamelab.BoneSprite object
-  */
+Gamelab.Background = Background;; /**
+                                  * Creates a new BoneSprite.
+                                  *
+                                  * <info-bit>Gamelab.BoneSprite is a container for 2D Animations.
+                                  * -apply Sprite class to create a 2D game-object.
+                                  *
+                                  * BoneSprites are a group of moving animations.</info-bit>
+                                  * <iframe style='width:400px; height:450px; overflow:hidden;' src='../client/examples/js-class/Sprite.html'> </iframe>
+                                  * @param   {string} src the srcPath for the image of the Sprite
+                                  * @param   {number} scale=1.0 the scale to be applied to size of each animation-frame
+                                  *
+                                  * @returns {Sprite} a Gamelab.BoneSprite object
+                                  */
 
 var BoneSprite = function (_Sprite2) {
   _inherits(BoneSprite, _Sprite2);
@@ -10398,8 +11496,80 @@ var BoneSprite = function (_Sprite2) {
 
 Gamelab.BoneSprite = BoneSprite;
 ; /**
-  * Creates a new SpriteBrush.
+  * Creates a new Interactive.
+  *
+  * @param   {string} src the srcPath for the image of the Item
+  * @param   {number} scale=1.0 the scale to be applied to size of each animation-frame
+  *
+  * @returns {Interactive} a Gamelab.Interactive object
+  *
   */
+
+var Interactive = function (_Sprite3) {
+  _inherits(Interactive, _Sprite3);
+
+  function Interactive() {
+    var src = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var scale = arguments[1];
+
+    _classCallCheck(this, Interactive);
+
+    return _possibleConstructorReturn(this, (Interactive.__proto__ || Object.getPrototypeOf(Interactive)).call(this, src, scale));
+  }
+
+  return Interactive;
+}(Sprite);
+
+Gamelab.Interactive = Interactive;; /**
+                                    * Creates a new Item.
+                                    *
+                                    * @param   {string} src the srcPath for the image of the Item
+                                    * @param   {number} scale=1.0 the scale to be applied to size of each animation-frame
+                                    *
+                                    * @returns {Item} a Gamelab.Item object
+                                    *
+                                    */
+
+var Item = function (_Sprite4) {
+  _inherits(Item, _Sprite4);
+
+  function Item() {
+    var src = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var scale = arguments[1];
+
+    _classCallCheck(this, Item);
+
+    var _this12 = _possibleConstructorReturn(this, (Item.__proto__ || Object.getPrototypeOf(Item)).call(this, src, scale));
+
+    _this12.imageOptions = [];
+    _this12.collisionObjects = [];
+    _this12.collisionBehavior = 'COLLECT';
+    _this12.collectionAnimation = undefined;
+    return _this12;
+  }
+
+  _createClass(Item, [{
+    key: 'appendImageOption',
+    value: function appendImageOption(src, scale) {
+      this.imageProfiles.push({
+        src: src,
+        scale: scale
+      });
+    }
+  }, {
+    key: 'appendCollisionProfile',
+    value: function appendCollisionProfile(collisionObjects, collisionBehavior) {
+      this.collisionObjects = collisionObjects;
+      this.collisionBehavior = collisionBehavior;
+    }
+  }]);
+
+  return Item;
+}(Sprite);
+
+Gamelab.Item = Item;; /**
+                      * Creates a new SpriteBrush.
+                      */
 
 var SpriteBrush = function () {
   function SpriteBrush(onCreate) {
@@ -10506,22 +11676,19 @@ var SpriteBrush = function () {
 
 Gamelab.SpriteBrush = SpriteBrush;
 ;
-
 var SpriteFactory = function () {
   function SpriteFactory(onCreate) {
     _classCallCheck(this, SpriteFactory);
 
     this.sprites = [];
-
     this.livingTotal = 0;
-
     this.livingSprites = [];
 
-    this.livingSprites.oldest = function () {
+    this.lockoutTime = 0;
 
+    this.livingSprites.oldest = function () {
       var maxTicker = 0,
           nextObjectIndex = 0;
-
       for (var x = 0; x < this.length; x++) {
         if (_typeof(this[x]) == 'object' && this[x].ticker >= maxTicker) {
           maxTicker = this[x].ticker;
@@ -10542,10 +11709,8 @@ var SpriteFactory = function () {
     };
 
     this.sprites.oldest = function () {
-
       var maxTicker = 0,
           nextObjectIndex = 0;
-
       for (var x = 0; x < this.length; x++) {
         if (_typeof(this[x]) == 'object' && this[x].ticker >= maxTicker) {
           maxTicker = this[x].ticker;
@@ -10590,14 +11755,11 @@ var SpriteFactory = function () {
       var exampleSprite = arguments[1];
       var onCreateSprite = arguments[2];
 
-
       for (var x = 0; x < total; x++) {
         var s = new Gamelab.Sprite().FromData(exampleSprite);
         this.sprites.push(s);
       }
-
       this.createSprite = onCreateSprite;
-
       return this;
     }
   }, {
@@ -10619,12 +11781,28 @@ var SpriteFactory = function () {
       return this;
     }
   }, {
+    key: 'lockout',
+    value: function lockout(numberUpdates) {
+      if (this.lockoutTime <= 0) {
+        this.lockoutTime = numberUpdates;
+      }
+    }
+  }, {
     key: 'enter',
     value: function enter() {
       var number = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
       var gameWindow = arguments[1];
 
       var $controller = this;
+
+      if (this.lockoutTime > 0) {
+        this.lockoutTime -= 1.0;
+
+        if (this.lockoutTime >= 1.0) {
+          return;
+        }
+        //continue to with enter() fxn    
+      }
 
       for (var x = 0; x < number; x++) {
         //get next in stock::
@@ -10682,13 +11860,12 @@ var SpriteFactory = function () {
   return SpriteFactory;
 }();
 
-Gamelab.SpriteFactory = SpriteFactory;
-; /**
-  * Creates a new SpriteFill.
-  */
+Gamelab.SpriteFactory = SpriteFactory;; /**
+                                        * Creates a new SpriteFill.
+                                        */
 
-var SpriteFill = function (_Sprite3) {
-  _inherits(SpriteFill, _Sprite3);
+var SpriteFill = function (_Sprite5) {
+  _inherits(SpriteFill, _Sprite5);
 
   function SpriteFill() {
     var src = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -10696,12 +11873,12 @@ var SpriteFill = function (_Sprite3) {
 
     _classCallCheck(this, SpriteFill);
 
-    var _this11 = _possibleConstructorReturn(this, (SpriteFill.__proto__ || Object.getPrototypeOf(SpriteFill)).call(this, src, scale));
+    var _this13 = _possibleConstructorReturn(this, (SpriteFill.__proto__ || Object.getPrototypeOf(SpriteFill)).call(this, src, scale));
 
-    _this11.sourceSprites = [];
-    _this11.overlaySprites = [];
-    _this11.shape = [];
-    return _this11;
+    _this13.sourceSprites = [];
+    _this13.overlaySprites = [];
+    _this13.shape = [];
+    return _this13;
   }
   //draw function is overwritten to nothing. --limits console errors --todo --complete
 
@@ -10759,11 +11936,8 @@ var SpriteFill = function (_Sprite3) {
   }, {
     key: 'Fill',
     value: function Fill() {
-
       var bounds = this.enclose_rectangle();
-
       //step 1: fill the shape with rectangles:
-
       var tracker = new Gamelab.Vector(),
           sprite = this.sourceSprites[0],
           currentSize = new Gamelab.Vector(sprite.size),
@@ -10785,7 +11959,6 @@ var SpriteFill = function (_Sprite3) {
           });
         }
       }
-
       return this.offscreenCanvas;
     }
   }]);
@@ -10795,13 +11968,12 @@ var SpriteFill = function (_Sprite3) {
 
 ;
 
-Gamelab.SpriteFill = SpriteFill;
-; /**
-  * Creates a new SpriteGroup.
-  *
-  * <info-bit>Gamelab.SpriteGroup is a container for RELATIVE-POSITIONED 2D Animations.
-  * -apply Sprite class to create a 2D game-object.
-  */
+Gamelab.SpriteFill = SpriteFill;; /**
+                                  * Creates a new SpriteGroup.
+                                  *
+                                  * <info-bit>Gamelab.SpriteGroup is a container for RELATIVE-POSITIONED 2D Animations.
+                                  * -apply Sprite class to create a 2D game-object.
+                                  */
 
 var SpriteGroup = function () {
   function SpriteGroup() {
@@ -10834,7 +12006,59 @@ var SpriteGroup = function () {
 ;
 
 Gamelab.SpriteGroup = SpriteGroup;
-;
+; /**
+  * Creates a new Terrain.
+  *
+  * @param   {string} src the srcPath for the image of the Terrain
+  * @param   {number} scale=1.0 the scale to be applied to size of each animation-frame
+  *
+  * @returns {Terrain} a Gamelab.Terrain object
+  *
+  */
+
+var Terrain = function (_Sprite6) {
+  _inherits(Terrain, _Sprite6);
+
+  function Terrain() {
+    var src = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var scale = arguments[1];
+
+    _classCallCheck(this, Terrain);
+
+    var _this14 = _possibleConstructorReturn(this, (Terrain.__proto__ || Object.getPrototypeOf(Terrain)).call(this, src, scale));
+
+    _this14.imageOptions = [];
+    //1. Terrain can draw from a set of optional source images
+    //2. Terrain has values for collision
+    //3. Terrain can quickly instantiate objects for running, jumping, climbing
+    _this14.collisionObjects = [];
+    _this14.collisionBehavior = 'STOP';
+    return _this14;
+  }
+
+  _createClass(Terrain, [{
+    key: 'multiply',
+    value: function multiply(top, left, skipTop, skipLeft) {}
+  }, {
+    key: 'appendImageOption',
+    value: function appendImageOption(src, scale) {
+      this.imageProfiles.push({
+        src: src,
+        scale: scale
+      });
+    }
+  }, {
+    key: 'appendCollisionProfile',
+    value: function appendCollisionProfile(collisionObjects, collisionBehavior) {
+      this.collisionObjects = collisionObjects;
+      this.collisionBehavior = collisionBehavior;
+    }
+  }]);
+
+  return Terrain;
+}(Sprite);
+
+Gamelab.Terrain = Terrain;;
 var FeatureSymbol = function FeatureSymbol(key) {
   _classCallCheck(this, FeatureSymbol);
 

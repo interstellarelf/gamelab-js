@@ -1,15 +1,8 @@
-
-
-
-
-
-
-
 class FeildSpan {
   constructor(a, b, transition = 'linear', duration = 500) {
     //console.log('FeildSpan(a, b, transition) :: transition may be the key-name of a curve or "random"');
 
-    if(typeof a == 'number' && b == undefined)
+    if (typeof a == 'number' && b == undefined)
       transition = 'fixed';
 
     this.a = a;
@@ -27,11 +20,11 @@ class FeildSpan {
       return new FeildSpan(this.a, this.b, this.transition, this.duration);
     };
 
-    this.max = function(){
-      if(typeof this.a == 'number' && typeof this.b !== 'number')
-      return this.a;
+    this.max = function() {
+      if (typeof this.a == 'number' && typeof this.b !== 'number')
+        return this.a;
       else
-      return this.a >= this.b ? this.a : this.b;
+        return this.a >= this.b ? this.a : this.b;
     };
 
     this.Reset = function() {
@@ -41,30 +34,30 @@ class FeildSpan {
 
     this.getValue = function() {
 
-      if(this.transition == 'fixed')
-      return this.a;
+      if (this.transition == 'fixed')
+        return this.a;
 
       var option = this,
 
         value = 0,
 
         diff = option.a - option.b;
-        option.duration = option.duration || 500;
-        var tvalue = option.transition;
+      option.duration = option.duration || 500;
+      var tvalue = option.transition;
 
-        var curveMethod;
+      var curveMethod;
 
-      for (var x in Twix.Curves) {
-        if (x.toLowerCase() == option.transition.toLowerCase())
-          curveMethod = Twix.Curves[x].None || Twix.Curves[x].In;
+      for (var x in Gamelab.EasingCurves) {
+        for (var y in Gamelab.EasingCurves[x]) {
+          if (y.toLowerCase() == option.transition.toLowerCase() && x == 'None' || x == 'In') {
+            curveMethod = Gamelab.EasingCurves[x][y] || Gamelab.EasingCurves[x][y];
+          }
+        }
       }
 
-      if(tvalue == 'random-once' && this.testValue !== undefined)
-      {
+      if (tvalue == 'random-once' && this.testValue !== undefined) {
         return this.testValue;
-      }
-
-      else if (tvalue == 'random-once' || tvalue == 'random') {
+      } else if (tvalue == 'random-once' || tvalue == 'random') {
 
         option.ticker += 1;
 
@@ -106,12 +99,11 @@ class FeildSpan {
 }
 
 
-
 class ColorFeildSpan {
 
-  constructor(a, b, transition = 'linear', duration = 500, colors=[]) {
+  constructor(a, b, transition = 'linear', duration = 500, colors = []) {
 
-    if(typeof a == 'string' && b == undefined)
+    if (typeof a == 'string' && b == undefined)
       transition = 'fixed';
 
     this.a = a;
@@ -130,11 +122,11 @@ class ColorFeildSpan {
       return new ColorFeildSpan(this.a, this.b, this.transition, this.duration, this.colors);
     };
 
-    this.hasVariance = function(){
-        return this.transition !== 'fixed';
+    this.hasVariance = function() {
+      return this.transition !== 'fixed';
     };
 
-    this.PrepareColors = function(){
+    this.PrepareColors = function() {
       //runs 100 X , creates set of differential colors on the specified scale
 
       for (var x = 0.0; x <= 1.0; x += 0.01) {
@@ -152,10 +144,9 @@ class ColorFeildSpan {
           tvalue = 'linear';
         }
 
-        if(this.transition == 'fixed')
-        {
-        this.colors.push(Gamelab.ColorCalculator.scaledRGBAFromHex(option.a, option.a, 0));
-        continue;
+        if (this.transition == 'fixed') {
+          this.colors.push(Gamelab.ColorCalculator.scaledRGBAFromHex(option.a, option.a, 0));
+          continue;
         }
 
         var portion = x;
@@ -171,31 +162,31 @@ class ColorFeildSpan {
       return this;
     };
 
-    this.min = function(){
+    this.min = function() {
 
-      if(typeof this.a == 'number' && this.b == undefined)
-      return this.a;
+      if (typeof this.a == 'number' && this.b == undefined)
+        return this.a;
 
-      if(this.a <= this.b)
-      return this.a;
-      else{
+      if (this.a <= this.b)
+        return this.a;
+      else {
         return this.b;
       }
     };
 
-    this.max = function(){
+    this.max = function() {
 
-      if(typeof this.a == 'number' && this.b == undefined)
-      return this.a;
+      if (typeof this.a == 'number' && this.b == undefined)
+        return this.a;
 
-      if(this.a >= this.b)
-      return this.a;
-      else{
+      if (this.a >= this.b)
+        return this.a;
+      else {
         return this.b;
       }
     };
 
-    this.getPortion = function(){
+    this.getPortion = function() {
       return this.ticker / this.duration;
     };
 
@@ -213,8 +204,8 @@ class ColorFeildSpan {
         return this.colors[Math.floor(Math.random() * this.colors.length)];
       }
 
-      if(this.transition == 'fixed')
-      return this.colors[0];
+      if (this.transition == 'fixed')
+        return this.colors[0];
 
       //get the correct array-member of index 0-99 using portion
       return this.colors[Math.floor(portion * 100)];

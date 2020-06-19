@@ -25,7 +25,7 @@ let Gamelab_Module = function() {
 
     errors: 0,
 
-    stopDraw:false,
+    stopDraw: false,
 
     defSize() {
       if (this.WIDTH == 0) {
@@ -38,15 +38,16 @@ let Gamelab_Module = function() {
 
     },
 
-    isGameObject(object){
+    isGameObject(object) {
       object.type = object.constructor.name;
       return ['Sprite',
-              'BackgroundElement',
-              'BackgroundFill',
-              'Terrain',
-              'Animation',
-              'Frame',
-              'Line2D'].includes(object.type);
+        'BackgroundElement',
+        'BackgroundFill',
+        'Terrain',
+        'Animation',
+        'Frame',
+        'Line2D'
+      ].includes(object.type);
     },
 
     getGameWindow(ix = 0) {
@@ -83,12 +84,10 @@ let Gamelab_Module = function() {
       this.testSquare = new Gamelab.Sprite();
 
 
-
     },
 
-    onButton:function(gpix=0, callback){
-      if(typeof gpix == 'function')
-      {
+    onButton: function(gpix = 0, callback) {
+      if (typeof gpix == 'function') {
         callback = gpix;
         gpix = 0;
       }
@@ -209,47 +208,39 @@ let Gamelab_Module = function() {
     },
 
 
-    loadSprites:function(sprites, callback){
+    loadSprites: function(sprites, callback) {
 
-      var LEN = sprites.length, COUNT = 0;
+      var LEN = sprites.length,
+        COUNT = 0;
 
-      if(sprites instanceof Array)
-      {
-              sprites.forEach(function(spr){
+      if (sprites instanceof Array) {
+        sprites.forEach(function(spr) {
 
-                spr.onLoad(function(){
+          spr.onLoad(function() {
 
-                  COUNT += 1;
+            COUNT += 1;
 
-                  if(COUNT >= LEN)
-                  {
-                    callback(sprites);
-                  }
+            if (COUNT >= LEN) {
+              callback(sprites);
+            }
 
-                });
+          });
 
-              });
-      }
-
-
-      else if(typeof sprites == 'object')
-      {
+        });
+      } else if (typeof sprites == 'object') {
         LEN = Object.keys(sprites).length;
 
-        for(var x in sprites)
-        {
+        for (var x in sprites) {
           var spr = sprites[x];
-          if(spr.constructor.name == 'Sprite' ||
-           spr.constructor.name == 'BoneSprite' ||
-           spr.constructor.name == 'SpriteGroup' ||
-          spr.constructor.name == 'Animation')
-          {
-            spr.onLoad(function(){
+          if (spr.constructor.name == 'Sprite' ||
+            spr.constructor.name == 'BoneSprite' ||
+            spr.constructor.name == 'SpriteGroup' ||
+            spr.constructor.name == 'Animation') {
+            spr.onLoad(function() {
 
               COUNT += 1;
 
-              if(COUNT >= LEN)
-              {
+              if (COUNT >= LEN) {
                 callback(sprites);
               }
             });
@@ -774,12 +765,11 @@ function $Q(selector) {
 
               console.log('Box collide::' + jstr([this, item2]));
 
-              if(Gamelab.Collision.spriteCollide(this, item2))
-              {
+              if (Gamelab.Collision.spriteCollide(this, item2)) {
 
-               callback(this, item2);
+                callback(this, item2);
 
-             };
+              };
 
             };
 
@@ -1191,9 +1181,26 @@ Gamelab.InputSystem = {
 
         evt_object = Gamelab.InputSystem['keymap'][gs_key_string] || Gamelab.InputSystem['keymap'][gs_key_string.toLowerCase()];
 
+
+      if (e.keyCode == 32) {
+        gs_key_string = 'key_space';
+      }
+
+      if (e.keyCode == 18) {
+        gs_key_string = 'key_alt';
+      }
+
+      if (e.keyCode == 9) {
+        gs_key_string = 'key_tab';
+      }
+
+      if (e.keyCode == 16) {
+        gs_key_string = 'key_shift';
+      }
+
+
       if (evt_object) {
         evt_object.down = e.type == 'keydown';
-
       }
 
     }
@@ -1587,14 +1594,11 @@ Gamelab.file_system = {
 };
 
 
-
-
 //reference loadJSON direct from Gamelab::
 Gamelab.loadJSON = Gamelab.file_system.loadJSON;
 //reference loadJSON as loadJson::
 Gamelab.file_system.loadJson = Gamelab.file_system.loadJSON;
 Gamelab.loadJson = Gamelab.loadJSON;
-
 
 
 Gamelab.ready(function(lib) {

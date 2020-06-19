@@ -1,4 +1,3 @@
-
 /**************************
   EventInterfaceMap: StringKeys:
 
@@ -7,7 +6,7 @@
 *****************************/
 
 
-let EventInterfaceMap = {  //className / must have named functions whyen carrying Symbol of className
+let EventInterfaceMap = { //className / must have named functions whyen carrying Symbol of className
 
   Sprite: ['@onUpdate', '@onDestroy'],
 
@@ -50,23 +49,23 @@ let ObjectFeatureMap = { //className / must have named function properties when 
 
   Sprite: ['@spatial', '@data'],
 
-  SpriteGroup:['@relative_spatial', '@data'],
+  SpriteGroup: ['@relative_spatial', '@data'],
 
   SpriteBrush: ['@spatial', '@data'],
 
-  Frame:['@spatial'],
+  Frame: ['@spatial'],
 
-  Particle:['@spatial'],
+  Particle: ['@spatial'],
 
-  RectangularLine:['@spatial'],
+  RectangularLine: ['@spatial'],
 
-  Circle:['@spatial'],
+  Circle: ['@spatial'],
 
-  Animation: ['@anchored', '@framedriven', '@effectdriven', '@data'],
+  GridAnimation: ['@anchored', '@framedriven', '@effectdriven', '@data'],
 
-  Line2d:['@spatial', '@pointarrayflippable', '@selftransposable',  '@data'],
+  Line2d: ['@spatial', '@pointarrayflippable', '@selftransposable', '@data'],
 
-  Text:['@spatial', '@text', '@colored'],
+  Text: ['@spatial', '@text', '@colored'],
 
 };
 
@@ -127,7 +126,6 @@ let UIPrefab = {
     Interactive: []
   }
 };
-
 
 
 let UIPrefabMainSelect = {

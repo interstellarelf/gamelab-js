@@ -76,9 +76,9 @@ class GameWindow {
 
       __inst.Size();
 
-      __inst.resize_ext.forEach(function(f){
+      __inst.resize_ext.forEach(function(f) {
 
-          f.bind(this).call();
+        f.bind(this).call();
 
       });
 
@@ -103,12 +103,12 @@ class GameWindow {
     this.domElement = this.canvas;
   }
 
-  FromArray(array){
+  FromArray(array) {
     this.drawFromWindows = [];
     return this;
   }
 
-  Offscreen(o){
+  Offscreen(o) {
     this.offscreen = o;
     this.canvas.display = 'none';
     return this;
@@ -153,7 +153,6 @@ class GameWindow {
   center() {
     return new Gamelab.Vector(Math.round(this.canvas.width / 2), Math.round(this.canvas.height / 2));
   }
-
 
 
   TrackStat() {
@@ -327,8 +326,8 @@ class GameWindow {
       return;
 
 
-          if (this.camera && this.camera.update)
-            this.camera.update();
+    if (this.camera && this.camera.update)
+      this.camera.update();
 
     var sortDrawables = function(arr, key) {
       return arr.sort((a, b) => {
@@ -394,11 +393,11 @@ class GameWindow {
 
   draw(canvas) {
 
-    if(canvas instanceof HTMLCanvasElement)
-    this.ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height);
+    if (canvas instanceof HTMLCanvasElement)
+      this.ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height);
 
-    else if(typeof canvas == 'object' && canvas.canvas instanceof HTMLCanvasElement)
-    this.ctx.drawImage(canvas.canvas, canvas.canvas.width, canvas.canvas.height);
+    else if (typeof canvas == 'object' && canvas.canvas instanceof HTMLCanvasElement)
+      this.ctx.drawImage(canvas.canvas, canvas.canvas.width, canvas.canvas.height);
 
     if (this.isPaused())
       return;
@@ -425,19 +424,19 @@ class GameWindow {
   }
 
 
-  defineComplete(getComplete){
+  defineComplete(getComplete) {
     this.getComplete = getComplete;
     return this;
   }
 
-  complete(){
+  complete() {
 
-    if(this.complete_callback)
-    this.complete_callback();
+    if (this.complete_callback)
+      this.complete_callback();
 
   }
 
-  onComplete(completion){
+  onComplete(completion) {
     this.complete_callback = completion;
     return this;
   }
@@ -466,7 +465,7 @@ class GameWindow {
 
   }
 
-  removeSelf(){
+  removeSelf() {
     this.canvas.parentNode.removeChild(this.canvas);
     return this;
   }
@@ -548,11 +547,10 @@ class GameWindow {
 
   add(obj) {
 
-    if(obj instanceof Array)
-    {
+    if (obj instanceof Array) {
       var $gw = this;
-      obj.forEach(function(o){
-          $gw.add(o);
+      obj.forEach(function(o) {
+        $gw.add(o);
       });
       return;
     }
@@ -640,7 +638,7 @@ class GameWindow {
   }
 
 
-  cleanup(){
+  cleanup() {
 
     this.removeDeadObjects();
 
@@ -655,16 +653,64 @@ class GameWindow {
    * @memberof GameWindow
    **********/
 
-  run(time=0, options={}){
+  run(time = 0, options = {}) {
 
-    if(options.DEV || options.dev)
-    {
+    if (options.DEV || options.dev) {
       this.start(time);
+    } else
+      this.animate(time);
+
+  }
+
+  drawOnce() {
+
+    if (!this.engaged)
+      return;
+
+    if (this.frameInterval) {
+      frameInterval = this.frameInterval;
     }
 
-    else
-    this.animate(time);
+    if (this.drawFromWindows instanceof Array) {
+      this.drawFromWindows.forEach(function(w) {
+        this.draw(w);
+      });
+      return;
+    }
 
+    if (this.getComplete && this.getComplete()) {
+      return;
+    }
+
+    var __inst = this;
+
+    if (this.__stats) {
+      this.__stats.begin();
+      this.__statsMS.begin();
+      this.__statsMB.update();
+    }
+
+    Gamelab.isAtPlay = true;
+
+    this.update();
+
+    if (!this.isPaused()) {
+      if (window.TWEEN)
+        TWEEN.update(time);
+
+      if (this.settings.hasOwnProperty('autoClear') && this.settings.autoClear == false) {
+
+      } else {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      }
+
+      this.draw();
+
+      if (this.__stats) {
+        this.__stats.end();
+        this.__statsMS.end();
+      }
+    }
   }
 
   animate(time, frameInterval) {
@@ -672,37 +718,32 @@ class GameWindow {
     if (!this.engaged)
       return;
 
-    if(this.frameInterval)
-    {
+    if (this.frameInterval) {
       frameInterval = this.frameInterval;
     }
 
-    if(this.drawFromWindows instanceof Array)
-    {
-      this.drawFromWindows.forEach(function(w){
+    if (this.drawFromWindows instanceof Array) {
+      this.drawFromWindows.forEach(function(w) {
         this.draw(w);
       });
       return;
     }
 
-    if(this.getComplete && this.getComplete())
-    {
+    if (this.getComplete && this.getComplete()) {
       return;
     }
 
     var __inst = this;
 
-    if(typeof frameInterval == 'number')
-    {
-      setTimeout(function(){
+    if (typeof frameInterval == 'number') {
+      setTimeout(function() {
 
         requestAnimationFrame(function() {
           __inst.animate();
         });
 
       }, frameInterval);
-    }
-    else{
+    } else {
       requestAnimationFrame(function() {
         __inst.animate();
       });

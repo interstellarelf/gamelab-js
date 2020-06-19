@@ -1,7 +1,6 @@
 /**
  * Creates a new SpriteFill.
  */
-
 class SpriteFill extends Sprite {
   constructor(src = {}, scale = 1.0) {
     super(src, scale);
@@ -15,20 +14,20 @@ class SpriteFill extends Sprite {
   }
   addSprite(src, scale, callback) {
     this.sourceSprites.push(new Gamelab.Sprite(src, scale));
-    if(callback) callback.bind(this).call();
+    if (callback) callback.bind(this).call();
   }
   addOverlaySprite(src, scale, callback) {
     console.info(`SpriteFill().addOverlay(): --adds an overlay.
       Every overlay must fit with every sourceSprite, matching non-transparent pixels only`);
     this.overlaySprites.push(new Gamelab.Sprite(src, scale));
-    if(callback) callback.bind(this).call();
+    if (callback) callback.bind(this).call();
   }
   SelectionMode(mode) {
     this.selection_mode = mode || this.selected_mode || 'random';
     return this.selection_mode;
   }
   BuildShape(onCreateShape) {
-    if(onCreateShape) onCreateShape.bind(this).call();
+    if (onCreateShape) onCreateShape.bind(this).call();
     return this.shape;
   }
   enclose_rectangle() {
@@ -51,11 +50,8 @@ class SpriteFill extends Sprite {
   }
 
   Fill() {
-
     var bounds = this.enclose_rectangle();
-
     //step 1: fill the shape with rectangles:
-
     var tracker = new Gamelab.Vector(),
       sprite = this.sourceSprites[0],
       currentSize = new Gamelab.Vector(sprite.size),
@@ -77,11 +73,8 @@ class SpriteFill extends Sprite {
         });
       }
     }
-
     return this.offscreenCanvas;
-
   }
-
 };
 
 Gamelab.SpriteFill = SpriteFill;

@@ -42,10 +42,9 @@
       var gameWindow = new Gamelab.GameWindow().Background('black');
 
       var sprite = new Gamelab.Sprite('./res/images/weapons/sabre.png'),
-
         rectangle = new Gamelab.RectangularLine().Size(200, 200).Gradient('orange', 'orange').Thickness(2);
 
-
+      var mouse = {position:new Gamelab.Vector(0, 0)};
 
       var pointSprites = [];
 
@@ -65,17 +64,27 @@
 
       gameWindow.add(sprite);
 
+      gameWindow.canvas.addEventListener('mousemove', function(evt){
+        console.info('hover::', evt);
+        var rect = gameWindow.canvas.getBoundingClientRect(),
+        position = {
+             x: evt.clientX - rect.left,
+             y: evt.clientY - rect.top
+           };
+           mouse.position = position;
+      });
+
       Gamelab.ready(function() {
 
         gameWindow.start();
 
         document.querySelector('button#rotate').onclick = function() {
-          alert('clicked');
+          //alert('rotating');
           sprite.rotation.x += 15;
         };
 
         sprite.onClick(gameWindow, function() {
-          alert('clicked');
+          //alert('clicked');
         });
 
         sprite.onHoverUpdate(gameWindow, function(isHovered) {
@@ -85,6 +94,13 @@
         gameWindow.onBeforeDraw(function() {
 
           sprite.origin = sprite.size.div(2);
+
+          //this call will set sprite.collisionPoints
+          if(sprite.isHovered(mouse, gameWindow))
+          {
+
+          }
+
 
           if (sprite.collisionPoints) {
             console.log('has collisionPoints');

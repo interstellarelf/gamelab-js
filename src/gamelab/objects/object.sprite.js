@@ -44,7 +44,7 @@ class Sprite {
   handleCanvasArgs(src) {
     if (src instanceof HTMLCanvasElement) {
       this.src = src;
-      this.selected_animation = new Gamelab.Animation(src);
+      this.selected_animation = new Gamelab.GridAnimation(src);
       this.image = this.selected_animation.image;
       this.animations = [];
       this.animations.push(this.selected_animation);
@@ -58,7 +58,7 @@ class Sprite {
         this.name = this.name || srcTail.split('.')[0];
       }
 
-      this.selected_animation = new Gamelab.Animation(src);
+      this.selected_animation = new Gamelab.GridAnimation(src);
       this.image = this.selected_animation.image;
       this.animations = [];
       this.animations.push(this.selected_animation);
@@ -67,9 +67,9 @@ class Sprite {
   }
 
   handleAnimationArgs(args) {
-    if (args instanceof Gamelab.Animation) //instantiate from animation
+    if (args instanceof Gamelab.GridAnimation) //instantiate from animation
     {
-      console.info('args was Gamelab.Animation', args);
+      console.info('args was Gamelab.GridAnimation', args);
       args = {
         selected_animation: args,
         image: args.image,
@@ -401,7 +401,7 @@ class Sprite {
 
     var __inst = this;
 
-    //Apply / instantiate Sound(), Gamelab.Motion(), and Gamelab.Animation() args...
+    //Apply / instantiate Sound(), Gamelab.Motion(), and Gamelab.GridAnimation() args...
 
 
     Gamelab.each(this.shots, function(ix, item) {
@@ -417,7 +417,7 @@ class Sprite {
     });
 
     Gamelab.each(this.animations, function(ix, item) {
-      __inst.animations[ix] = new Gamelab.Animation(item);
+      __inst.animations[ix] = new Gamelab.GridAnimation(item);
     });
 
     Gamelab.each(this.particles, function(ix, item) {
@@ -433,7 +433,7 @@ class Sprite {
     if (!this.selected_animation && args.selected_animation) {
 
       //console.dev('applying animation:' + jstr(args.selected_animation));
-      this.selected_animation = new Gamelab.Animation(args.selected_animation);
+      this.selected_animation = new Gamelab.GridAnimation(args.selected_animation);
 
       this.animations = [];
       if (this.animations.indexOf(this.selected_animation) == -1)
@@ -465,7 +465,7 @@ class Sprite {
   Clone(sprite) {
     console.log('using Clone() function');
     var clone = new Gamelab.Sprite(sprite.src);
-    clone.Anime(new Gamelab.Animation(sprite.anime));
+    clone.Anime(new Gamelab.GridAnimation(sprite.anime));
     clone.apply_args(sprite);
     return clone;
   }
@@ -744,7 +744,7 @@ class Sprite {
 
   Add(object) {
 
-    if (object instanceof Gamelab.Animation) {
+    if (object instanceof Gamelab.GridAnimation) {
       this.animations.add(object);
     }
 
@@ -999,7 +999,7 @@ class Sprite {
 
       } else {
         __inst.size = new Gamelab.Vector(__inst.image.domElement.width, __inst.image.domElement.height);
-        __inst.selected_animation = new Gamelab.Animation(this.image.domElement).FrameSize(__inst.size);
+        __inst.selected_animation = new Gamelab.GridAnimation(this.image.domElement).FrameSize(__inst.size);
         __inst.animations = [];
         __inst.animations.push(__inst.selected_animation);
         __inst.Scale(__inst.scale || 1.0);
@@ -1017,7 +1017,7 @@ class Sprite {
 
       } else {
         __inst.size = new Gamelab.Vector(__inst.image.domElement.width, __inst.image.domElement.height);
-        __inst.selected_animation = new Gamelab.Animation(__inst.image).FrameSize(__inst.size);
+        __inst.selected_animation = new Gamelab.GridAnimation(__inst.image).FrameSize(__inst.size);
         __inst.animations = [];
         __inst.animations.push(__inst.selected_animation);
         __inst.Scale(__inst.scale || 1.0);
@@ -1119,7 +1119,7 @@ class Sprite {
     y -= camera_pos.y * scrollFactor || 0;
 
     return x + sprite.size.x > -1000 - w && x < w + 1000 &&
-      y + sprite.size.y > 0 - 1000 - h && y < h + 1000;
+      y + sprite.size.y > -1000 - h && y < h + 1000;
   }
 
   /*****************************
@@ -1326,7 +1326,7 @@ class Sprite {
    * @function
    * @memberof Sprite
    * @param {Object} options an object of arguments
-   * @param {Gamelab.Animation} animation the animation to fire from the Sprite
+   * @param {Gamelab.GridAnimation} animation the animation to fire from the Sprite
    * @param {number} speed the speed of the shot that is projected
    * @param {Gamelab.Vector} position the initial position of the shot: defaults to current Sprite position
    * @param {Gamelab.Vector} size the Vector size of the shot
@@ -1338,7 +1338,7 @@ class Sprite {
     gw = gw || Gamelab.game_windows[0];
     this.prep_key = 'shoot';
 
-    let animation = options.bullet || options.animation || options.anime || new Gamelab.Animation();
+    let animation = options.bullet || options.animation || options.anime || new Gamelab.GridAnimation();
     let speed = options.speed || options.velocity || 1;
 
 
@@ -1416,7 +1416,7 @@ class Sprite {
 
     gw = gw || Gamelab.game_windows[0];
 
-    let animation = options.animation || new Gamelab.Animation();
+    let animation = options.animation || new Gamelab.GridAnimation();
     let position = options.position || new Gamelab.Vector(this.position);
     let offset = options.offset || new Gamelab.Vector(0, 0, 0);
     let size = new Gamelab.Vector(options.size || this.size);

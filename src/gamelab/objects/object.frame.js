@@ -60,10 +60,8 @@
       return this;
     }
 
-    Scale(s)
-    {
-      if(this.image && this.image.domElement)
-      {
+    Scale(s) {
+      if (this.image && this.image.domElement) {
         this.size = new Gamelab.Vector(Math.round(this.image.domElement.width * s), Math.round(this.image.domElement.height * s));
       }
     }
@@ -109,14 +107,14 @@
 
                 position: vector,
 
-                x:x,
-                y:y,
+                x: x,
+                y: y,
 
                 size: new Gamelab.Vector(unitSize, unitSize),
 
                 pixel: pixel,
 
-                rotation:this.rotation
+                rotation: this.rotation
 
               };
 
@@ -151,14 +149,14 @@
 
                 position: vector,
 
-                x:x,
-                y:y,
+                x: x,
+                y: y,
 
                 size: new Gamelab.Vector(unitSize, unitSize),
 
                 pixel: pixel,
 
-                rotation:this.rotation
+                rotation: this.rotation
 
               };
 
@@ -192,14 +190,14 @@
 
               position: vector,
 
-              x:x,
-              y:y,
+              x: x,
+              y: y,
 
               size: new Gamelab.Vector(unitSize, unitSize),
 
               pixel: pixel,
 
-              rotation:this.rotation
+              rotation: this.rotation
 
             };
 
@@ -239,12 +237,10 @@
 
 
     createPixelMap(size, altImage) {
-      if(this.image.domElement instanceof HTMLCanvasElement)
-      {
+      if (this.image.domElement instanceof HTMLCanvasElement) {
         this.canvas = this.image.domElement;
         ctx = this.ctx = this.canvas.getContext('2d');
-      }
-      else{
+      } else {
         this.StoreOffscreen();
         ctx = ctx || this.ctx;
       }
