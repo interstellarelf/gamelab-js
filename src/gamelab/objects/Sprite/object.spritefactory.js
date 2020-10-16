@@ -100,6 +100,11 @@ class SpriteFactory {
     }
   }
 
+  Life(l) {
+    this.life = l;
+    return this;
+  }
+
   enter(number = 1, gameWindow) {
     var $controller = this;
 
@@ -109,7 +114,7 @@ class SpriteFactory {
       if (this.lockoutTime >= 1.0) {
         return;
       }
-      //continue to with enter() fxn    
+      //continue to with enter() fxn
     }
 
     for (var x = 0; x < number; x++) {
@@ -117,6 +122,8 @@ class SpriteFactory {
       var livingCount = this.sprites.countLiving();
 
       var s = new Gamelab.Sprite().Clone(this.sprites[0]);
+
+      s.Life(this.life);
 
       if (this.createSprite) {
         this.createSprite.bind(s).call();

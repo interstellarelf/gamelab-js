@@ -8,9 +8,7 @@
     <script src="./../res/libraries/rest.js"></script>
     <!-- spritebox-example.css style -->
     <link rel="stylesheet" href="../res/styles/gamelab-example.css">
-
     <style>
-
       body {
         background: black;
       }
@@ -27,14 +25,12 @@
         padding-left: 4px;
         border-bottom: 1px solid #444;
       }
-
       .top-ctrl {
         position:relative;
         background:black;
         color:white;
         top:-12px;
       }
-
       .button {
         min-width:100px;
         height:25px;
@@ -42,63 +38,48 @@
         padding:2px;
         cursor:pointer;
       }
-
     </style>
-
   </head>
   <body>
     <header>
       <img src="../res/images/gamelab-logo.png" alt="" id="logo">
       <span class="title">Save Spritesheet</span>
-
-
       <label  for="upload">
       <span class="button top-ctrl">Choose Images</span>
       <input  type="file"  id="upload" class="images top-ctrl" value="Choose Images" multiple="multiple"  style="display:none">
     </label>
-
       <span id="save-to-server" class="top-ctrl button">
         Save-To-Server
       </span>
-
     </header>
     <script>
 
       function save() {
-
         Rest.postJSON('/webfile/api/image/png', function () {
-
           alert('posted');
-
         }, {
-
           data: {
-
             content: gameWindow.canvas.toDataURL(),
             filename: 'spritesheet.png',
             type: 'json'
           }
-
         });
-
       };
 
       var gameWindow = new Gamelab.GameWindow().Background('transparent');
 
       new Gamelab.Module().load('./res/scripts/sprite/multi.image.sprite.js', function (C) {
-        new C('./res/images/effects/shots/electroshot/lightning-ball', 1, 14, 256);
+        new C('./res/images/effects/electroshot/lightning-ball', 1, 14, 256);
       });
 
+      window.onresize = function(){
+      };
+
       Gamelab.ready(function () {
-
         let saveButton = document.querySelector('span#save-to-server');
-
         saveButton.onclick = function () {
-
           save();
-
         };
-
       });
     </script>
 

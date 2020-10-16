@@ -223,7 +223,7 @@ module.exports = function() {
 
 
   if (leftLegA && leftLegC) {
-    alert('got left Leg A + C');
+    //alert('got left Leg A + C');
     leftLegA.children = leftLegA.children || [];
     var lBone = new Gamelab.Bone3D();
     lBone.Parent(leftLegA);
@@ -233,7 +233,7 @@ module.exports = function() {
   }
 
   if (leftLegA2 && leftLegC2) {
-    alert('got left Leg A2 + C2');
+    //alert('got left Leg A2 + C2');
     leftLegA2.children = leftLegA2.children || [];
     var lBone = new Gamelab.Bone3D();
     lBone.Parent(leftLegA2);
@@ -243,7 +243,7 @@ module.exports = function() {
   }
 
   if (rightLegA && rightLegC) {
-    alert('got right Leg A + C');
+    //alert('got right Leg A + C');
     rightLegA.children = rightLegA.children || [];
     var rBone = new Gamelab.Bone3D();
     rBone.Parent(rightLegA);
@@ -253,7 +253,7 @@ module.exports = function() {
   }
 
   if (rightLegA2 && rightLegC2) {
-    alert('got right Leg A2 + C2');
+    //alert('got right Leg A2 + C2');
     rightLegA2.children = rightLegA2.children || [];
     var rBone = new Gamelab.Bone3D();
     rBone.Parent(rightLegA2);
@@ -263,7 +263,7 @@ module.exports = function() {
   }
 
   if (leftLegC && leftLegD) {
-    alert('got left Leg C + D');
+    //alert('got left Leg C + D');
     leftLegC.children = leftLegC.children || [];
     var lBone = new Gamelab.Bone3D();
     lBone.Parent(leftLegC);
@@ -273,7 +273,7 @@ module.exports = function() {
   }
 
   if (leftLegC2 && leftLegD2) {
-    alert('got left Leg C2 + D2');
+    //alert('got left Leg C2 + D2');
     leftLegC2.children = leftLegC2.children || [];
     var lBone = new Gamelab.Bone3D();
     lBone.Parent(leftLegC2);
@@ -283,7 +283,7 @@ module.exports = function() {
   }
 
   if (rightLegC && rightLegD) {
-    alert('got right Leg C + D');
+    //alert('got right Leg C + D');
     rightLegC.children = rightLegC.children || [];
     var rBone = new Gamelab.Bone3D();
     rBone.Parent(rightLegC);
@@ -293,7 +293,7 @@ module.exports = function() {
   }
 
   if (rightLegC2 && rightLegD2) {
-    alert('got right Leg C2 + D2');
+    //alert('got right Leg C2 + D2');
     rightLegC2.children = rightLegC2.children || [];
     var rBone = new Gamelab.Bone3D();
     rBone.Parent(rightLegC2);

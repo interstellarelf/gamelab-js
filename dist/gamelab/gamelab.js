@@ -2085,7 +2085,6 @@ var Collision = {
         bottom = obj1.position.y + obj1.size.y - paddingY + camPos.y;
 
     if (right > obj2.position.x && left < obj2.position.x + obj2.size.x && bottom > obj2.position.y && top < obj2.position.y + obj2.size.y) {
-
       return true;
     }
   },
@@ -2430,7 +2429,63 @@ for (var x in ColorStrings) {
     Gamelab.Colors[x] = new Gamelab.RGBColor().fromString(x);
   }
 }
-;(function () {
+;
+var ConditionalPromise = function (_Promise) {
+  _inherits(ConditionalPromise, _Promise);
+
+  function ConditionalPromise(resolve, reject) {
+    _classCallCheck(this, ConditionalPromise);
+
+    var _this = _possibleConstructorReturn(this, (ConditionalPromise.__proto__ || Object.getPrototypeOf(ConditionalPromise)).call(this, resolve, reject));
+
+    _this.every = function () {}; //millis || boolfxn
+    _this.unless = function () {};
+    _this.resolve = resolve || function () {};
+    _this.reject = reject || function () {};
+    _this.until = function () {}; //millis || boolfxn
+    _this.promise = new Promise(_this.resolve, _this.reject);
+    return _this;
+  }
+
+  _createClass(ConditionalPromise, [{
+    key: 'Do',
+    value: function Do(d) {
+      this.do = d;
+      return this;
+    }
+  }, {
+    key: 'On',
+    value: function On(o) {
+      this.on = o;
+      return this;
+    }
+  }, {
+    key: 'Every',
+    value: function Every(e) {
+      this.every = e;
+      return this;
+    }
+  }, {
+    key: 'Unless',
+    value: function Unless(u) {
+      this.unless = u;
+      return this;
+    }
+  }, {
+    key: 'Until',
+    value: function Until(u) {
+      this.until = u;
+      return this;
+    }
+  }, {
+    key: 'run',
+    value: function run(timer) {}
+  }]);
+
+  return ConditionalPromise;
+}(Promise);
+
+Gamelab.ConditionalPromise = ConditionalPromise;;(function () {
   console.log('Line() class... creating');
 
   var cos = Math.cos,
@@ -2698,6 +2753,64 @@ for (var x in ColorStrings) {
     });
     return images;
   };
+
+  var StateFrame = function () {
+    function StateFrame(object, target) {
+      _classCallCheck(this, StateFrame);
+
+      this.object = object;
+      this.target = target;
+      this.easingCurve = 'linear-none';
+      this.timeLimit = 100;
+      this.complete = function () {
+        console.log('empty complete');
+      };
+    }
+
+    _createClass(StateFrame, [{
+      key: 'Object',
+      value: function Object(o) {
+        this.object = o;
+        return this;
+      }
+    }, {
+      key: 'Target',
+      value: function Target(t) {
+        this.target = t;
+        return this;
+      }
+    }, {
+      key: 'EasingCurve',
+      value: function EasingCurve(e) {
+        this.easingCurve = e;
+        return this;
+      }
+    }, {
+      key: 'TimeLimit',
+      value: function TimeLimit(t) {
+        this.timeLimit = t;
+        return this;
+      }
+    }, {
+      key: 'onComplete',
+      value: function onComplete(complete) {
+        this.complete = complete;
+        return this;
+      }
+    }, {
+      key: 'commit',
+      value: function commit() {
+        alert('commiting keyframe');
+        if (this.complete) {
+          this.complete();
+        }
+      }
+    }]);
+
+    return StateFrame;
+  }();
+
+  Gamelab.StateFrame = StateFrame;
 
   Gamelab.UI.getCurveCanvasList = getCurveCanvasList;
   Gamelab.UI.getCurveImageList = getCurveImageList;
@@ -3099,6 +3212,8 @@ var GameWindow = function () {
 
     Gamelab.camera = this.camera;
 
+    this.scaleTracker = 1.0;
+
     var __inst = this;
 
     this.Size();
@@ -3270,6 +3385,18 @@ var GameWindow = function () {
           return true;
         }
       });
+    }
+  }, {
+    key: 'getGameSprites',
+    value: function getGameSprites() {
+      var gameSprites = [];
+      this.drawables.forEach(function (sprite) {
+        console.info(sprite);
+        if (sprite.spriteType = 'game') {
+          gameSprites.push(sprite);
+        }
+      });
+      return gameSprites;
     }
 
     /**
@@ -4274,27 +4401,27 @@ var GameImage = function (_Renderable) {
 
     _classCallCheck(this, GameImage);
 
-    var _this = _possibleConstructorReturn(this, (GameImage.__proto__ || Object.getPrototypeOf(GameImage)).call(this, src));
+    var _this2 = _possibleConstructorReturn(this, (GameImage.__proto__ || Object.getPrototypeOf(GameImage)).call(this, src));
 
     if ((typeof src === 'undefined' ? 'undefined' : _typeof(src)) == 'object' && !(src instanceof HTMLCanvasElement)) {
       var _ret;
 
-      return _ret = src, _possibleConstructorReturn(_this, _ret);
+      return _ret = src, _possibleConstructorReturn(_this2, _ret);
     }
 
     if (typeof src == 'string') {
-      _this.domElement = document.createElement('IMG');
-      _this.domElement.src = src;
+      _this2.domElement = document.createElement('IMG');
+      _this2.domElement.src = src;
     } else if (src instanceof HTMLCanvasElement) {
-      _this.domElement = src;
+      _this2.domElement = src;
     }
 
-    _this.domElement.onerror = function () {
+    _this2.domElement.onerror = function () {
       this.__error = true;
       //console.dev('--image error');
     };
 
-    return _this;
+    return _this2;
   }
 
   return GameImage;
@@ -4549,17 +4676,47 @@ var TexelArray = function () {
 
 Gamelab.Texel = Texel;
 Gamelab.TexelArray = TexelArray;
-;
+;var ThreeJsMath = {
+  getScreenXY: function getScreenXY(position, camera, div) {
+    var pos = position.clone();
+    var projScreenMat = new THREE.Matrix4();
+    projScreenMat.multiply(camera.projectionMatrix, camera.matrixWorldInverse);
+    projScreenMat.multiplyVector3(pos);
+    var offset = this.findOffset(div);
+    return {
+      x: (pos.x + 1) * div.width / 2 + offset.left,
+      y: (-pos.y + 1) * div.height / 2 + offset.top
+    };
+    return offset;
+  },
+  findOffset: function findOffset(element) {
+    var pos = new Object();
+    pos.left = pos.top = 0;
+    if (element.offsetParent) {
+      do {
+        pos.left += element.offsetLeft;
+        pos.top += element.offsetTop;
+      } while (element = element.offsetParent);
+    }
+    return pos;
+  }
+};
+
+Gamelab.ThreeJsMath = ThreeJsMath;
+
 var ThreeJsWindow = function () {
-  function ThreeJsWindow(container) {
+  function ThreeJsWindow(container, threejs) {
     _classCallCheck(this, ThreeJsWindow);
 
-    if (!THREE in window) {
-      return console.error('Needs three.js library in window.');
-    }
+    var THREE = window.THREE || threejs;
+
+    if (!THREE) return console.error('Needs three.js library in window.');
+
     var scene = this.scene = new THREE.Scene();
     var camera = this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1.0, 5000);
-    var renderer = this.renderer = new THREE.WebGLRenderer();
+    var renderer = this.renderer = new THREE.WebGLRenderer({
+      alpha: true
+    });
     var defaultLight = this.defaultLight = new THREE.AmbientLight(0xffffff); // soft white light
     scene.add(defaultLight);
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -4604,9 +4761,7 @@ Gamelab.ThreeJsWindow = ThreeJsWindow;
 var ThreeJSWindow = ThreeJsWindow;
 Gamelab.ThreeJSWindow = ThreeJSWindow;
 var ThreejsWindow = ThreeJsWindow;
-Gamelab.ThreejsWindow = ThreejsWindow;;
-
-var Trigonometry = {
+Gamelab.ThreejsWindow = ThreejsWindow;;var Trigonometry = {
 
   rotatePointsByOrigin: function rotatePointsByOrigin(points, origin, rotation) {
     for (var x = 0; x < points.length; x++) {
@@ -4618,16 +4773,19 @@ var Trigonometry = {
 
   getTrianglesByBox: function getTrianglesByBox(box) {
     box.origin = box.origin || new Gamelab.Vector(0, 0, 0);
-    var point_a1 = box.position.copy(),
-        point_a2 = box.position.add(box.size.x, 0),
-        point_a3 = box.position.add(box.size.x, box.size.y),
-        point_b1 = box.position.copy(),
-        point_b2 = box.position.add(0, box.size.y),
-        point_b3 = box.position.add(box.size.x, box.size.y);
 
-    var plista = this.rotatePointsByOrigin([point_a1, point_a2, point_a3], box.origin.add(box.position), box.rotation.negate());
+    var position = box.fullPosition || box.position;
 
-    var plistb = this.rotatePointsByOrigin([point_b1, point_b2, point_b3], box.origin.add(box.position), box.rotation.negate());
+    var point_a1 = position.copy(),
+        point_a2 = position.add(box.size.x, 0),
+        point_a3 = position.add(box.size.x, box.size.y),
+        point_b1 = position.copy(),
+        point_b2 = position.add(0, box.size.y),
+        point_b3 = position.add(box.size.x, box.size.y);
+
+    var plista = this.rotatePointsByOrigin([point_a1, point_a2, point_a3], box.origin.add(position), box.rotation.negate());
+
+    var plistb = this.rotatePointsByOrigin([point_b1, point_b2, point_b3], box.origin.add(position), box.rotation.negate());
 
     return [plista, plistb];
   },
@@ -4651,8 +4809,7 @@ var Trigonometry = {
 };
 
 Gamelab.Trig = Trigonometry;
-Gamelab.Trigonometry = Trigonometry;
-;(function () {
+Gamelab.Trigonometry = Trigonometry;;(function () {
   console.log('Vector class... creating');
 
   /**
@@ -5082,13 +5239,75 @@ Gamelab.Trigonometry = Trigonometry;
 
   Gamelab.VectorMath = VectorMath;
 })();
-; /**
-  * returns BoolEvent --allows code to run whenever a conditional-function returns true
-  * @param   {onBool} onBool the function to be tested each update
-  * @param   {call} call the function to be called when onBool returns true;
-  
-  * @returns {BoolEvent} a Gamelab.BoolEvent object
-  */
+;
+var WebGLWindow = function () {
+  function WebGLWindow(container) {
+    _classCallCheck(this, WebGLWindow);
+
+    if (typeof container == 'string') {
+      container = document.querySelector(container);
+    }
+
+    this.container = container;
+    var canvasBox = document.createElement('div');
+    canvasBox.classList.add('control');
+
+    var canvas = document.createElement('CANVAS');
+
+    canvas.style.position = 'relative';
+    canvas.style.width = '500px';
+    canvas.style.height = '500px';
+    canvas.width = 500;
+    canvas.height = 500;
+    canvas.style.marginTop = '30px';
+
+    var scene = this.scene = new THREE.Scene();
+    var camera = this.camera = new THREE.PerspectiveCamera(75, canvasBox.clientWidth / canvasBox.clientHeight, 0.1, 1000);
+    var renderer = this.renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+    canvasBox.appendChild(renderer.domElement);
+    container.append(canvasBox);
+  }
+
+  _createClass(WebGLWindow, [{
+    key: 'update',
+    value: function update(scene, renderer) {
+      console.dev_log('updating');
+    }
+    //animate(): begins the update-interval
+
+  }, {
+    key: 'animate',
+    value: function animate() {
+      var $webgl = this;
+      var update = this.update;
+
+      function run() {
+        update($webgl.scene, $webgl.renderer);
+        requestAnimationFrame(run);
+        renderer.render($webgl.scene, $webgl.camera);
+      }
+      run();
+    }
+    //start() :: calls animate to begin the update-interval
+
+  }, {
+    key: 'start',
+    value: function start() {
+      this.animate();
+    }
+  }]);
+
+  return WebGLWindow;
+}();
+
+Gamelab.WebGLWindow = WebGLWindow;; /**
+                                    * returns BoolEvent --allows code to run whenever a conditional-function returns true
+                                    * @param   {onBool} onBool the function to be tested each update
+                                    * @param   {call} call the function to be called when onBool returns true;
+                                    * @returns {BoolEvent} a Gamelab.BoolEvent object
+                                    */
 
 var BooleanEvent = function (_GSEvent) {
   _inherits(BooleanEvent, _GSEvent);
@@ -5096,17 +5315,17 @@ var BooleanEvent = function (_GSEvent) {
   function BooleanEvent(onBool, callback) {
     _classCallCheck(this, BooleanEvent);
 
-    var _this2 = _possibleConstructorReturn(this, (BooleanEvent.__proto__ || Object.getPrototypeOf(BooleanEvent)).call(this, {}));
+    var _this3 = _possibleConstructorReturn(this, (BooleanEvent.__proto__ || Object.getPrototypeOf(BooleanEvent)).call(this, {}));
 
-    _this2.bool = onBool || function () {
+    _this3.bool = onBool || function () {
       console.info('CustomBoolEvent():needs .on function(){}. --Add this as 1st argument or via chainable On() function returning bool argument');
     };
     /*Defaults to false to avoid broken code*/
-    _this2.callback = callback || function () {
+    _this3.callback = callback || function () {
       console.info('CustomBoolEvent():needs .callback function(){} --Add this as 2nd argument or via chainable Call() function');
     };
-    Gamelab.gs_events.push(_this2);
-    return _this2;
+    Gamelab.gs_events.push(_this3);
+    return _this3;
   }
 
   /**
@@ -5225,7 +5444,7 @@ var InputEvent = function (_GSEvent3) {
   function InputEvent(args) {
     _classCallCheck(this, InputEvent);
 
-    var _this4 = _possibleConstructorReturn(this, (InputEvent.__proto__ || Object.getPrototypeOf(InputEvent)).call(this, args));
+    var _this5 = _possibleConstructorReturn(this, (InputEvent.__proto__ || Object.getPrototypeOf(InputEvent)).call(this, args));
 
     var btnix = args.btnix || args.button_ix || false,
         gpix = args.gpix || args.gamepad_ix || 0,
@@ -5251,7 +5470,7 @@ var InputEvent = function (_GSEvent3) {
         callback(x, y);
       });
     }
-    return _this4;
+    return _this5;
   }
 
   return InputEvent;
@@ -5282,11 +5501,11 @@ var KeyboardEvent = function (_InputEvent) {
 
     _classCallCheck(this, KeyboardEvent);
 
-    var _this5 = _possibleConstructorReturn(this, (KeyboardEvent.__proto__ || Object.getPrototypeOf(KeyboardEvent)).call(this, {}));
+    var _this6 = _possibleConstructorReturn(this, (KeyboardEvent.__proto__ || Object.getPrototypeOf(KeyboardEvent)).call(this, {}));
 
-    _this5.keys = keys;
-    _this5.callback = callback;
-    return _this5;
+    _this6.keys = keys;
+    _this6.callback = callback;
+    return _this6;
   }
 
   _createClass(KeyboardEvent, [{
@@ -5347,12 +5566,12 @@ var GamepadEvent = function (_InputEvent2) {
   function GamepadEvent() {
     _classCallCheck(this, GamepadEvent);
 
-    var _this6 = _possibleConstructorReturn(this, (GamepadEvent.__proto__ || Object.getPrototypeOf(GamepadEvent)).call(this, {}));
+    var _this7 = _possibleConstructorReturn(this, (GamepadEvent.__proto__ || Object.getPrototypeOf(GamepadEvent)).call(this, {}));
 
-    _this6.gps = [0];
-    _this6.keys = [];
-    _this6.callback = function () {};
-    return _this6;
+    _this7.gps = [0];
+    _this7.keys = [];
+    _this7.callback = function () {};
+    return _this7;
   }
 
   _createClass(GamepadEvent, [{
@@ -7001,8 +7220,10 @@ Gamelab.Box2D = Box2D;
       _classCallCheck(this, Frame);
 
       var __inst = this;
-      this.framePos = new Gamelab.Vector(0, 0);
-      this.origin = new Gamelab.Vector(0, 0);
+      this.framePos = new Gamelab.Vector(0, 0, 0);
+      this.frameSize = new Gamelab.Vector(0, 0, 0);
+      this.origin = new Gamelab.Vector(0, 0, 0);
+      this.position = new Gamelab.Vector(0, 0, 0);
       this.rotation = new Gamelab.Vector(0, 0, 0);
     }
 
@@ -7036,9 +7257,8 @@ Gamelab.Box2D = Box2D;
       }
     }, {
       key: 'FramePos',
-      value: function FramePos(p) {
-        this.framePos = new Gamelab.Vector(p, p, p);
-
+      value: function FramePos(x, y, z) {
+        this.framePos = new Gamelab.Vector(x, y, z);
         return this;
       }
     }, {
@@ -7259,19 +7479,19 @@ var Line2d = function (_Scriptable) {
   function Line2d() {
     _classCallCheck(this, Line2d);
 
-    var _this7 = _possibleConstructorReturn(this, (Line2d.__proto__ || Object.getPrototypeOf(Line2d)).call(this));
+    var _this8 = _possibleConstructorReturn(this, (Line2d.__proto__ || Object.getPrototypeOf(Line2d)).call(this));
 
-    _this7.Object(_this7);
-    _this7.points = [];
-    _this7.position = new Gamelab.Vector(0, 0);
-    _this7.rotation = new Gamelab.Vector(0, 0);
-    _this7.size = new Gamelab.Vector(0, 0);
-    _this7.index = 0;
-    _this7.lineWidth = 1.0;
-    _this7.timer = 0;
-    _this7.phase_index = 0;
-    _this7.call = function () {};
-    return _this7;
+    _this8.Object(_this8);
+    _this8.points = [];
+    _this8.position = new Gamelab.Vector(0, 0);
+    _this8.rotation = new Gamelab.Vector(0, 0);
+    _this8.size = new Gamelab.Vector(0, 0);
+    _this8.index = 0;
+    _this8.lineWidth = 1.0;
+    _this8.timer = 0;
+    _this8.phase_index = 0;
+    _this8.call = function () {};
+    return _this8;
   }
 
   _createClass(Line2d, [{
@@ -10053,15 +10273,249 @@ Gamelab.Sprite = Sprite;;Gamelab.assign3DGroupMesh = function (key, mesh, sprite
   return Gamelab.ThreejsGroups[key];
 };
 
-var Sprite3d = function Sprite3d(gamelabSprite, scale) {
-  _classCallCheck(this, Sprite3d);
+var Sprite3D = function () {
+  function Sprite3D(gamelabSprite, scale) {
+    _classCallCheck(this, Sprite3D);
+
+    var sprite = gamelabSprite,
+        texture = new THREE.TextureLoader().load(sprite.src);
+    texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
+    var w = sprite.image.domElement.width,
+        h = sprite.image.domElement.height;
+
+    this.w = w;
+    this.h = h;
+
+    var geometry = new THREE.PlaneGeometry(w, h, 256, Math.round(256 * (w / h)));
+
+    this.geometry = geometry;
+
+    this.vertices = this.geometry.vertices;
+
+    var material = new THREE.MeshPhongMaterial({
+      map: texture,
+      transparent: true
+    });
+    //material.colorWrite = false;
+    material.side = THREE.DoubleSide;
+
+    var mesh = new THREE.Mesh(geometry, material);
+
+    material.needsUpdate = true;
+
+    sprite.threejsScale = scale * sprite.scale;
+
+    this.spriteScale = scale;
+
+    mesh.scale.set(sprite.threejsScale, sprite.threejsScale, 1);
+
+    this.size3D = new Gamelab.Vector(w * this.threejsScale, h * this.threejsScale);
+
+    this.size3d = this.size3D;
+
+    // Add to pivot group
+    var member = new THREE.Object3D();
+
+    member.add(mesh);
+
+    this.mesh = mesh;
+
+    this.member = member;
+    sprite.builderGroup = sprite.builderGroup || 'MASTER';
+    this.threejsGroup = Gamelab.assign3DGroupMesh(sprite.builderGroup, this.member, sprite);
+    this.threejsMesh = mesh;
+
+    var realSize = new Gamelab.Vector(sprite.image.domElement.width, sprite.image.domElement.height, 1).mult(sprite.threejsScale);
+
+    this.group = this.threejsGroup;
+
+    this.threejsGroup.needsUpdate = true;
+
+    var t3d = this;
+
+    sprite.onLoad(function () {
+
+      var size2D = t3d.visibleSize(camera, renderer).size;
+
+      while (size2D.x > sprite.size.x) {
+        scale -= 0.02;
+        t3d.Scale(scale);
+        size2D = t3d.visibleSize(camera, renderer).size;
+        camera.updateMatrixWorld();
+      }
+
+      while (size2D.x < this.size.x) {
+        scale += 0.02;
+        t3d.Scale(scale);
+        size2D = t3d.visibleSize(camera, renderer).size;
+        camera.updateMatrixWorld();
+      }
+    });
+  }
+
+  _createClass(Sprite3D, [{
+    key: 'ScreenSize',
+    value: function ScreenSize(camera) {
+      var mesh = this.mesh;
+      var vertices = mesh.geometry.vertices;
+      var vertex = new THREE.Vector3();
+      var min = new THREE.Vector3(1, 1, 1);
+      var max = new THREE.Vector3(-1, -1, -1);
+
+      for (var i = 0; i < vertices.length; i++) {
+        var vertexWorldCoord = vertex.copy(vertices[i]).applyMatrix4(mesh.matrixWorld);
+        var vertexScreenSpace = vertexWorldCoord.project(camera);
+        min.min(vertexScreenSpace);
+        max.max(vertexScreenSpace);
+      }
+
+      return new THREE.Box2(min, max);
+    }
+  }, {
+    key: 'Scale',
+    value: function Scale(scaleValue) {
+      this.threejsScale = scaleValue * this.spriteScale;
+      this.mesh.scale.set(this.threejsScale, this.threejsScale, 1);
+      this.size3D = new Gamelab.Vector(this.w * this.threejsScale, this.h * this.threejsScale);
+      return this;
+    }
+  }, {
+    key: 'visibleSize',
+    value: function visibleSize(camera, renderer) {
+      var obj = this.threejsGroup;
+      var box = new THREE.Box3().setFromObject(this.mesh);
+      var size = box.getSize();
+      console.log(size);
+
+      // Calc distance of obj from camera
+      var distance = camera.position.distanceTo(obj.position);
+      console.log('distance: ', distance);
+      distance = camera.position.z - obj.position.z - size.z / 2;
+
+      var aspect = renderer.domElement.width / renderer.domElement.height;
+      // Calc height and width
+      var vFOV = THREE.Math.degToRad(camera.fov); // convert vertical fov to radians
+      var height = 2 * Math.tan(vFOV / 2) * distance; // visible height
+      var width = height * aspect; //camera.aspect;           // visible width
+
+      var ratio = distance / height; // height per 1 of z-depth
+      console.log('depath ratio: ', ratio);
+
+      width = size.x / ratio * aspect;
+      height = size.y / ratio * aspect;
+
+      // Calc position
+      var vector = new THREE.Vector3();
+      var viewProjectionMatrix = new THREE.Matrix4();
+      var viewMatrix = new THREE.Matrix4();
+      viewMatrix.copy(camera.matrixWorldInverse);
+      viewProjectionMatrix.multiplyMatrices(camera.projectionMatrix, viewMatrix);
+      var widthHalf = 0.5 * renderer.domElement.width;
+      var heightHalf = 0.5 * renderer.domElement.height;
+      obj.updateMatrixWorld();
+      vector.setFromMatrixPosition(obj.matrixWorld);
+      //vector.project(camera);
+      vector.applyMatrix4(viewProjectionMatrix);
+
+      vector.x = vector.x * widthHalf + widthHalf;
+      vector.y = -(vector.y * heightHalf) + heightHalf;
+      /*
+          vector.x = 2 * (vector.x / renderer.domElement.width) - 1;
+          vector.y = 1 - 2 * ( vector.y / renderer.domElement.height );*/
+      var x = vector.x;
+      var y = vector.y;
+
+      var result = {
+        position: new Gamelab.Vector(x - width / 2, y - height / 2),
+        size: new Gamelab.Vector(width, height)
+      };
+      console.info(result);
+      return result;
+    }
+  }, {
+    key: 'fitCamera',
+    value: function fitCamera(camera, scene, offset) {
+
+      offset = offset || 1.25;
+
+      var boundingBox = new THREE.Box3();
+
+      var object = this.mesh;
+
+      // get bounding box of object - this will be used to setup controls and camera
+      boundingBox.setFromObject(object);
+
+      var center = boundingBox.getCenter();
+
+      var size = boundingBox.getSize();
+
+      // get the max side of the bounding box (fits to width OR height as needed )
+      var maxDim = Math.max(size.x, size.y, size.z);
+      var fov = camera.fov * (Math.PI / 180);
+      var cameraZ = Math.abs(maxDim / 2 * Math.tan(fov * 2)); //Applied fifonik correction
+
+      cameraZ *= offset; // zoom out a little so that objects don't fill the screen
+
+      // <--- NEW CODE
+      //Method 1 to get object's world position
+      scene.updateMatrixWorld(); //Update world positions
+      var objectWorldPosition = new THREE.Vector3();
+      objectWorldPosition.setFromMatrixPosition(object.matrixWorld);
+
+      //Method 2 to get object's world position
+      //objectWorldPosition = object.getWorldPosition();
+
+      var directionVector = camera.position.sub(objectWorldPosition); //Get vector from camera to object
+      var unitDirectionVector = directionVector.normalize(); // Convert to unit vector
+      camera.position = unitDirectionVector.multiplyScalar(cameraZ); //Multiply unit vector times cameraZ distance
+      camera.lookAt(objectWorldPosition); //Look at object
+      // --->
+
+      var minZ = boundingBox.min.z;
+      var cameraToFarEdge = minZ < 0 ? -minZ + cameraZ : cameraZ - minZ;
+
+      camera.far = cameraToFarEdge * 3;
+      camera.updateProjectionMatrix();
+    }
+  }, {
+    key: 'get2DSize',
+    value: function get2DSize(camera, div) {
+      this.size3D = new THREE.Vector3(this.size3D.x, this.size3D.y, 0);
+      var size = new Gamelab.Vector(Gamelab.ThreeJsMath.getScreenXY(this.size3D, camera, div));
+      return size;
+    }
+  }]);
+
+  return Sprite3D;
+}();
+
+var Sprite3d = Sprite3D;
+
+Gamelab.Sprite3D = Sprite3D;
+Gamelab.Sprite3d = Sprite3d;;Gamelab.assign3DGroupMesh = function (key, mesh, sprite) {
+  Gamelab.ThreejsGroups = Gamelab.ThreejsGroups || [];
+  Gamelab.ThreejsGroups[key] = Gamelab.ThreejsGroups[key] || new THREE.Object3D();
+  Gamelab.ThreejsGroups[key].countOps = Gamelab.ThreejsGroups[key].countOps || 1.0;
+  Gamelab.ThreejsGroups[key].countOps += 1.0;
+  Gamelab.ThreejsGroups[key].add(mesh);
+  mesh.layer = sprite.layer;
+  return Gamelab.ThreejsGroups[key];
+};
+
+var ThreeDSprite = function ThreeDSprite(gamelabSprite, scale) {
+  _classCallCheck(this, ThreeDSprite);
 
   var sprite = gamelabSprite,
       texture = new THREE.TextureLoader().load(sprite.src);
   texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
   var w = sprite.image.domElement.width,
       h = sprite.image.domElement.height;
-  var geometry = new THREE.PlaneGeometry(w, h, 1, 1);
+  var geometry = new THREE.PlaneGeometry(w, h, 256, 256);
+
+  this.geometry = geometry;
+
+  this.vertices = this.geometry.vertices;
+
   var material = new THREE.MeshPhongMaterial({
     map: texture,
     transparent: true
@@ -10200,15 +10654,15 @@ var Sprite3d = function Sprite3d(gamelabSprite, scale) {
   });
 
   return {
+    mesh: this.mesh,
+    vertices: this.vertices,
+    geometry: this.geometry,
     group: sprite.threejsGroup,
     member: sprite.member
   };
 };
 
-var Sprite3D = Sprite3d;
-
-Gamelab.Sprite3d = Sprite3d;
-Gamelab.Sprite3D = Sprite3D;
+Gamelab.ThreeDSprite = ThreeDSprite;
 
 var SpriteController = function () {
   function SpriteController() {
@@ -11143,10 +11597,10 @@ var Background = function (_Sprite) {
   function Background() {
     _classCallCheck(this, Background);
 
-    var _this9 = _possibleConstructorReturn(this, (Background.__proto__ || Object.getPrototypeOf(Background)).apply(this, arguments));
+    var _this10 = _possibleConstructorReturn(this, (Background.__proto__ || Object.getPrototypeOf(Background)).apply(this, arguments));
 
-    _this9.backgroundTextureArrays = [];
-    return _this9;
+    _this10.backgroundTextureArrays = [];
+    return _this10;
   }
 
   _createClass(Background, [{
@@ -11406,10 +11860,10 @@ var BoneSprite = function (_Sprite2) {
 
     _classCallCheck(this, BoneSprite);
 
-    var _this10 = _possibleConstructorReturn(this, (BoneSprite.__proto__ || Object.getPrototypeOf(BoneSprite)).call(this, src, scale));
+    var _this11 = _possibleConstructorReturn(this, (BoneSprite.__proto__ || Object.getPrototypeOf(BoneSprite)).call(this, src, scale));
 
-    _this10.bones = [];
-    return _this10;
+    _this11.bones = [];
+    return _this11;
   }
 
   _createClass(BoneSprite, [{
@@ -11539,13 +11993,13 @@ var Item = function (_Sprite4) {
 
     _classCallCheck(this, Item);
 
-    var _this12 = _possibleConstructorReturn(this, (Item.__proto__ || Object.getPrototypeOf(Item)).call(this, src, scale));
+    var _this13 = _possibleConstructorReturn(this, (Item.__proto__ || Object.getPrototypeOf(Item)).call(this, src, scale));
 
-    _this12.imageOptions = [];
-    _this12.collisionObjects = [];
-    _this12.collisionBehavior = 'COLLECT';
-    _this12.collectionAnimation = undefined;
-    return _this12;
+    _this13.imageOptions = [];
+    _this13.collisionObjects = [];
+    _this13.collisionBehavior = 'COLLECT';
+    _this13.collectionAnimation = undefined;
+    return _this13;
   }
 
   _createClass(Item, [{
@@ -11788,6 +12242,12 @@ var SpriteFactory = function () {
       }
     }
   }, {
+    key: 'Life',
+    value: function Life(l) {
+      this.life = l;
+      return this;
+    }
+  }, {
     key: 'enter',
     value: function enter() {
       var number = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
@@ -11801,7 +12261,7 @@ var SpriteFactory = function () {
         if (this.lockoutTime >= 1.0) {
           return;
         }
-        //continue to with enter() fxn    
+        //continue to with enter() fxn
       }
 
       for (var x = 0; x < number; x++) {
@@ -11809,6 +12269,8 @@ var SpriteFactory = function () {
         var livingCount = this.sprites.countLiving();
 
         var s = new Gamelab.Sprite().Clone(this.sprites[0]);
+
+        s.Life(this.life);
 
         if (this.createSprite) {
           this.createSprite.bind(s).call();
@@ -11873,12 +12335,12 @@ var SpriteFill = function (_Sprite5) {
 
     _classCallCheck(this, SpriteFill);
 
-    var _this13 = _possibleConstructorReturn(this, (SpriteFill.__proto__ || Object.getPrototypeOf(SpriteFill)).call(this, src, scale));
+    var _this14 = _possibleConstructorReturn(this, (SpriteFill.__proto__ || Object.getPrototypeOf(SpriteFill)).call(this, src, scale));
 
-    _this13.sourceSprites = [];
-    _this13.overlaySprites = [];
-    _this13.shape = [];
-    return _this13;
+    _this14.sourceSprites = [];
+    _this14.overlaySprites = [];
+    _this14.shape = [];
+    return _this14;
   }
   //draw function is overwritten to nothing. --limits console errors --todo --complete
 
@@ -12025,15 +12487,15 @@ var Terrain = function (_Sprite6) {
 
     _classCallCheck(this, Terrain);
 
-    var _this14 = _possibleConstructorReturn(this, (Terrain.__proto__ || Object.getPrototypeOf(Terrain)).call(this, src, scale));
+    var _this15 = _possibleConstructorReturn(this, (Terrain.__proto__ || Object.getPrototypeOf(Terrain)).call(this, src, scale));
 
-    _this14.imageOptions = [];
+    _this15.imageOptions = [];
     //1. Terrain can draw from a set of optional source images
     //2. Terrain has values for collision
     //3. Terrain can quickly instantiate objects for running, jumping, climbing
-    _this14.collisionObjects = [];
-    _this14.collisionBehavior = 'STOP';
-    return _this14;
+    _this15.collisionObjects = [];
+    _this15.collisionBehavior = 'STOP';
+    return _this15;
   }
 
   _createClass(Terrain, [{

@@ -55,12 +55,13 @@ class GameWindow {
      * @memberof GameWindow
      **********/
 
-
     this.camera = new Gamelab.Camera();
 
     this.camera.target = false;
 
     Gamelab.camera = this.camera;
+
+    this.scaleTracker = 1.0;
 
     var __inst = this;
 
@@ -233,6 +234,16 @@ class GameWindow {
     });
   }
 
+  getGameSprites() {
+    var gameSprites = [];
+    this.drawables.forEach(function(sprite) {
+      console.info(sprite);
+      if (sprite.spriteType = 'game') {
+        gameSprites.push(sprite);
+      }
+    });
+    return gameSprites;
+  }
 
   /**
    * creates an array of gridUnits

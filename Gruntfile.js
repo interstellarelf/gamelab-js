@@ -24,12 +24,12 @@ module.exports = function(grunt) {
 
     jsdoc: {
       dist: {
-        src: ['src/gamelab/README.md', 'src/__concat/gamelab.js'],
+        src: ['src/README.md', 'src/__concat/gamelab.js'],
         jsdoc: './node_modules/.bin/jsdoc',
         options: {
           destination: './docs',
-          configure: './node_modules/gamelab-docstrap/jsdoc.conf.json',
-          template: './node_modules/gamelab-docstrap'
+          configure: './node_modules/docula-jsdoc/jsdoc.conf.json',
+          template: './node_modules/docula-jsdoc'
         }
       }
     },

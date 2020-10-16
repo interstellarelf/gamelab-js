@@ -4144,3 +4144,28 @@
 [2020-04-02T18:11:17.886] [INFO] default - Rectangle
 [2020-04-02T18:11:17.886] [INFO] default - KeyboardEvent
 [2020-04-02T18:11:17.886] [INFO] default - --applying examples
+[2020-09-22T04:26:41.532] [INFO] default - --gathered examples.json data
+[2020-09-22T04:26:42.971] [INFO] default - Sound
+[2020-09-22T04:26:42.971] [INFO] default - Terrain
+[2020-09-22T04:26:42.971] [INFO] default - GameWindow
+[2020-09-22T04:26:42.971] [INFO] default - GridAnimation
+[2020-09-22T04:26:42.971] [INFO] default - Camera
+[2020-09-22T04:26:42.971] [INFO] default - Sprite
+[2020-09-22T04:26:42.971] [INFO] default - Module
+[2020-09-22T04:26:42.972] [INFO] default - Frame
+[2020-09-22T04:26:42.972] [INFO] default - GamepadEvent
+[2020-09-22T04:26:42.972] [INFO] default - InputEvent
+[2020-09-22T04:26:42.972] [INFO] default - StaticAnimation
+[2020-09-22T04:26:42.972] [INFO] default - Renderable
+[2020-09-22T04:26:42.972] [INFO] default - Interactive
+[2020-09-22T04:26:42.972] [INFO] default - BooleanEvent
+[2020-09-22T04:26:42.972] [INFO] default - Rectangle
+[2020-09-22T04:26:42.972] [INFO] default - SpriteGroup
+[2020-09-22T04:26:42.972] [INFO] default - SpriteFill
+[2020-09-22T04:26:42.972] [INFO] default - SpriteBrush
+[2020-09-22T04:26:42.972] [INFO] default - Item
+[2020-09-22T04:26:42.972] [INFO] default - VectorFrameBounds
+[2020-09-22T04:26:42.972] [INFO] default - BoneSprite
+[2020-09-22T04:26:42.972] [INFO] default - KeyboardEvent
+[2020-09-22T04:26:42.972] [INFO] default - GameImage
+[2020-09-22T04:26:42.972] [INFO] default - --applying examples

@@ -19,8 +19,10 @@
   class Frame {
     constructor() {
       var __inst = this;
-      this.framePos = new Gamelab.Vector(0, 0);
-      this.origin = new Gamelab.Vector(0, 0);
+      this.framePos = new Gamelab.Vector(0, 0, 0);
+      this.frameSize = new Gamelab.Vector(0, 0, 0);
+      this.origin = new Gamelab.Vector(0, 0, 0);
+      this.position = new Gamelab.Vector(0, 0, 0);
       this.rotation = new Gamelab.Vector(0, 0, 0);
     }
 
@@ -49,9 +51,8 @@
       return this;
     }
 
-    FramePos(p) {
-      this.framePos = new Gamelab.Vector(p, p, p);
-
+    FramePos(x, y, z) {
+      this.framePos = new Gamelab.Vector(x, y, z);
       return this;
     }
 

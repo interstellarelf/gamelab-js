@@ -138,11 +138,8 @@ let Collision = {
     if (right > obj2.position.x && left < obj2.position.x + obj2.size.x &&
       bottom > obj2.position.y && top < obj2.position.y + obj2.size.y
     ) {
-
       return true;
-
     }
-
   },
 
 

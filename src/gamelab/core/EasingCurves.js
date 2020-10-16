@@ -294,6 +294,47 @@
     return images;
   };
 
+
+  class StateFrame {
+    constructor(object, target) {
+      this.object = object;
+      this.target = target;
+      this.easingCurve = 'linear-none';
+      this.timeLimit = 100;
+      this.complete = function() {
+        console.log('empty complete');
+      };
+    }
+    Object(o) {
+      this.object = o;
+      return this;
+    }
+    Target(t) {
+      this.target = t;
+      return this;
+    }
+    EasingCurve(e) {
+      this.easingCurve = e;
+      return this;
+    }
+    TimeLimit(t) {
+      this.timeLimit = t;
+      return this;
+    }
+    onComplete(complete) {
+      this.complete = complete;
+      return this;
+    }
+    commit() {
+      alert('commiting keyframe');
+      if (this.complete) {
+        this.complete();
+      }
+    }
+  }
+
+  Gamelab.StateFrame = StateFrame;
+
   Gamelab.UI.getCurveCanvasList = getCurveCanvasList;
   Gamelab.UI.getCurveImageList = getCurveImageList;
 
