@@ -29,6 +29,9 @@ class Module {
   }
 
   load(uri, callback) {
+
+    Gamelab.modules = Gamelab.modules || [];
+
     var __object = this;
     this.uri = uri;
     callback = callback || function() {};
@@ -36,6 +39,13 @@ class Module {
 
     var script = document.createElement('SCRIPT'),
       executeNow = false;
+
+    for (var x = 0; x < Gamelab.modules.length; x++) {
+      if (Gamelab.modules[x].uri == uri) {
+        callback(Gamelab.modules[x].construct);
+        return Gamelab.modules[x];
+      }
+    }
 
     if (uri.toLowerCase().endsWith('.js')) {
       script.src = uri;
@@ -50,6 +60,7 @@ class Module {
     //define onload fxn
     script.onload = function() {
       var construct = window.module.exports;
+      __object.construct = __object.lib = construct;
       callback(construct, uri);
     };
     if (executeNow) {
@@ -59,6 +70,9 @@ class Module {
       }, 250);
     }
     //append to the document
+
+    Gamelab.modules.push(__object);
+
     document.head.appendChild(script);
   }
 };

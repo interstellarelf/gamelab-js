@@ -1,0 +1,14 @@
+
+
+1. When a shape enters your perimeter:
+    -You may still attack the shape
+    -It's going to attack (explode as in suicide bomb)
+    -Random event: the shape is struck by lightning and will change into a powerup.
+
+2. Each level has:
+    1. number of shapes you steal / target number per level
+    2. time clock (how long you've been playing)
+    3. victory scene per level.
+
+3. Also has:
+    1. survival mode

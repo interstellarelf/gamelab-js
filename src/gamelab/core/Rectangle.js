@@ -8,7 +8,7 @@
  * @returns {Rectangle} a Rectangle object
  */
 
-class Rectangle {
+class Vector2Range {
     constructor(x1, y1, x2, y2) {
       this.Min(x1, y1);
       this.Max(x2, y2);
@@ -28,11 +28,9 @@ class Rectangle {
 
 
 
-let VectorBounds = Rectangle;
-
-Gamelab.VectorBounds =VectorBounds;
-
-Gamelab.Rectangle = Rectangle;
+let VectorBounds = Vector2Range;
+Gamelab.VectorBounds = Vector2Range;
+Gamelab.Vector2Range = Vector2Range;
 
 /**
  * Takes the min and max vectors plus termPoint ('termination-point'), returns VectorFrameBounds
@@ -45,6 +43,8 @@ Gamelab.Rectangle = Rectangle;
  * @returns {VectorFrameBounds} a VectorFrameBounds object
  */
 
+//traverse a grid from min(x,y) toward max(x,y)
+//stop or repeat at the termPoint(x,y)
 class VectorFrameBounds {
     constructor(min, max, termPoint) {
         this.min = min;

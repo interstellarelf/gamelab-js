@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather-Demo</title>
+
+    <script src="../assets/js/Gamestack.min.js"></script>
+
+    <script src="../assets/js/dat.gui/dat.gui.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../assets/js/dat.gui/dat.gui.css" />
+
+    <style>
+        canvas
+        {
+            background:black;
+
+        }
+    </style>
+</head>
+<body>
+<script>
+
+    //enemy && player Sprite()
+
+    var enemy, player,
+
+        $GS = Gamestack, gamelib = Gamestack;
+
+    ExampleSettings = {
+
+        Collision_Type:'pixel-grid',
+
+        highlighterOn:true
+
+    },
+
+    settings_options = {
+
+        Collision_Types:['pixel-grid', 'box'],
+
+        highlighterOn:true || false
+
+    };
+
+    //Instantiate a GameWindow()
+
+    var gameWindow = new gamelib.GameWindow();
+
+    /**
+     * Instantiate Sprite: enemy
+     */
+
+    enemy = new $GS.Sprite(
+        {
+            name: "enemy",
+            description: "The enemy sprite",
+            group: "enemy",
+            size: new $GS.Vector(90, 90, 0),
+            stats: {health: 100, magic: 1000}
+
+        }
+    );
+
+    /**
+     * set the Animation
+     */
+
+    enemy.setAnimation(new $GS.Animation({
+        src: "images/spaceship/spinship1.png",
+        group: "enemy",
+        frameSize: new $GS.Vector(90, 90, 0),
+        frameBounds: new $GS.VectorFrameBounds(new $GS.Vector(0, 0), new $GS.Vector(15, 0))
+    }));
+
+
+    /**
+     * Instantiate Sprite: player
+     */
+
+    player = new $GS.Sprite(
+        {
+            name: "player",
+            description: "The player sprite",
+            group: "player",
+            size: new $GS.Vector(90, 90, 0),
+            stats: {health: 100, magic: 1000}
+
+        }
+    );
+
+    /**
+     * set the Animation
+     */
+
+    player.setAnimation(new $GS.Animation({
+        src: "images/spaceship/spinshipmulti1.png",
+        group: "player",
+        frameSize: new $GS.Vector(90, 90, 0),
+        frameBounds: new $GS.VectorFrameBounds(new $GS.Vector(0, 0), new $GS.Vector(15, 0))
+    }));
+
+
+    var boolEvent = new Gamestack.BoolEvent().On(function(){
+
+       return player.__myTrigger == true; //BoolEvent must return a true || false value on the On(function(){})
+
+    }).Call(function(){
+
+        alert('BoolEvent was triggered');
+
+        player.__myTrigger = false;
+
+    });
+
+    player.Pos(new Gamestack.Vector(300, 300));
+
+    enemy.setFrame(7);
+
+    player.setFrame(7);
+
+    /* array of pixels for the ColorMap */
+    var grid = [], gridHighlighters = [];
+
+    //set timed function to trigger the BoolEvent
+
+    window.setTimeout(function(){
+
+        player.onUpdate(function(){
+
+            player.animate();
+
+        });
+
+        player.__myTrigger = true; //This should trigger the BoolEvent on next update
+
+        var testSquare = new Gamestack.Sprite('images/test-square.png');
+
+        testSquare.Size(5);
+
+        //alert(jstr(testSquare));
+
+        player.animate();
+
+        var frame = player.selected_animation.selected_frame;
+
+        player.onUpdate(function(sprite, anime){
+
+            this.selected_animation.run();
+
+            if(ExampleSettings.Collision_Type == 'pixel-grid' && this.hasPixelCollision(enemy))
+            {
+                console.info('pixel-grid collision');
+            }
+            else if (ExampleSettings.Collision_Type == 'box' && this.hasBoxCollision(enemy))
+            {
+                console.info('box collision');
+            }
+
+            this.set_colliderHighlights(testSquare, ExampleSettings.highlighterOn);
+
+            console.log("pmap len:" + player.selected_animation.selectedFramePixelMap.length);
+
+        });
+
+    }, 3000);
+
+    gameWindow.add(enemy);
+
+    gameWindow.add(player);
+
+    Gamestack.GuiControllerMode();
+
+   var option_gui = Gamestack.GuiOptions(ExampleSettings, 'Collision_Type', settings_options.Collision_Types),
+
+   highlighteron_gui = Gamestack.GuiBool(ExampleSettings, 'highlighterOn');
+
+   option_gui.onChange(function(value){
+
+       if(value.toLowerCase() == 'box'){
+
+
+
+        };
+
+   });
+
+    highlighteron_gui.onChange(function(value){
+
+
+    });
+
+    Gamestack.example_mode = function(){
+
+    };
+
+    /***************
+     *
+     * Call gameWindow.animate()
+     *
+     * *************/
+
+    gameWindow.start();
+
+
+</script>
+
+
+</body>
+</html>

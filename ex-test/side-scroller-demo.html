@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>Sidescroller Demo</title>
+
+  <script src="./js/libs/jquery.js"></script>
+
+  <script src="../dist/domfx/domfx.js"></script>
+
+  <script src="../dist/gamelab/gamelab.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      font-family: Monospace;
+    }
+
+    header {
+
+      position: absolute;
+
+      width: 40%;
+
+      height: 70px;
+
+      left: 50%;
+
+    }
+
+    header img {
+
+      position: relative;
+
+      left: 35%;
+
+      height: 40px;
+
+      width: auto;
+
+      max-width: 150px;
+
+      padding: 4px;
+
+    }
+
+    header span {
+      position: relative;
+      left: 15px;
+      margin-left: 155px;
+      font-size: 1.5em;
+      line-height: 40px;
+      top: 2px;
+      float: right;
+      color: white;
+    }
+
+  </style>
+
+
+</head>
+
+<body>
+
+  <header>
+
+    <img src="../assets/images/gamestack-logo.png" /> <span>:SideScroller Demo</span>
+
+  </header>
+
+  <div class="container"></div>
+
+  <script>
+
+
+    var Gamestack = Gamelab;
+
+    /*Side Scroller Demo: an illustration of Gamestack.js in a side-scroller demo*/
+
+    /*
+    to test: (from gamestack root) use node cmd: 'npm start' then browse to http://localhost:3137/examples/side-scroller-demo.html:
+     * */
+
+    var player, Animation = Gamestack.Animation,
+      GameImage = Gamestack.GameImage,
+      Vector = Gamestack.Vector,
+      Sprite = Gamestack.Sprite,
+
+      ImageStat = DomFx.ImageStat,
+      Force = Gamestack.Force;
+
+
+    var Sound = Gamestack.Sound;
+
+    var gameWindow = new Gamestack.GameWindow();
+
+
+    /**************
+     *
+     * Create a function to load the level sprites from file, using gameWindow.loadLevelFile, and callback(err, data)
+     *
+     * ****************/
+
+    var loadLevel = function(callback) {
+
+      $.getJSON('http://localhost:8080/ex-test/levels/big_brick_level_02.json', function(data) {
+
+
+        var gw = gameWindow;
+
+        var count = 0;
+
+        $.each(data.sprites, function(ix, xitem) {
+
+          console.log('Sprite:' + count);
+
+          count += 1;
+
+          //  console.info(xitem);
+
+          if (typeof xitem.src == 'string' && xitem.src.indexOf('square') >= 0) {
+            console.log('got square at xitem.src:' + xitem.src);
+            xitem.src = './assets/game/image/bricks/square_brick.png';
+            xitem.group = 'block';
+
+            var sprite = new Gamelab.Sprite(xitem.src);
+
+            sprite.group = xitem.group;
+
+            sprite.DRAWOFFSCREEN = false;
+
+            sprite.position.x = xitem.position.x;
+            sprite.position.y = xitem.position.y;
+
+            sprite.size.x = xitem.size.x;
+            sprite.size.y = xitem.size.y;
+
+            gw.add(sprite);
+
+          }
+
+          $.each(xitem, function(iy, yitem) {
+
+            if (typeof yitem.src == 'string' && yitem.src.indexOf('square') >= 0) {
+              console.log('got square at yitem.src:' + yitem.src);
+              yitem.src = './assets/game/image/bricks/square_brick.png';
+            }
+
+          });
+
+          //sprite.image = sprite.selected_animation.image;
+
+          if (ix >= data.sprites.length - 1) {
+
+            //last sprite is loaded //WHY DOESN't this work?
+
+            callback(false, data);
+          }
+        });
+
+      });
+
+    };
+
+
+    var V = function(x, y, z) {
+
+      return new Gamelab.Vector(x, y, z);
+
+    }
+
+
+    Gamelab.ready(function(lib) {
+
+      console.info('library is ready');
+
+      //create a Background:
+
+      var background = new Gamestack.ScrollingBackground('images/sky_pack/sky/sky.png').Rows(4).Cols(4);
+
+      background.Size(new Gamestack.Vector(1000, 1000));
+
+      background.onLoad(function() {
+
+        background.Fill(4, 4);
+
+      });
+
+      //create some animations and sounds within an object:
+
+      var GameAssets = {
+        character: {
+          player_run: new Animation().Src("images/characters/full/spaceman1.png").FrameSize(130, 130).FrameBounds(V(0, 0), V(23, 0)),
+          player_jump: new Animation().Src("images/characters/full/spaceman1.png").Duration(300).FrameSize(130, 130).FrameBounds(V(5, 3), V(36, 3)),
+          player_fall: new Animation({
+            src: "images/characters/full/spaceman1.png",
+            frameSize: new Vector(130, 130, 0),
+            frameBounds: new VectorFrameBounds(new Vector(36, 3), new Vector(36, 3))
+          }),
+          player_flip: new Animation({
+            src: "images/characters/full/spaceman1.png",
+            duration: 700,
+            frameSize: new Vector(130, 130, 0),
+            frameBounds: new VectorFrameBounds(new Vector(7, 2), new Vector(28, 2))
+          })
+        },
+        Sound: {
+          collect_item: new Sound('sounds/collect_item.mp3').Volume(0.3)
+        }
+      };
+
+
+
+
+      var GameButtons = {
+        left_stick: {x:0, y:0},
+        right_stick: {x:0, y:0},
+        0:false,
+        1:false,
+        2:false,
+        3:false,
+        4:false,
+        5:false,
+        6:false,
+        7:false,
+        8:false,
+        9:false,
+        10:false,
+        11:false,
+        12:false,
+        13:false,
+        14:false
+      };
+
+
+      //create jump sound
+
+      var jump_sound = new Sound("sounds/jump_sound.mp3");
+
+
+      //override the onRun() of the jump to play a sound
+
+      GameAssets.character.player_jump.onRun(function() {
+
+        jump_sound.Play();
+
+      });
+
+      //set the frame speed for custom player_run.animate()
+
+      GameAssets.character.player_run.fspeed = 1;
+
+      //custom animate function:
+
+      GameAssets.character.player_run.animate = function() {
+
+        if (Math.abs(Math.floor(player.speed.x)) > 0) {
+
+          //console.log('UPDATING');
+
+          this.cix += this.fspeed;
+
+          if (this.cix > 22) {
+
+            //cause looping back and forth behavior
+
+            this.fspeed = -1;
+
+            this.cix = 22;
+
+          } else if (this.cix < 11) {
+
+            //cause looping back and forth behavior
+
+            this.fspeed = 1;
+
+            this.cix = 11;
+
+          }
+
+        } else {
+
+          this.fspeed = 1;
+          this.cix = 0;
+
+        }
+
+
+        this.update_frame();
+
+      };
+
+
+
+      //Add the player Sprite()
+
+      player = new Sprite(GameAssets.character.player_run.src);
+
+      player.group = 'player';
+
+      //Set the size{} of player
+
+      player.Size(new Vector(75, 75));
+
+      //set player.type for later reference (see $Q() queries to reference multiple collections of Sprite() and rig events, etc.. )
+
+      player.type = "player";
+
+      player.position.x = 300;
+
+      player.runPhysics = {
+
+        traction: {
+
+          run_x: 0.5,
+
+          stop_x: 1.5,
+
+          air_x: 8
+
+        },
+
+        maxSpeed: 10
+
+      };
+
+
+      //set player animation
+
+      player.Animation(GameAssets.character.player_run);
+
+
+      player.actions = {};
+
+      //levelTiles: an array to hold the level Sprites() (from-file)
+
+      var levelTiles = [];
+
+
+      /*********************************************************
+      * jump (action)
+      *  -defines player jump
+      **********************************************************/
+
+      player.addAction('jump', {
+        total: 0,
+        height: 400,
+        speed: 3,
+        rspeed: 1,
+      }, function() {
+
+        if (!this.parent.__inAir) {
+          return;
+        }
+
+        var maxTime = 2000 / this.get('jumpSpeed');
+
+        var height = this.get('height');
+
+        var total = this.get('total');
+
+        var speed = this.get('speed');
+
+        var rspeed = this.get('rspeed');
+
+        if (total < this.get('height')) {
+
+          var portionRemaining = (height - total) / height;
+
+          if (portionRemaining < 1.0) {
+            portionRemaining = 1.0;
+          }
+
+          var nextBump = Gamelab.Curves.Circular.Out(portionRemaining) * height;
+
+          //alert(nextBump);
+
+          var nextHeight = Math.ceil(nextBump * (0.01 * speed)) + 1;
+
+          this.parent.position.y -= nextHeight;
+
+          this.parent.rot_speed.x = 12 * portionRemaining;
+
+          total += nextHeight;
+
+          this.set('total', total);
+
+        } else {
+
+          this.disengage();
+
+        }
+
+      });
+
+
+
+      /*********************************************************
+      * run (action)
+      *  -defines player run
+      **********************************************************/
+
+      player.addAction('run', {
+
+        traction: {
+
+          run_x: 0.5,
+
+          stop_x: 1.5,
+
+          air_x: 8
+
+        },
+
+        speed: 1
+
+      }, function(x, y) {
+
+        var player = this.parent;
+
+        var speed = this.get('speed'),
+          runTraction = this.get('traction').run_x,
+          airTraction = this.get('traction').air_x,
+          stopTraction = this.get('traction').stop_x;
+
+        if (Math.abs(x) > 0.2) {
+
+          if (!player.__inAir && (player.state !== 'jumping' && player.state !== 'falling')) {
+
+            player.rotation.x = 0;
+
+            player.rot_speed.x = 0;
+
+            player.setState('running');
+
+            if (x > 0 && player.speed.x < 0 || x < 0 && player.speed.x > 0) {
+
+              player.speed.x += Math.round(x * stopTraction * speed);
+
+            }
+          }
+
+
+          if (x > 0) {
+
+            player.flipX = player.state !== 'jumping' ? true : player.flipX;
+
+            var airSpeed = Math.round(x * player.runPhysics.traction.air_x);
+
+            if (player.speed.x < airSpeed) {
+
+              player.accelX(0.2, airSpeed);
+            }
+          }
+
+          if (x < 0) {
+
+            player.flipX = player.state !== 'jumping' ? false : player.flipX;
+
+            var airSpeed = Math.round(x * airTraction * speed);
+
+            if (player.speed.x > airSpeed) {
+              player.accelX(0.2, airSpeed);
+            }
+          }
+
+        } else {
+
+          //set player state and decelerate on idle left_stick
+
+          //player.rotation.x = 0;
+
+
+
+          if (player.speed.x < 0) {
+
+            player.speed.x += Math.round(stopTraction * speed);
+
+            if(player.speed.x > -0.2)
+            {
+              player.speed.x = 0;
+            }
+          }
+
+          if (player.speed.x > 0) {
+
+            player.speed.x -= Math.round(stopTraction * speed);
+
+            if(player.speed.x < 0.2)
+            {
+              player.speed.x = 0;
+            }
+          }
+        }
+
+      });
+
+
+
+      var start = function() {
+
+        //  var tiles =  $Q('.Sprite[type=basic_block]');
+
+        var tiles = $Q('.Sprite[group=block]');
+
+        tiles.each(function(ix, item) {
+
+          levelTiles.push(item); //add to levelTiles[]
+
+        });
+
+
+
+        /***********************
+         *
+         * Notes:
+         *
+         * ************************/
+
+
+        //Gamepad input
+        new Gamelab.GamepadEvent().Gamepads(1).Keys('button_0').Call(function(pressed) {
+
+          if(pressed)
+          {
+            GameButtons['0'] += 1;
+          }
+          else {
+            GameButtons['0'] = -2;
+          }
+
+          if (pressed && GameButtons['0'] <= -1  && player.jump_tween && player.state == 'jumping') //cancel the jump when colliding with overhead basic_block
+          {
+
+            if (player.jumpTimer > 120) {
+
+              player.jump_tween.stop();
+
+              player.speed.y = -3;
+
+              player.setState('falling');
+
+              player.jump_tween = false;
+            }
+
+
+          }
+
+          if (pressed && GameButtons['0'] >= 0 && GameButtons['0'] <= 4 ) {
+
+            var targetJumpY = Math.round(player.position.y - Gamelab.HEIGHT / 2.5);
+
+            if (player.state !== 'jumping' && !player.__inAir) {
+
+              player.__inAir = true;
+
+              player.setState('jumping');
+
+              player.speed_tracker = new Vector(0, 0, 0);
+
+              player.pos_tracker = new Vector(player.position);
+
+              GameAssets.character.player_jump.Unlock();
+
+              GameAssets.character.player_jump.onComplete(function(anime) {
+
+                GameAssets.character.player_flip.cix = 0;
+
+                player.Animation(GameAssets.character.player_fall);
+
+              });
+
+
+              setTimeout(function() {
+
+                player.setState('falling');
+
+              }, 600);
+
+              player.jumpTimer = 0;
+
+              setTimeout(function() {
+
+
+                player.setState('jumping');
+
+
+                /*
+
+                player.jump_tween = new TWEEN.Tween(player.position).to({
+                  y: targetJumpY
+                }, 700).easing(TWEEN.Easing.Quadratic.Out).onUpdate(function() {
+
+
+                  player.speed_tracker.y = player.position.y - player.pos_tracker.y;
+
+                  player.pos_tracker.y = player.position.y;
+
+                  player.__inAir = true;
+
+                  player.jumpTimer += 20;
+
+
+                }).onComplete(function() {
+
+                  player.rot_speed.x = 0;
+
+                  player.setState('falling');
+
+                }).start();
+
+                */
+
+              }, 50);
+
+
+
+
+            }
+
+          }
+
+        });
+
+
+
+
+        player.total_apples = 0;
+
+        //Show applies as an item display
+
+
+
+
+        //functions for player state
+
+        player.setState = function(state) //control the state of the player
+        {
+
+          this.state = state;
+
+          if (this.state == '_NEXT_') {
+            alert('_NEXT_');
+          }
+
+          if (this.state == 'idle') {
+            this.Animation(GameAssets.character.player_run);
+
+          }
+
+          if (this.state == 'falling') {
+
+            this.Animation(GameAssets.character.player_fall);
+
+            if (this.speed.y < 0) {
+
+              this.decel(player.speed, 'y', 0.5);
+
+
+            }
+
+
+            if (!this.__inAir) {
+
+              this.setState('idle');
+            }
+
+          }
+
+          if (this.state == 'running') {
+            this.Animation(GameAssets.character.player_run);
+
+          }
+
+          if (this.state == 'jumping') {
+            this.Animation(GameAssets.character.player_jump);
+
+            this.selected_animation.engage();
+
+          }
+
+
+        };
+
+        //player.onUpdate: run code every .update() of the player
+
+        player.onUpdate(function(sprite) {
+
+          sprite.selected_animation.animate();
+
+          if(this.flipX)
+          {
+            this.rotation = this.rotation.add(this.rot_speed);
+          }
+          else {
+
+            this.rotation = this.rotation.sub(this.rot_speed);
+
+          }
+
+
+          if (this.updateCollision) {
+            this.updateCollision();
+          }
+
+          if (this.updateGravity) {
+            this.updateGravity();
+          }
+
+
+
+          if (player.state == 'jumping') {
+
+            player.actions.jump.engage();
+
+          }
+
+          if (player.state == 'running') {
+
+
+            player.rotation.x = 0;
+
+            player.rot_speed.x = 0;
+
+          }
+
+
+          if (player.state == 'falling' || player.state == 'falling') {
+
+
+            player.__inAir = true;
+
+            //player.rotation = player.rotation.add(player.rot_speed);
+
+          }
+
+
+          if (!player.__inAir) {
+            player.speed.y = 0;
+
+            player.rotation.x = 0;
+
+            player.rot_speed.x = 0;
+
+          } else if (player.state !== 'jumping' && Math.abs(player.speed.y) > 2) {
+            player.setState('falling');
+
+          }
+
+
+          if (player.state !== 'jumping') {
+            player.position = player.position.add(player.speed);
+          }
+
+          if (player.state == 'jumping') {
+            player.position.x += player.speed.x;
+          }
+
+
+        });
+
+        //add a second player update:
+
+        player.onUpdate(function(sprite) {
+
+          //control the __gameStack Camera, with player-sprite as focus
+
+          var target = sprite.position.sub(new Gamestack.Vector(gameWindow.canvas.width / 2, gameWindow.canvas.height / 2));
+
+          camera = gameWindow.camera;
+
+
+          var diff = camera.position.sub(target);
+
+          //camera follows player
+
+          var speedX = Math.ceil(diff.x * -0.3),
+            speedY = Math.ceil(diff.y * -0.3);
+
+          camera.position.x += speedX;
+
+          camera.position.y += speedY;
+
+
+        });
+
+
+
+        //add player to gameWindow
+        gameWindow.add(player);
+
+
+        Gamelab.WIDTH = 600;
+        Gamelab.HEIGHT = 600;
+
+
+        function getTerrains() {
+
+          return gameWindow.drawables.filter(function(a) {
+            return a.group == 'block';
+          });
+
+        }
+
+
+        var terrains = getTerrains();
+
+        terrains.forEach(function(terrain) {
+
+          player.onCollision(terrain, function(obj1, obj2) {
+
+            var p1 = obj1.center(),
+              p2 = obj2.center();
+
+            // angle in degrees
+            var angleDeg = Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
+
+            if (p2.y < p1.y) {
+              console.log(angleDeg);
+            }
+
+            var overhead = angleDeg > -120 && angleDeg < -60 && obj1.overlap_x(obj2, 0.2);
+
+
+            if (player.actions.jump && overhead) //cancel the jump when colliding with overhead basic_block
+            {
+
+              player.actions.jump.disengage();
+
+            }
+
+
+          });
+
+
+        });
+
+
+
+
+        window.setTimeout(function() {
+
+          var blocks = getTerrains();
+
+          blocks.forEach(function(terrain) {
+
+
+
+
+          });
+
+          //collision function for player sprite to any block
+
+
+          console.info('blocks', blocks);
+
+          /*
+
+          $Q('.Sprite[group=player]').on('collide', blocks, function(obj1, obj2){
+
+              //1:1 , this is the callback for 1 object colliding with 1 other object (player and basic_brick)
+
+
+
+
+          });
+
+          */
+
+
+          var SPEEDS = {
+            high: 6,
+            low: 4
+          };
+
+          var apples = $Q('.Sprite[group=item]');
+
+          //collision of player to any apple
+
+          $Q('.Sprite[group=player]').on('collide', apples, function(obj1, obj2) {
+
+            if (!obj2.dead) {
+
+              obj2.active = false; // item collected
+
+              GameAssets.Sound.collect_item.Play();
+
+              player.total_apples += 1;
+
+              items.update(player.total_apples);
+
+              obj2.dead = true;
+
+              gameWindow.remove(obj2);
+
+            }
+
+          });
+
+
+          //StickLeft event::
+
+          new Gamelab.GamepadEvent().Gamepads(1).Keys('stick_left').Call(function(x, y) {
+
+            //player runs and flips
+
+            console.log('LSTICK');
+
+            player.actions.run.engage(x, y);
+
+          });
+
+
+          player.padding = new Vector(0.2, 0.1); //vector of 0-1 values for collision padding (transparency of sprite-images calls for padding in collision-processing)
+
+          //play a single song on repeat
+          var song = new Sound('sounds/songs/happy_song.mp3').volume(0.1);
+
+          song.Play();
+
+          //Add a gravity/force to the game
+
+
+          player.accelY = function(accel, max) {
+
+            if (this.speed.y < max) {
+              this.speed.y += accel;
+            }
+
+            this.position.y += this.speed.y;
+          }
+
+          var gravity = new Force({
+            name: "medium_grav",
+            accel: 0.4,
+            max: 9,
+            subjects: [player], //provide subjects inside an array, player is the subject of this Force, player is pulled by this force
+            topClastics: levelTiles //an array of collideable objects
+
+          });
+
+
+          player.updateGravity = function() {
+
+            if (this.state == 'jumping') {
+              return;
+            }
+
+            //This update will stop the player from passing through blocks underneath him
+
+            //first update gravity
+            gravity.update();
+
+            var blockBeneath = player.get_highest_ground_from_array(blocks, 0.2);
+
+            if(blockBeneath)
+            {
+              var clipped = player.overlap_y(blockBeneath, 0.1);
+
+              if (clipped) {
+                player.position.y = player.item_pos_y(blockBeneath, 0.1);
+                player.setGrounded(true);
+                player.setState('idle');
+
+              } else {
+                player.setGrounded(false);
+              }
+
+            }
+
+
+          };
+
+
+
+
+          player.updateCollision = function() {
+
+            var blocks = getTerrains();
+
+            for (var x = 0; x < blocks.length; x++) {
+
+              if (this.overlap_x(blocks[x], 0.1) && this.overlap_y(blocks[x], 0.3)) {
+
+                this.collide_stop_x(blocks[x], 0.05);
+
+                if (this.center().x < blocks[x].center().x) {
+                  this.position.x -= 4.0;
+                }
+
+                if (this.center().x > blocks[x].center().x) {
+                  this.position.x += 4.0;
+                }
+
+              }
+
+            }
+
+          };
+
+        }, 1000);
+
+
+
+      };
+
+      loadLevel(function() {
+
+        //  start the game
+
+        start();
+
+        gameWindow.start();
+
+      });
+
+    });
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Run + Gun Frog</title>
+    <script src="../dist/gamelab/gamelab.js"></script>
+    <script src="./js/sprites/FrogRunnerSprite.js"></script>
+    <!-- spritebox-example.css style -->
+    <link rel="stylesheet" href="../res/styles/gamelab-example.css">
+  </head>
+  <body>
+    <header>
+      <img src="../res/images/gamelab-logo.png" alt="" id="logo">
+      <span class="title">Run + Gun Frog</span>
+    </header>
+    <script>
+
+      //Create the game-window
+      var gameWindow = new Gamelab.GameWindow().Background('black');
+
+      var $playerSprite = new Gamelab.FrogRunnerSprite();
+
+      gameWindow.add($playerSprite);
+
+      //Gamepad input
+      new Gamelab.GamepadEvent().Gamepads(1).Keys('button_1').Call(function (pressed) {
+
+        if (pressed) {
+          $playerSprite.controls.gun_button = true;
+          $playerSprite.shoot();
+        } else {
+          $playerSprite.controls.gun_button = false;
+        }
+
+      });
+
+      //Gamepad input
+      new Gamelab.GamepadEvent().Gamepads(1).Keys('stick_left').Call(function (x, y) {
+
+        //always runs if controller is plugged in
+
+        if (Math.abs(x) >= 0.2) {
+          console.log('stick_1 was moved at > 0.5x');
+        } else {}
+
+        var roundX = Math.round(x * 100) / 100,
+          roundY = Math.round(y * 100) / 100;
+
+        $playerSprite.speed.x = roundX * 7.0;
+
+        if (y >= 0.2) {
+          console.log('stick_1 was moved at >= 0.2x');
+          $playerSprite.selected_animation = animations.run_gun_down;
+        } else if (y <= -0.2) {
+          console.log('stick_1 was moved at <= -0.2x');
+          $playerSprite.selected_animation = animations.run_gun_up;
+        } else if (Math.abs(x) >= 0.1 || $playerSprite.controls.gun_button) {
+          $playerSprite.selected_animation = animations.run_gun;
+
+        } else if (!$playerSprite.animeBusy()) {
+          $playerSprite.selected_animation = animations.idle;
+        }
+
+        if (Math.abs(x) >= 0.1) {
+
+          $playerSprite.flipX = x > 0
+            ? false
+            : true;
+
+        }
+
+      });
+
+      Gamelab.ready(function () {
+
+        var level = new Gamelab.Module().load('res/scripts/run-gun/level-01.js', function (construct) {
+
+          var tiles = new construct();
+
+          //startGame(tiles);
+
+        });
+
+      });
+
+      //start gameWindow
+      gameWindow.start();
+
+      
+    </script>
+
+  </body>
+</html>

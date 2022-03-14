@@ -1,0 +1,62 @@
+[
+  {
+    "path": "./examples/html/--DEP-sprite3d.html"
+  },
+  {
+    "path": "./examples/html/--DEP-svg-sprite.html"
+  },
+  {
+    "path": "./examples/html/2d-math-position-rotation.html"
+  },
+  {
+    "path": "./examples/html/2d-math-triangle-click-detection.html"
+  },
+  {
+    "path": "./examples/html/2d-math-triangle-collision-detection.html"
+  },
+  {
+    "path": "./examples/html/2d-math-triangle-mouse-detection.html"
+  },
+  {
+    "path": "./examples/html/2d-motion-particle-color-change.html"
+  },
+  {
+    "path": "./examples/html/2d-motion-particle-shining-sun.html"
+  },
+  {
+    "path": "./examples/html/canvas-gamelab-curve-motion.html"
+  },
+  {
+    "path": "./examples/html/canvas-gamelab-firing-clock.html"
+  },
+  {
+    "path": "./examples/html/canvas-gradient-shape.html"
+  },
+  {
+    "path": "./examples/html/canvas-scrolling-background.html"
+  },
+  {
+    "path": "./examples/html/canvas-spritesheet-output-png.html"
+  },
+  {
+    "path": "./examples/html/gamelab-array-transformer.html"
+  },
+  {
+    "path": "./examples/html/gamelab-game-2d-action-01.html"
+  },
+  {
+    "path": "./examples/html/gamelab-game-2d-action-02.html"
+  },
+  {
+    "path": "./examples/html/gamelab-game-run-gun-frog.html"
+  },
+  {
+    "path": "./examples/html/gamelab-game-space-meteors.html"
+  },
+  {
+    "path": "./examples/html/gamelab-game-spaceshooter.html"
+  },
+  {
+    "path": "./examples/html/particle.html"
+  }
+]

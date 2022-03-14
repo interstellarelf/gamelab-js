@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Draw SVG</title>
+    <script src="../dist/gamelab/gamelab.js"></script>
+    <script src="./js/libs/dat.gui.js"></script>
+
+    <!-- spritebox-example.css style -->
+    <link rel="stylesheet" href="./styles/example.css">
+
+    <style>
+      @font-face {
+        font-family: baumans;
+        src: url('res/fonts/baumans/Baumans-Regular.ttf');
+      }
+    </style>
+
+  </head>
+
+  <body>
+    <header>
+      <img src="./images/lib/gamelab-logo.png" alt="" id="logo">
+      <span class="title">Draw SVGs</span>
+    </header>
+
+    <script>
+
+      var gameWindow = new Gamelab.GameWindow().Background('black');
+      var sprite = new Gamelab.Sprite('./res/images/wheel-pattern.svg');
+      gameWindow.add(sprite);
+
+    //sprite.anime.FrameSize(800, 800)
+
+      sprite.onLoad(function(){
+        this.anime.FrameSize(900, 900);
+        this.Scale(0.2);
+        this.Origin(110, 110);
+        console.info(this);
+      });
+
+      sprite.onUpdate(function(){
+          this.position.x = 100;
+          this.position.y = 60;
+          this.rotation.x += 5;
+      });
+
+      Gamelab.ready(function() {
+        gameWindow.start();
+      });
+    </script>
+
+  </body>
+
+</html>

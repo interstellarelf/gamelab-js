@@ -1,0 +1,136 @@
+
+
+@font-face {
+  font-family: "Roboto";
+  src: url("./webfonts/Roboto-Light.ttf") format("ttf");
+}
+
+body,
+html {
+  position: absolute;
+  background: url('./img/blackboard.jpg');
+  background-size: 130% auto;
+  background-repeat: repeat;
+  width: 100%;
+  height: 100%;
+  min-width: 1000px;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 20px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #111;
+  border-radius: 5px;
+  border: 2px ridge #444;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #000;
+}
+
+img#logo {
+  position: relative;
+  width: 140px;
+  height: auto;
+}
+
+div.main {
+  position: fixed;
+  top: 40px;
+  left: 2%;
+  right: 2%;
+  width: 94%;
+  height: 90%;
+  min-width: 1000px;
+  overflow-y: scroll;
+  padding: 7px;
+  background: url('./img/blackboard.jpg');
+  background-size: 130% auto;
+  background-repeat: repeat;
+  border: 2px ridge #333;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.section-title {
+  position: relative;
+  display: block;
+  color: grey;
+  left: 5%;
+  width: 82%;
+  font-family: 'Roboto';
+  font-size: 22px;
+  letter-spacing: 2px;
+  padding: 2px;
+  margin: 4px;
+  margin-bottom: 1px;
+  border-bottom: 2px ridge #444;
+}
+
+.section-text {
+  position: relative;
+  display: block;
+  color: grey;
+  left: 5%;
+  width: 86%;
+  font-family: 'Roboto';
+  font-size: 16px;
+  padding: 2px;
+  margin: 4px;
+  margin-bottom: 1px
+}
+
+div.links {
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  margin: 8px;
+  margin-bottom: 32px;
+  max-width: 95%;
+}
+
+div.app-link {
+  position: relative;
+  align-items: center;
+}
+
+a.screen-link {
+  display: block;
+  position: relative;
+  border: 1px solid #333;
+  padding: 9px;
+  max-width: 222px;
+  color: #bbb;
+  font-size: 18px;
+  font-family: 'Roboto';
+  letter-spacing: 2px;
+  cursor: pointer;
+  text-decoration: none;
+  margin: 9px;
+  top: 0px;
+  min-height: 170px;
+  white-space: nowrap;
+}
+
+a.screen-link:hover {
+  color: #aaa;
+  border: 1px solid #666;
+}
+
+a.screen-link img {
+  position: relative;
+  display: block;
+  width: 212px;
+  margin-top: 10px;
+  height: auto;
+}

@@ -1,0 +1,12 @@
+
+
+@font-face {
+  font-family: "Roboto";
+  src: url("./webfonts/Roboto-Light.ttf") format("ttf");
+}
+
+
+@font-face {
+  font-family: "MajorMono";
+  src: url("./webfonts/MajorMonoDisplay-Regular.ttf") format("ttf");
+}

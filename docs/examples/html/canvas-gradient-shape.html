@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Canvas Gradient Shape</title>
+  <script src="../dist/gamelab/gamelab.js"></script>
+  <script src="./js/libs/dat.gui.js"></script>
+
+  <!-- spritebox-example.css style -->
+  <link rel="stylesheet" href="./styles/example.css">
+
+</head>
+
+<body>
+  <header>
+    <img src="./images/lib/gamelab-logo.png" alt="" id="logo">
+    <span class="title">Canvas Gradient Shape</span>
+  </header>
+
+  <div><span>
+
+    <span>&#9627;</span>
+
+  </span></div>
+
+  <script>
+
+      Gamelab.ready(function(){
+
+          var gameWindow = new Gamelab.GameWindow().Background('#111111');
+
+          var rectangle = new Gamelab.Rectangle()
+          .Position(100, 100)
+          .BorderThickness(2.0)
+          .Size(200, 80)
+          .BorderGradient('black', 'black')
+          .Gradient('orange', 'salmon');
+
+
+          gameWindow.add(rectangle);
+
+          var sprite = new Gamelab.Sprite('./res/images/sky/sky.png').DrawToCanvas();
+
+          sprite.onLoad(function(){
+
+              var ix = 0;
+
+              console.info(this);
+
+              var pixels = this.effectCtx.getImageData(0, 0, this.size.x, this.size.y);
+
+              console.info(this.anime.colorMap);
+
+          });
+
+          gameWindow.start();
+
+      });
+
+
+  </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,5 @@
+
+
+TODO:
+Insert several wall-decorators into this folder to
+decorate any region of nXn wall textures.

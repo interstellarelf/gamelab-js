@@ -1,0 +1,793 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Spaceships-a</title>
+  <script src="./../dist/gamelab/gamelab.js"></script>
+  <link rel="stylesheet" href="styles/example.css">
+
+  <style>
+
+    body, html {
+      overflow: hidden;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <header>
+    <img src="./../res/images/gamelab-logo.png" alt="" id="logo">
+    <span class="title">Spacegame</span>
+  </header>
+
+  <script>
+
+    var gameWindow = new Gamelab.GameWindow().Background('black');
+
+    var activeMeteors = [];
+
+    //sounds and animations to be applied throughout game
+    var GameAssets = {
+      backgroundSources: [],
+      sounds: {
+        shot: new Gamelab.Sound("./sounds/shot.mp3"),
+        powerup1: new Gamelab.Sound("./sounds/powerup-1.mp3"),
+        powerup2: new Gamelab.Sound("./sounds/powerup-1.mp3"),
+        crash1: new Gamelab.Sound("./sounds/crash-1.mp3"),
+        crash2: new Gamelab.Sound("./sounds/crash-2.mp3"),
+        ambient1: new Gamelab.Sound("./sounds/ambient/ambient-1.mp3").volume(0.7),
+        ambient2: new Gamelab.Sound("./sounds/ambient/ambient-2.mp3").volume(0.7)
+      },
+
+      weapon_animations: {
+        normal_bullet: new Gamelab.Animation().Src("./images/powershot/orange-orb.png").FrameSize(new Gamelab.Vector(65, 65, 0)).FrameBounds(new Gamelab.Vector(0, 0), new Gamelab.Vector(11, 0))
+      },
+
+      powerups: {
+        speedPower: new Gamelab.Animation("./images/powershot/green-orb.png").FrameSize(new Gamelab.Vector(65, 65, 0)).FrameBounds(new Gamelab.Vector(0, 0), new Gamelab.Vector(11, 0)),
+        shotPower: new Gamelab.Animation("./images/powershot/orange-orb.png").FrameSize(new Gamelab.Vector(65, 65, 0)).FrameBounds(new Gamelab.Vector(0, 0), new Gamelab.Vector(11, 0))
+      },
+
+      damage_animations: {
+        explosion1: new Gamelab.Animation("./images/explosions/explosion/spritesheet.png").FrameSize(new Gamelab.Vector(128, 128, 0)).FrameBounds(new Gamelab.Vector(0, 0), new Gamelab.Vector(5, 4), new Gamelab.Vector(5, 4)),
+        explosion_meteor: new Gamelab.Animation("./images/explosions/explosion-dandelion/spritesheet.png").FrameSize(new Gamelab.Vector(256, 256, 0)).FrameBounds(new Gamelab.Vector(0, 0), new Gamelab.Vector(6, 5), new Gamelab.Vector(6, 5)),
+        explosion_meteor_green: new Gamelab.Animation("./images/explosions/explosion-green-blast-1/spritesheet.png").FrameSize(new Gamelab.Vector(256, 256, 0)).FrameBounds(new Gamelab.Vector(0, 0), new Gamelab.Vector(50, 0))
+      }
+    };
+
+    var backgroundPlanets = [],
+      meteorites = [];
+
+    var EnemyShips = [
+      new Gamelab.Sprite('./images/spaceships/batwing-ship-small.png'),
+      new Gamelab.Sprite('./images/spaceships/firebird-ship-small.png'),
+      new Gamelab.Sprite('./images/spaceships/bug-ship-small.png'),
+      new Gamelab.Sprite('./images/spaceships/stingray-ship-small.png'),
+      new Gamelab.Sprite('./images/spaceships/tetrawing-ship-small.png')
+    ];
+
+    var playerShip = new Gamelab.Sprite('./images/spaceships/player-ship.png');
+    playerShip.Scale(1.0);
+    playerShip.Layer(100);
+
+    //variable to reference Game.selectedEnemy when the game starts
+    var selectedEnemy;
+
+    //Create a quick reference to Gamelab.Vector class (easier to type)
+    var V = Gamelab.Vector;
+
+    playerShip.onLoad(function() {
+      this.anime.FrameSize(90, 90).FrameBounds(new V(7, 0), new V(7, 0), new V(7, 0));
+      this.Size(90, 90);
+      this.Position(gameWindow.size.x / 2.0, gameWindow.size.y * 0.7);
+    });
+
+    playerShip.controlStats = {
+      speed: 3.0
+    };
+
+    // Add the playerShip to the gameWindow
+    gameWindow.add(playerShip);
+
+    //control position of playerShip with a, w, s, d
+    new Gamelab.KeyboardEvent().Keys(['a', 'w', 's', 'd']).Call(function(key) {
+      console.log('KeyboardEvent:key-down: ' + key);
+      var xVelocity = key == 'a' ? -1.0 : key == 'd' ? 1.0 : 0;
+      var yVelocity = key == 'w' ? -1.0 : key == 's' ? 1.0 : 0;
+      var totalSpeedVector = new V(xVelocity, yVelocity).mult(playerShip.controlStats.speed);
+      playerShip.position = playerShip.position.add(totalSpeedVector);
+    });
+
+
+    //Create basic playerBulletSprite (an energy bullet)
+    var playerBulletSprite = new Gamelab.Sprite('./images/spaceships/weapons/shot-green.png').Scale(0.5);
+
+    //load function for playerBulletSprite:: sets the anime (animation) + size of the sprite
+    playerBulletSprite.onLoad(function() {
+      this.anime.FrameSize(65, 65).FrameBounds(new V(0, 0), new V(12, 0), new V(12, 0));
+      this.Size(25, 25);
+      this.speed.y = -8;
+    });
+
+
+    playerBulletSprite.ScrollFactor(0);
+
+    //playerBulletFactory :: brings new bullets into the gameWindow
+    var playerBulletFactory = new Gamelab.SpriteFactory()
+      .PrepareSprites(200, playerBulletSprite, function onCreate() {
+        console.info('--created bullet sprite:', this);
+        this.ScrollFactor(0);
+
+        //set animation
+        this.anime.FrameSize(65, 65).FrameBounds(new V(0, 0), new V(12, 0), new V(12, 0));
+
+        //size the sprite
+        this.Size(25, 25);
+
+        //get the correct position for this bullet
+        var center = playerShip.size.div(2.0).sub(this.size.div(2.0));
+
+        //position the bullet
+        this.Position(playerShip.position.add(center.x, center.y - 40));
+
+        //set the initial speed.y
+        this.speed.y = -18.0;
+
+        //set the update for the bullet
+        this.onUpdate(function() {
+          //speed.y increases (negatively speaking)
+          //this.speed.y -= 0.2;
+
+          //position is incremented by speed.y
+          this.position.y += this.speed.y;
+        });
+      });
+
+    new Gamelab.KeyboardEvent().Keys(['space']).Call(function(key) {
+      console.log('KeyboardEvent:key-down: ' + key);
+
+      playerBulletFactory.Life(800);
+
+      //enter one bullet into the gameWindow (pass gameWindow as 2nd argument)
+      playerBulletFactory.enter(1, gameWindow);
+      //lockout for 10 updates to prevent way too many bullets being fired
+      //(the above line of code will do nothing for 10 calls)
+      playerBulletFactory.lockout(30);
+    });
+
+    //Create basic enemyBulletSprite (an energy bullet)
+    var enemyBulletSprite = new Gamelab.Sprite('./images/spaceships/weapons/shot-red.png').Scale(0.5);
+
+    //load function for enemyBulletSprite:: sets the anime (animation) + size of the sprite
+    enemyBulletSprite.onLoad(function() {
+      this.anime.FrameSize(65, 65).FrameBounds(new V(0, 0), new V(12, 0), new V(12, 0));
+      this.Size(65, 65);
+      this.speed.y = 8;
+    });
+
+    enemyBulletSprite.ScrollFactor(0);
+
+    //enemyBulletFactory :: brings new bullets into the gameWindow
+    var enemyBulletFactory = new Gamelab.SpriteFactory()
+      .PrepareSprites(200, enemyBulletSprite, function onCreate() {
+        console.info('--created bullet sprite:', this);
+        this.ScrollFactor(0);
+
+        //set animation
+        this.anime.FrameSize(65, 65).FrameBounds(new V(0, 0), new V(12, 0), new V(12, 0));
+
+        //size the sprite
+        this.Size(65, 65);
+
+        //get the correct position for this bullet
+        var center = selectedEnemy.size.div(2.0).sub(this.size.div(2.0));
+
+        //position the bullet
+        this.Position(selectedEnemy.position.add(center.x, selectedEnemy.size.y - 25));
+
+        //set the initial speed.y
+        this.speed.y = 6.0;
+
+        //set the update for the bullet
+        this.onUpdate(function() {
+          //speed.y increases (negatively speaking)
+          this.speed.y += 0.6;
+
+          //position is incremented by speed.y
+          this.position.y += this.speed.y;
+        });
+      });
+
+    playerShip.ScrollFactor(0);
+
+    //add an update to the playerShip
+    playerShip.onUpdate(function() {
+
+    });
+
+    //Main Game object (a game-controller)
+
+    var Game = {
+
+      __isLoaded: false,
+      focus: true,
+      selected_index: -1,
+      selectedEnemy: {},
+      ticker: 0,
+
+      addMeteorites: function() {
+
+        var mod = this.ticker % 300;
+
+        if (mod > 100 && this.ticker % 20 == 0) {
+
+          var mix = Math.round(Math.random() * 12) + 1;
+          var meteor = new Gamelab.Sprite(meteorites[mix]).Layer(100);
+          meteor.speed.y = Math.round(Math.random() * 10) + 1;
+          var posX = Math.random() * gameWindow.canvas.width,
+
+            posY = -300;
+
+          var sf = 1.0;
+
+          if (meteor.image && meteor.image.domElement) {
+
+            meteor.size = new Gamelab.Vector(meteor.image.domElement.width * sf, meteor.image.domElement.height * sf);
+
+            while (meteor.size.x >= gameWindow.canvas.width / 14) {
+
+              sf -= 0.05;
+
+              meteor.size = new Gamelab.Vector(meteor.image.domElement.width * sf, meteor.image.domElement.height * sf).round();
+            }
+          } else {
+            meteor.size = new Gamelab.Vector(20, 20);
+          }
+
+          meteor.noScroll = true;
+          meteor.position = new Gamelab.Vector(posX, posY);
+          meteor.life = 750;
+          meteor.speed.x = (posX - gameWindow.canvas.width / 2) * -0.01;
+          meteor.rot_speed.x = Math.random() * 4 * 100 / 100;
+          meteor.explode = METEOR_EXPLODE; //meteor has explode function
+          meteor.shatter = METEOR_SHATTER;
+          meteor.power = "x"; //no power / won't check for this
+
+          if (Math.random() * 30 <= 2) {
+
+            meteor.power = 'extra-shot'; //extra shot power  process later
+
+          } else if (Math.random() * 30 <= 4) {
+
+            meteor.explosion_animation = new Gamelab.Animation(GameAssets.damage_animations.explosion_meteor_green);
+
+            meteor.power = 'speed'; //speed shot power  process later
+
+          } else {
+            meteor.explosion_animation = new Gamelab.Animation(GameAssets.damage_animations.explosion_meteor);
+          }
+
+          var explosionSize = new Gamelab.Vector(200, 200, 0);
+
+          var centerExpVector = new Gamelab.Vector(meteor.position.add(meteor.size.div(2)).sub(explosionSize.div(2))); //use Gamelab.Vector mathematics to center the sprite;
+
+
+          meteor.explosion = new Gamelab.Sprite().FromData({
+
+            selected_animation: meteor.explosion_animation,
+
+            size: explosionSize.randomize(0.8, 1.2),
+
+            position: centerExpVector
+
+          });
+
+          if (meteor.explosion.anime) {
+            meteor.explosion.life = (meteor.explosion.anime.frames.length - 1) * 1;
+          }
+
+          console.log('EXP-LIFE::' + meteor.explosion.life);
+
+          meteor.explosion.onUpdate(function(spr) {
+
+            this.anime.engage(900);
+
+          });
+
+          meteor.explosion.noScroll = true;
+
+          meteor.health = 4;
+
+          meteor.Life(1050);
+
+          meteor.onUpdate(function(spr) {
+
+            this.life -= 1.0;
+
+            this.position = this.position.add(this.speed);
+
+            this.rotation.x += this.rot_speed.x;
+
+          });
+
+          if (meteor.size.x == 0) {
+
+            //alert('bad-size');
+
+          } else {
+
+            activeMeteors.push(meteor);
+
+          }
+
+          console.log('active Meteor len:' + activeMeteors.length);
+
+          for (var x = 0; x < activeMeteors.length; x++) {
+            if (activeMeteors[x].isDead() || activeMeteors[x].active == false) {
+              activeMeteors.splice(x, 1);
+            }
+          };
+
+          new Gamelab.CollisionEvent().OnCollision(activeMeteors, playerShip).Call(function(obj1, obj2) {
+
+            if (obj1.active && !obj2.flickering) { //if 'alive'
+
+              //var sound = sound || new Gamelab.Sound(GameAssets.sounds.crash1).volume(0.4); sound.play();
+
+              obj2.health -= 20;
+
+              if (obj2.health < 1) {
+
+                obj2.health = 1;
+              }
+
+              //obj2.ShowFlickerEffect(500);
+
+            }
+          });
+
+          gameWindow.add(meteor);
+          /*add */
+        }
+
+      },
+
+      //fill the initial screen with stars
+      fillScreen: function() {
+        for (var x = 0; x < 100; x++) {
+
+          var star = new Gamelab.Sprite(backgroundStars[x % 4 + 1]);
+          star.Layer(10).ScrollFactor(0.3).Life(750);
+
+          var posX = Math.random() * (gameWindow.canvas.width + 400) - 200,
+            posY = Math.random() * (gameWindow.canvas.height + 400) - 200,
+            size = Math.random() * 10 + 10;
+          star.Size(size, size);
+          star.position = new Gamelab.Vector(posX, posY);
+          gameWindow.add(star, true);
+          /*add to bottom-layer*/
+
+        }
+      },
+
+      //update function: runs around 60 times per second when processing power is enough
+      update: function() {
+        gameWindow.camera.position.y -= 4; //constant scroll
+        this.ticker += 1.0;
+
+        if (this.ticker % 20 == 0) {
+          var star = new Gamelab.Sprite(backgroundStars[x % 4 + 1]);
+          star.Layer(10).ScrollFactor(0.3).Life(750);
+          var posX = Math.random() * gameWindow.canvas.width,
+            posY = -200 + Math.round(gameWindow.camera.position.y * star.scrollFactor),
+            size = Math.random() * 10 + 10;
+          star.Size(size, size);
+          star.position = new Gamelab.Vector(posX, posY);
+          gameWindow.add(star, true);
+          /*add to bottom-layer*/
+        }
+
+        Game.addMeteorites();
+        gameWindow.removeDeadObjects(); //remove any dead sprite
+      },
+
+      //switch function : adding a new enemy ship to the screen
+      addEnemyShip: function() {
+        Game.selected_index += 1;
+        Game.selectedEnemy = selectedEnemy = SHIPS[Game.selected_index % SHIPS.length];
+        if (Game.selectedEnemy) {
+          Game.selectedEnemy.show();
+        }
+      }
+    };
+
+    //Enemy Engines: Particle Effect arguments:
+    var particleArgs = {
+        globalCompositeOperation: 'lighter',
+        birthrate: 10,
+        life: {
+          a: 6,
+          b: 6,
+          transition: 'random'
+        },
+        speed: {
+          a: 0,
+          b: 10,
+          transition: 'linear'
+        },
+        scale: {
+          a: 0.3,
+          b: 0.1,
+          transition: 'linear'
+        },
+        angle: {
+          a: 70,
+          b: 110,
+          transition: 'random'
+        },
+        alpha: {
+          a: 0.8,
+          b: 0,
+          transition: 'linear'
+        }
+      },
+
+      particleBlueArgs = {
+        globalCompositeOperation: 'lighter',
+        birthrate: 10,
+        life: {
+          a: 6,
+          b: 6,
+          transition: 'random'
+        },
+        speed: {
+          a: 0,
+          b: 10,
+          transition: 'linear'
+        },
+        scale: {
+          a: 0.3,
+          b: 0.1,
+          transition: 'linear'
+        },
+        angle: {
+          a: 70,
+          b: 110,
+          transition: 'random'
+        },
+        alpha: {
+          a: 0.8,
+          b: 0,
+          transition: 'linear'
+        }
+      };
+
+    //Create instance of Particle for enemy ship's engine-particle, use particleArgs
+    var engineParticleA = new Gamelab.Particle(particleArgs, gameWindow).Src('./images/particles/fire.png');
+
+    //use composite of 'lighter': causes fire-like mixing of pixels
+    engineParticleA.Composite('lighter').Layer(-1);
+
+    //Create instance of ParticleB for enemy ship's engine-particle, use particleArgs
+    var engineParticleB = new Gamelab.Particle(particleBlueArgs, gameWindow).Src('./images/particles/fire-blue.png');
+
+    //use composite of 'lighter': causes fire-like mixing of pixels
+    engineParticleB.Composite('lighter').Layer(-1);
+
+    //apply properties to enemy ships
+    EnemyShips.forEach(function(ship) {
+
+      //ship.name equal to filename, take out the '.png'
+      ship.name = ship.src.split('/').pop().split('.')[0];
+
+      //by default the ship is not active and will not be drawn (invisible)
+      ship.active = false;
+
+      //apply zero to rotation.x  (use 180 for ships intended to fly up the screen)
+      ship.rotation.x = 0;
+
+      //set timer to zero
+      ship.timer = 0;
+
+      ship.particle = ship.name.indexOf('stingray') >= 0 || ship.name.indexOf('batwing') >= 0 || ship.name.indexOf('bug') >= 0 ? 'b' : 'a';
+
+      ship.ScrollFactor(0);
+
+      //define the ship update
+      ship.onUpdate(function() {
+        this.position.y += 4.0;
+        this.ticker += 1;
+        if (this.active && this.ticker % 1 == 0) {
+
+          if (this.particle == 'a') {
+            engineParticleA.Position(this.position.add(this.size.x / 2, this.size.y * 0.1).sub(4.5, 4));
+
+            if (this.name == 'tetrawing') {
+
+              engineParticleA.position.y += 15;
+              engineParticleA.Position(this.position.add(this.size.x / 2, this.size.y * 0.1).sub(4, 4));
+
+            }
+
+            if (this.name == 'batwing') {
+              engineParticleA.position.x += 2.0;
+            }
+
+            engineParticleA.enter(3);
+          }
+
+          if (this.particle == 'b') {
+            engineParticleB.Position(this.position.add(this.size.x / 2, this.size.y * 0.1).sub(4.5, 4));
+
+            if (this.name == 'tetrawing') {
+
+              engineParticleB.position.y += 15;
+
+            }
+
+            if (this.name == 'batwing') {
+              engineParticleB.position.x += 2.0;
+            }
+            engineParticleB.enter(3);
+          }
+        }
+      });
+      ship.show = function() {
+
+        EnemyShips.forEach(function(s) {
+          s.active = false;
+        });
+
+        this.active = true;
+        this.Scale(0.5);
+
+        this.Layer(100);
+
+        var sizeX = this.size.x || 60;
+        var px = Math.ceil(Gamelab.WIDTH * 0.5) - sizeX / 2,
+          pxAdjustment = Math.round(Math.random() * 200);
+
+        //create odds of 1 in 2 for the position adjustment (negative or positive)
+        if (Math.random() * 1.0 >= 0.5) {
+          px += pxAdjustment;
+        } else {
+          px -= pxAdjustment;
+        }
+
+        //position the ship just above the top of the screen
+        this.Position(px, -200);
+      };
+
+      ship.onLoad(function() {
+        SHIPS.push(this);
+        if (!Game.__isLoaded) {
+          //call switch once
+          Game.addEnemyShip();
+          Game.__isLoaded = true;
+        }
+      });
+      //add the ship to the game window
+      gameWindow.add(ship, {
+        layer: 100
+      });
+    });
+
+    var V = Gamelab.Vector,
+      SHIPS = [];
+
+
+    var backgroundStars = [];
+
+    for (var x = 1; x <= 4; x++) {
+      backgroundStars.push(new Gamelab.Sprite('./images/solar-system-pack/Stars/star (' + x + ').png'));
+    };
+
+
+    for (var x = 1; x <= 11; x++) {
+      if (x <= 4)
+        backgroundPlanets.push(new Gamelab.Sprite('./images/solar-system-pack/Planets/planet (' + x + ').png'));
+      meteorites.push(new Sprite('./images/solar-system-pack/meteors/meteorite (' + x + ').png'));
+    };
+
+
+    var METEOR_EXPLOSIONS = METEOR_EXPLOSIONS || [];
+
+    //meteor explode function::applied to each meteor
+
+    var METEOR_EXPLODE = function() {
+
+      if (this.active) {
+
+        var camPos = Gamelab.game_windows[0].camera.position;
+
+        this.explosion.Position(this.position.add(this.size.div(2)).sub(this.explosion.size.div(2)));
+
+        var $meteor = this;
+
+        gameWindow.add(this.explosion);
+
+        gameWindow.remove(this);
+
+
+        activeMeteors.splice(activeMeteors.indexOf(this), 1);
+
+        // console.log('Active Meteor Total:' + activeMeteors.length);
+
+
+        var __inst = this;
+
+        //shatter if function exists
+        if (typeof(this.shatter) == 'function')
+          this.shatter(meteorites, 3);
+
+        //play explosion sound
+        var sound = sound || new Gamelab.Sound(GameAssets.sounds.crash1).volume(0.1);
+        sound.play();
+
+
+        var powerup;
+
+        if (this.power == 'extra-shot') {
+
+          powerup = new Gamelab.Sprite().Name('extra-shot').Size(new Gamelab.Vector(30, 30, 0));
+
+          powerup.Animation(GameAssets.powerups.shotPower);
+
+        } else if (this.power == 'speed') {
+
+          powerup = new Gamelab.Sprite().Name('speed').Size(new Gamelab.Vector(30, 30, 0));
+
+          powerup.Animation(GameAssets.powerups.speedPower);
+
+        }
+
+        if (powerup) {
+
+          powerup.Pos(this.center().sub(powerup.size.div(2)));
+
+          powerup.onUpdate(function(spr) {
+
+            spr.selected_animation.run();
+
+          });
+
+          powerup.speed.x = (powerup.position.x - gameWindow.canvas.width / 2) * -0.01;
+          powerup.speed.y = 3;
+          powerup.noScroll = true;
+          powerup.life = 3000;
+          gameWindow.add(powerup);
+
+          //Collect powerup on collision
+          new Gamelab.CollisionEvent().OnCollision(playerShip, powerup).Call(function(obj1, obj2) {
+
+            if (obj2.active) {
+
+              //  obj2.active = false;
+
+              switch (obj2.name) { //name of powerup
+
+                case "extra-shot":
+
+                  obj1.Weapon.totalPerShot += 1;
+                  obj1.Weapon.rot_disp += 10;
+                  obj2.active = false;
+                  GameAssets.sounds.powerup1.play();
+
+                  break;
+
+                case "speed":
+
+                  obj1.speedMultiple = obj1.speedMultiple || 1;
+                  obj1.speedMultiple += 1;
+                  obj2.active = false;
+                  GameAssets.sounds.powerup1.play();
+
+                  break;
+              }
+              gameWindow.remove(obj2);
+            }
+          });
+        }
+      };
+    }
+
+
+    //meteor / shatter into chunks
+    var METEOR_SHATTER = function(shardset, totalPieces, lifeTime) {
+
+      if (this.active) {
+
+        for (var x = 0; x < totalPieces; x++) {
+
+          var spr = new Gamelab.Sprite(shardset[x % shardset.length]);
+
+          spr.active = true;
+
+          spr.noScroll = true;
+
+          spr.scrollFactor = 0;
+
+          spr.speed = new Gamelab.Vector().rotationalSpeedPoint(Math.round(Math.random() * 360), Math.round(Math.random() * 5));
+
+          spr.speed = new Gamelab.Vector(spr.speed.add(this.speed.div(2)));
+
+          spr.rot_speed.x = Math.random() * 5 + 1;
+
+          if (x % 2 == 0)
+            spr.rot_speed.x *= -1;
+
+          var sizeRandomDiv = Math.round(Math.random() * (8 - 3)) + 3;
+
+          spr.size = new Gamelab.Vector(this.size.div(sizeRandomDiv));
+
+          spr.position = new Gamelab.Vector(this.center().sub(spr.size.div(2)));
+
+          // console.log('shatter piece');
+
+          //  console.log(spr);
+
+          spr.life = 900;
+
+          gameWindow.add(spr);
+
+        }
+
+      } else {
+        alert('INACTIVE');
+      }
+
+    };
+
+    //Play main sound : ambient
+
+    GameAssets.sounds.ambient1.Loop().play(); //song will play endlessly until stopped
+
+    var count = 0;
+
+    //Every 6000 milliseconds, call Game.addEnemyShip()
+    setInterval(function() {
+      if (count == 0) {
+        return;
+      }
+      //call Game.addEnemyShip
+      if (Game.focus)
+        Game.addEnemyShip();
+    }, 6000);
+
+    document.addEventListener("visibilitychange", function() {
+      Game.focus = !Game.focus;
+    });
+
+    gameWindow.onUpdate(function() {
+      Game.update();
+
+      if (Game.selectedEnemy &&
+        Game.selectedEnemy.onScreen &&
+        Game.selectedEnemy.onScreen(gameWindow.size.x, gameWindow.size.y, gameWindow)) {
+        console.log('enemy on screen');
+        enemyBulletFactory.Life(800);
+        //enter one bullet into the gameWindow (pass gameWindow as 2nd argument)
+        enemyBulletFactory.enter(1, gameWindow);
+        //lockout for 10 updates to prevent way too many bullets being fired
+        //(the above line of code will do nothing for 10 calls)
+        enemyBulletFactory.lockout(Math.round(Math.random() * 100) + 50);
+      }
+    });
+
+    Gamelab.ready(function() {
+      Game.fillScreen();
+      gameWindow.start();
+
+      var isPC = !Gamelab.isMobileOrTablet();
+
+      alert('isPC?=' + isPC);
+      
+    });
+  </script>
+
+</body>
+
+</html>

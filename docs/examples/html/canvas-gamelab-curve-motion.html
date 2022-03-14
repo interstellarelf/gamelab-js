@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Curve Motion</title>
+  <script src="../dist/gamelab/gamelab.js"></script>
+  <script src="./js/libs/dat.gui.js"></script>
+
+  <!-- spritebox-example.css style -->
+  <link rel="stylesheet" href="./styles/example.css">
+
+</head>
+
+<body>
+  <header>
+    <img src="./images/lib/gamelab-logo.png" alt="" id="logo">
+    <span class="title">Curve Motion</span>
+  </header>
+
+  <script>
+  
+    var Gamestack = Gamelab;
+
+    var SCREEN_SCALE = 0.5,
+
+      sizeUnit = Math.round(64 * SCREEN_SCALE);
+
+    var Game = {},
+      COLLISION_BOXES = [];
+
+    Game.COLLISION_BOXES = COLLISION_BOXES;
+
+    var player,
+      Animation = Gamestack.Animation,
+      Vector = Gamestack.Vector,
+      VectorFrameBounds = Gamestack.VectorFrameBounds;
+
+    Gamelab.ready(function(){
+
+      let list = Gamelab.UI.getCurveCanvasList();
+
+      console.info(Gamelab.Curves);
+
+      list.forEach(function(canvas){
+
+        console.image(canvas.toDataURL());
+
+      });
+
+    });
+
+  </script>
+
+
+</body>
+
+</html>

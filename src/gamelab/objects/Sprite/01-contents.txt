@@ -1,0 +1,10 @@
+//TODO: check and complete all classes herein
+
+SpriteSwitch
+EmptySprite
+BoneSprite
+Interactive
+Item
+ScrollingBackground
+SpriteFactory
+FillSprite

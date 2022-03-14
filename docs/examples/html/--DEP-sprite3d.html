@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Gamelab.Sprite3d-Demo</title>
+    <script src="../dist/gamelab/gamelab.js"></script>
+    <script src="../res/libraries/three.js"></script>
+    <link rel="stylesheet" href="./styles/example.css">
+    <style>
+
+      div#container{
+        position:fixed;
+        top:0px;
+        left:0px;
+        bottom:0px;
+        right:0px;
+        width:100%;
+        height:100%;
+        background:#777;
+      }
+
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="./images/lib/gamelab-logo.png" alt="" id="logo">
+      <span class="title">Sprite3d-Demo</span>
+    </header>
+
+    <div id="container"></div>
+
+    <script>
+
+    var threejsWindow = new Gamelab.ThreeJsWindow('#container'),
+    gameWindow = new Gamelab.GameWindow();
+
+    var spriteController = new Gamelab.SpriteController();
+
+    var knownGroups = [];
+
+      let assets = [new Gamelab.Sprite('./res/images/deathtraps/saw-blade-01.png')];
+
+      let ct = 0, countMembers = 0;
+      assets.forEach((s)=>{
+        s.index = ct;
+
+        if(s instanceof Sprite)
+        {
+          s.onLoad(function(){
+
+            this.flipX = true;
+            this.Origin(this.size.div(2.0));
+            this.Position(800, 800);
+            let zOffset = -1000;
+            let t3d = new Gamelab.Sprite3D(this, 0.4);
+            if(!(knownGroups.indexOf(t3d.group) >= 0))
+            {
+              knownGroups.push(t3d.group);
+              spriteController.add(t3d.member);
+              t3d.memberIndex = countMembers;
+              countMembers += 1.0;
+              threejsWindow.add(t3d.group);
+            }
+
+            this.onUpdate(function(){
+
+              this.rotation.z -= 0.4 * 3.0;
+
+            });
+
+            gameWindow.add(this);
+          });
+        }
+
+        if(s instanceof Bone3D)
+        {
+          //do nothing
+        }
+
+
+
+        ct += 1;
+        });
+
+
+
+                gameWindow.onBeforeDraw(function(){
+
+                  var sprites =  this.drawables.filter(function(a){ return a.constructor.name == 'Sprite' });
+
+                  sprites.forEach(function(s){
+
+
+
+                  });
+
+                });
+
+    Gamelab.ready(function(){
+      threejsWindow.start();
+      gameWindow.start();
+    });
+    </script>
+</body>
+</html>

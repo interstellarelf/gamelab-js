@@ -1,0 +1,265 @@
+@font-face {
+  font-family: "Roboto";
+  src: url("./webfonts/Roboto-Light.ttf") format("ttf");
+}
+body,
+html {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #222;
+  color: lightgrey;
+  padding: 0;
+  margin: 0;
+  font-family: 'Roboto';
+  font-weight: 200;
+}
+a,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+i,
+li,
+p,
+span,
+ul {
+  font-weight: 100;
+  letter-spacing: 2px;
+}
+* {
+  -webkit-font-smoothing: antialiased;
+}
+h2.title {
+  display: block;
+  text-align: center;
+  font-size: 40px;
+  margin: 4px;
+  color: #c7c7c7;
+
+}
+
+h3.description {
+  display: block;
+  text-align: center;
+  font-size: 20px;
+  padding: 4px;
+  margin: 5px 5px 25px;
+}
+div.window-top {
+  position: relative;
+  left:0px;
+  width: 100%;
+  min-height: 120px;
+  background: #000;
+  border-bottom: 2px ridge #777;
+  padding-bottom:30px;
+}
+nav.top-nav {
+  position: relative;
+  display: block;
+  text-align: center;
+  top: 4px;
+}
+nav.top-nav a {
+  color: #adadad;
+  font-size: 18px;
+  padding: 12px;
+  border: 1px ridge lightgrey;
+  text-decoration: none;
+  margin: 3px;
+  background: -webkit-linear-gradient(top, rgba(40, 40, 40, 0.6), rgba(35, 35, 35, 0.6) 50%, rgba(10, 10, 10, 0.8) 50%, rgba(0, 0, 0, 0.8));
+}
+div.blog-heading {
+  position: relative;
+  padding: 5px 20px 0px;
+  width: 55%;
+  min-height: 210px;
+  color: lightgrey;
+  left: 60px;
+  border-bottom: 2px inset #444;
+}
+div.blog-heading h1,
+div.blog-heading h2 {
+  position:relative;
+  left:-22px;
+  display: block;
+  font-size: 26px;
+  text-decoration: underline;
+}
+div.blog-heading span {
+  padding: 7px;
+  color: skyblue;
+  font-size: 20px;
+  display: block;
+}
+div.blog-heading span.date {
+
+
+}
+span.date:before {
+  position: absolute;
+  display: block;
+  margin-left: -34px;
+  margin-top: -2px;
+  width: 24px;
+  height: 24px;
+  content: " ";
+  background: url("./img/clock-icon.png");
+  background-size: 100% auto;
+}
+div.blog-heading span.technology {
+
+}
+span.technology:before {
+  position: absolute;
+  display: block;
+  margin-left: -34px;
+  margin-top: -1px;
+  width: 24px;
+  height: 24px;
+  content: " ";
+  background: url("./img/braces-icon.png");
+  background-size: 100% auto;
+}
+div.blog-heading span.author {
+
+}
+span.author:before {
+  position: absolute;
+  display: block;
+  margin-left: -33px;
+  margin-top: -1px;
+  width: 24px;
+  height: 24px;
+  content: " ";
+  background: url("./img/author-icon.png");
+  background-size: 100% auto;
+}
+div.blog-article {
+  position: relative;
+  padding: 20px;
+  width: 55%;
+  min-height: 220px;
+  color: lightgrey;
+  left: 30px;
+  font-size: 19px;
+  line-height: 28px;
+  font-weight: 200;
+}
+div.blog-article p {
+  position: relative;
+}
+pre {
+  position: relative;
+}
+pre code {
+  max-width: 100%;
+  position: relative;
+  margin: 0;
+  color: lightgrey;
+  background-color: #111;
+  border: 1px solid #777;
+  display: block;
+  text-align: left;
+  white-space: pre-wrap;
+  /* Since CSS 2.1 */
+  white-space: -moz-pre-wrap;
+  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;
+  /* Opera 4-6 */
+}
+code,
+pre {
+  white-space: pre-line;
+}
+
+code {
+  font-size:14px;
+    padding:10px;
+}
+
+div.main {
+  position: relative;
+  height: auto;
+  width: 100%;
+}
+
+
+
+section.right-col {
+    position:absolute;
+    height: 96%;
+    top: 0;
+    width: 27%;
+    right: 4px;
+    padding: 11px;
+    border-left: 2px ridge #888;
+    overflow-y:auto;
+}
+
+
+
+section.right-col a {
+  color:salmon;
+  margin:3px;
+}
+
+section.right-col > div {
+    margin-left: 25px;
+}
+
+section.right-col span.section-name {
+  font-size: 20px;
+  color: skyblue;
+}
+
+span.section-name {
+  font-size: 20px;
+  color: skyblue;
+}
+
+div.page-links {
+  margin-top: 33px;
+}
+section.right-col ul.links {
+  font-size: 18px;
+  color: lightgrey;
+  margin-top: 8px
+
+}
+
+section.right-col ul.links li {
+  list-style-type: circle;
+  margin: 6px;
+}
+
+footer {
+  position: relative;
+  width: 100%;
+  min-height: 120px;
+  border-top: 2px ridge #777;
+  letter-spacing:1.5px;
+}
+footer div.donate {
+  display: block;
+  padding: 30px 30px 30px 60px;
+  line-height: 24px;
+}
+footer div.donate h2 {
+  font-size: 22px;
+  text-decoration: underline;
+}
+footer div.donate p {
+  font-size: 18px;
+}
+footer div.donate a {
+  font-size: 18px;
+  color: #00b5ff;
+}
+footer div.donate span {
+  font-size: 18px;
+  color: #00b5ff;
+}

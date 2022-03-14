@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Particle</title>
+  <script src="../dist/gamelab/gamelab.js"></script>
+  <script src="./../res/libraries/dat.gui.js"></script>
+  <!-- spritebox-example.css style -->
+  <link rel="stylesheet" href="../res/styles/gamelab-example.css">
+
+  <style>
+    span.dgc-title {
+      position: absolute;
+      z-index: 9999;
+      width: 241px;
+      height: 20px;
+      font-size: 12px;
+      top: 0;
+      overflow: visible;
+      background: #111;
+      color: lightgrey;
+      padding-left: 4px;
+      border-bottom: 1px solid #444;
+    }
+  </style>
+
+</head>
+
+<body>
+  <header>
+    <img src="../res/images/gamelab-logo.png" alt="" id="logo">
+    <span class="title">Particle</span>
+  </header>
+  <script>
+    /***************
+     * Call gameWindow.start()
+     * *************/
+    var particle,
+      gameWindow
+
+    var datargs = {
+      shape: 'circle',
+      path: {
+        selection: 'random',
+        size: {
+          x: 200,
+          y: 200
+        },
+        curve: 'linear'
+      },
+      birthrate: {
+        a: 20,
+        b: 20,
+        transition: 'random'
+      },
+      life: {
+        a: 70,
+        b: 70,
+        transition: 'random'
+      },
+      color: {
+        a: '#ff0000',
+        b: '#0000ff',
+        transition: 'linear'
+      },
+      speed: {
+        a: 1.0,
+        b: 4.0,
+        transition: 'linear'
+      },
+      scale: {
+        a: 0.8,
+        b: 0.1,
+        transition: 'linear'
+      },
+      angle: {
+        a: -105,
+        b: -65,
+        transition: 'random'
+      },
+      alpha: {
+        a: 1.0,
+        b: 0.1,
+        transition: 'linear'
+      }
+    };
+
+    var ParticleDemo;
+
+    function ready() {
+
+      //Create the game-window
+
+      gameWindow = gameWindow || new Gamelab.GameWindow().Background('black');
+
+      gameWindow.reset_draw();
+
+      particle = new Gamelab.Particle(datargs, gameWindow).Src('./images/particles/white-ring.png');
+
+      particle.Composite('lighter');
+
+      ParticleDemo = {
+        particle: particle,
+        shoot: function(datargs) {
+          this.particle.Composite('lighter');
+          this.particle.Position(300, 350);
+          this.particle.enter(1)
+        }
+      };
+
+      var COUNT = 0;
+
+      setTimeout(function() {
+
+        gameWindow.onBeforeDraw(function() {
+
+          COUNT += 1;
+
+          gameWindow.ctx.globalCompositeOperation = 'lighter';
+
+          if (COUNT % 4 == 0)
+          {
+            ParticleDemo.shoot();
+          }
+
+        });
+
+      }, 1000);
+
+
+      //start gameWindow
+      if (!BEGIN) {
+        gameWindow.start();
+        BEGIN = true;
+      }
+
+    };
+
+    var BEGIN = false;
+
+    Gamelab.ready(function() {
+
+      ready();
+
+    });
+  </script>
+
+</body>
+
+</html>

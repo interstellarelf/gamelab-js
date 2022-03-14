@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Canvas Scrolling Background</title>
+  <script src="../dist/gamelab/gamelab.js"></script>
+  <script src="./js/libs/dat.gui.js"></script>
+
+  <!-- spritebox-example.css style -->
+  <link rel="stylesheet" href="./styles/example.css">
+
+</head>
+
+<body>
+  <header>
+    <img src="./images/lib/gamelab-logo.png" alt="" id="logo">
+    <span class="title">Scrolling Background</span>
+  </header>
+
+  <script>
+
+      Gamelab.ready(function(){
+
+          var gameWindow = new Gamelab.GameWindow();
+
+          var bgSize = new Gamelab.Vector(400, 400);
+
+          var background = new Gamelab.ScrollingBackground('./images/sky/sky.png', bgSize).Fill(8, 8, gameWindow);
+
+          gameWindow.start();
+
+      });
+
+  </script>
+
+
+</body>
+
+</html>

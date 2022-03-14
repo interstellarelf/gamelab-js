@@ -23,7 +23,20 @@
       return Gamelab.stopDraw || false;
     }
 
-    arc(p1, p2, options = {}) {
+    drawLine(a, b, strokeStyle){
+
+      if (this.isStopped())
+        return;
+
+      var ctx = Gamelab.game_windows[0].ctx;
+      ctx.strokeStyle = strokeStyle || 'aqua';
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+    }
+
+    arc(p1, p2, strokeStyle) {
 
       if (this.isStopped())
         return;
@@ -76,11 +89,12 @@
       //degrees rotation:
       var deg = rotation;
       deg = deg % 360;
-      var rad = deg * Math.PI / 180;
+      var rad = Math.floor((deg * Math.PI * 1000) / 180) / 1000;
       //Set the origin to the center of the image
       canvasContext.translate(x, y);
       canvasContext.rotate(rad);
       //Rotate the canvas around the origin
+
 
       canvasContext.translate(0, canvasContext.width);
 
@@ -99,7 +113,7 @@
 
       if(globalComposite)
       {
-        canvasContext.globalCompositeOperation = globalComposite;
+        //canvasContext.globalCompositeOperation = globalComposite;
       }
       //draw the image
       canvasContext.drawImage(image, fx, fy, fw, fh, -origin.x, -origin.y, width, height);

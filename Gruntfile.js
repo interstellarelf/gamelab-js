@@ -10,14 +10,11 @@ module.exports = function(grunt) {
 
   require('load-grunt-tasks')(grunt); // npm install --save-dev load-grunt-tasks
 
-  var fsExtra = require('node-fs-extra'),
+  var fsExtra = require('fs-extra'),
     glob = require('glob');
 
   var folders = {
-    'gamelab-examples': 'gamelab-examples',
-    'gamelab-tools': 'gamelab-tools',
-    'gamelab-builders': 'gamelab-builders',
-    'gamelab-games': 'gamelab-games'
+    'examples': 'examples'
   };
 
   grunt.initConfig({
@@ -28,8 +25,8 @@ module.exports = function(grunt) {
         jsdoc: './node_modules/.bin/jsdoc',
         options: {
           destination: './docs',
-          configure: './node_modules/docula-jsdoc/jsdoc.conf.json',
-          template: './node_modules/docula-jsdoc'
+          configure: './node_modules/docula-js-doc-template/jsdoc.conf.json',
+          template: './node_modules/docula-js-doc-template'
         }
       }
     },
@@ -182,10 +179,7 @@ module.exports = function(grunt) {
 
 
   var folderFiles = {
-    'gamelab-examples': [],
-    'gamelab-tools': [],
-    'gamelab-games': [],
-    'gamelab-builders': []
+    'examples': []
   };
 
   function CreateExample(path) {
@@ -203,11 +197,11 @@ module.exports = function(grunt) {
     var done = this.async();
 
     var last = folders[Object.keys(folders).pop()];
-    var examplesFolder = 'gamelab-examples';
+    var examplesFolder = 'examples';
     var source = __dirname + '/' + examplesFolder,
       target = __dirname + '/docs/' + examplesFolder + '/' + 'html';
 
-    glob(__dirname + '/docs/gamelab-examples/html' + '/*.html', {}, function(err, files) {
+    glob(__dirname + '/docs/examples/html' + '/*.html', {}, function(err, files) {
 
       console.log(JSON.stringify(files));
       files.forEach(function(f) {
@@ -240,10 +234,38 @@ module.exports = function(grunt) {
   });
 
 
+
+  //copy ALL DOCS to the gamelab-angular project
+
+  //Register Custom Task:: Copy all examples, tools, games, builders into the docs folder
+  grunt.registerTask('doc-copy-all', function() {
+
+    var done = this.async();
+
+    var path = require('path');
+
+    var source = __dirname + '/docs',
+      target = path.resolve('./../gamelab-framework-angular/src/assets/docs/library');
+
+      fsExtra.copy(source, target, function(err) {
+        if (err) {
+          console.error(err);
+        } else {
+          console.log("success at copying::" + source + '/*');
+        }
+
+        done();
+
+      }); //copies directory, even if it has subdirectories or files
+
+  });
+
+
+
   grunt.registerTask('build', ['concat', 'babel', 'copy-to-gamelab-tools']);
   grunt.registerTask('default', ['concat', 'babel', 'copy-to-gamelab-tools']);
-  grunt.registerTask('doc', ['doc-copy-files', 'doc-list-files', 'jsdoc']);
-  grunt.registerTask('docs', ['doc-copy-files', 'doc-list-files', 'jsdoc']);
+  grunt.registerTask('doc', ['doc-copy-files', 'doc-list-files', 'jsdoc', 'doc-copy-all']);
+  grunt.registerTask('docs', ['doc-copy-files', 'doc-list-files', 'jsdoc', 'doc-copy-all']);
   grunt.registerTask('hint', ['jshint']);
   grunt.registerTask('jshint', ['jshint']);
   grunt.registerTask('all', ['concat', 'babel']);

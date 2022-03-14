@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+      Item
+      - Documentation
+    </title>
+
+    <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+    <script src="scripts/jquery.js"></script>
+    <script src="scripts/custom.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad();
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-spritebox-dark.css">
+    <style>
+
+      i.g-icon {
+        position: absolute;
+        z-index: 9999;
+        top: 5px;
+        left: 200px;
+        border: none;
+        background: url("images/g.png");
+        background-size:96% auto;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+
+
+
+      div#main{
+
+      background:#101010;
+
+      }
+
+
+      example-link{
+
+      cursor:pointer;
+
+      }
+
+    </style>
+
+  </head>
+
+  <body>
+
+    
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+    
+
+    <input type="checkbox" id="nav-trigger" class="nav-trigger"/>
+    <label for="nav-trigger" class="navicon-button x">
+      <div class="navicon"></div>
+    </label>
+
+    <label for="nav-trigger" class="overlay"></label>
+
+    <div class="top-nav-wrapper">
+      <ul>
+        <li >
+          <img class="logo" style="cursor:pointer; position:relative; height:34px; width:auto; " src="images/gamelab-logo.png" onclick="window.location='index.html';"></img>
+            <i class="g-icon"></i>
+        </li>
+
+        
+        <li>
+          <form id="search-form" class="navbar-form" role="search">
+
+            <i class="search-icon-planet"></i>
+            <input type="text" id="search-input" placeholder="Search" class="search-input">
+          </form>
+        </div>
+      </li>
+      
+
+    </ul>
+  </div>
+
+  <nav style="padding-top:30px;">
+    <h3 class="reference-title">
+      System Documentation
+    </h3>
+
+    <h3>Classes</h3><ul><li id="GameWindow-nav"><a href="GameWindow.html">GameWindow</a><ul class='methods'><li data-type="method" id="GameWindow-getCanvas-nav"><a href="GameWindow.html#getCanvas">getCanvas</a></li><li data-type="method" id="GameWindow-center-nav"><a href="GameWindow.html#center">center</a></li><li data-type="method" id="GameWindow-GridStyle-nav"><a href="GameWindow.html#GridStyle">GridStyle</a></li><li data-type="method" id="GameWindow-onUpdate-nav"><a href="GameWindow.html#onUpdate">onUpdate</a></li><li data-type="method" id="GameWindow-onResize-nav"><a href="GameWindow.html#onResize">onResize</a></li><li data-type="method" id="GameWindow-update-nav"><a href="GameWindow.html#update">update</a></li><li data-type="method" id="GameWindow-onBeforeDraw-nav"><a href="GameWindow.html#onBeforeDraw">onBeforeDraw</a></li><li data-type="method" id="GameWindow-onAfterDraw-nav"><a href="GameWindow.html#onAfterDraw">onAfterDraw</a></li><li data-type="method" id="GameWindow-Size-nav"><a href="GameWindow.html#Size">Size</a></li><li data-type="method" id="GameWindow-add-nav"><a href="GameWindow.html#add">add</a></li><li data-type="method" id="GameWindow-Background-nav"><a href="GameWindow.html#Background">Background</a></li><li data-type="method" id="GameWindow-remove-nav"><a href="GameWindow.html#remove">remove</a></li><li data-type="method" id="GameWindow-run-nav"><a href="GameWindow.html#run">run</a></li><li data-type="method" id="GameWindow-start-nav"><a href="GameWindow.html#start">start</a></li></ul></li><li id="Camera-nav"><a href="Camera.html">Camera</a></li><li id="Module-nav"><a href="Module.html">Module</a></li><li id="Vector2Range-nav"><a href="Vector2Range.html">Vector2Range</a></li><li id="VectorFrameBounds-nav"><a href="VectorFrameBounds.html">VectorFrameBounds</a></li><li id="Sprite-nav"><a href="Sprite.html">Sprite</a><ul class='methods'><li data-type="method" id="Sprite-onLoad-nav"><a href="Sprite.html#onLoad">onLoad</a></li><li data-type="method" id="Sprite-Clone-nav"><a href="Sprite.html#Clone">Clone</a></li><li data-type="method" id="Sprite-Add-nav"><a href="Sprite.html#Add">Add</a></li><li data-type="method" id="Sprite-Life-nav"><a href="Sprite.html#Life">Life</a></li><li data-type="method" id="Sprite-init-nav"><a href="Sprite.html#init">init</a></li><li data-type="method" id="Sprite-addInitializer-nav"><a href="Sprite.html#addInitializer">addInitializer</a></li><li data-type="method" id="Sprite-get_id-nav"><a href="Sprite.html#get_id">get_id</a></li><li data-type="method" id="Sprite-create_id-nav"><a href="Sprite.html#create_id">create_id</a></li><li data-type="method" id="Sprite-getSizeByMax-nav"><a href="Sprite.html#getSizeByMax">getSizeByMax</a></li><li data-type="method" id="Sprite-SingleFrame-nav"><a href="Sprite.html#SingleFrame">SingleFrame</a></li><li data-type="method" id="Sprite-LifeSpan-nav"><a href="Sprite.html#LifeSpan">LifeSpan</a></li><li data-type="method" id="Sprite-Life-nav"><a href="Sprite.html#Life">Life</a></li><li data-type="method" id="Sprite-isDead-nav"><a href="Sprite.html#isDead">isDead</a></li><li data-type="method" id="Sprite-die-nav"><a href="Sprite.html#die">die</a></li><li data-type="method" id="Sprite-onScreen-nav"><a href="Sprite.html#onScreen">onScreen</a></li><li data-type="method" id="Sprite-update-nav"><a href="Sprite.html#update">update</a></li><li data-type="method" id="Sprite-onUpdate-nav"><a href="Sprite.html#onUpdate">onUpdate</a></li><li data-type="method" id="Sprite-travelLineOnLoop-nav"><a href="Sprite.html#travelLineOnLoop">travelLineOnLoop</a></li><li data-type="method" id="Sprite-shoot-nav"><a href="Sprite.html#shoot">shoot</a></li><li data-type="method" id="Sprite-subsprite-nav"><a href="Sprite.html#subsprite">subsprite</a></li><li data-type="method" id="Sprite-animate-nav"><a href="Sprite.html#animate">animate</a></li><li data-type="method" id="Sprite-onAnimationComplete-nav"><a href="Sprite.html#onAnimationComplete">onAnimationComplete</a></li><li data-type="method" id="Sprite-center-nav"><a href="Sprite.html#center">center</a></li><li data-type="method" id="Sprite-overlap_x-nav"><a href="Sprite.html#overlap_x">overlap_x</a></li><li data-type="method" id="Sprite-overlap_y-nav"><a href="Sprite.html#overlap_y">overlap_y</a></li><li data-type="method" id="Sprite-collide_stop_x-nav"><a href="Sprite.html#collide_stop_x">collide_stop_x</a></li><li data-type="method" id="Sprite-restoreFrom-nav"><a href="Sprite.html#restoreFrom">restoreFrom</a></li></ul></li><li id="Animation-nav"><a href="Animation.html">Animation</a><ul class='methods'><li data-type="method" id="Animation-init_singleFrame-nav"><a href="Animation.html#init_singleFrame">init_singleFrame</a></li><li data-type="method" id="Animation-onLoad-nav"><a href="Animation.html#onLoad">onLoad</a></li><li data-type="method" id="Animation-onRun-nav"><a href="Animation.html#onRun">onRun</a></li><li data-type="method" id="Animation-onComplete-nav"><a href="Animation.html#onComplete">onComplete</a></li><li data-type="method" id="Animation-soleComplete-nav"><a href="Animation.html#soleComplete">soleComplete</a></li><li data-type="method" id="Animation-ReverseFrames-nav"><a href="Animation.html#ReverseFrames">ReverseFrames</a></li><li data-type="method" id="Animation-SingleFrame-nav"><a href="Animation.html#SingleFrame">SingleFrame</a></li><li data-type="method" id="Animation-getCurrentPixelMap-nav"><a href="Animation.html#getCurrentPixelMap">getCurrentPixelMap</a></li><li data-type="method" id="Animation-setFrame-nav"><a href="Animation.html#setFrame">setFrame</a></li><li data-type="method" id="Animation-onUpdate-nav"><a href="Animation.html#onUpdate">onUpdate</a></li><li data-type="method" id="Animation-run-nav"><a href="Animation.html#run">run</a></li><li data-type="method" id="Animation-animate-nav"><a href="Animation.html#animate">animate</a></li><li data-type="method" id="Animation-engage-nav"><a href="Animation.html#engage">engage</a></li><li data-type="method" id="Animation-Frame#createColorMap-nav"><a href="Animation.html#.Frame#createColorMap">Frame#createColorMap</a></li><li data-type="method" id="Animation-StaticAnimation#onLoad-nav"><a href="Animation.html#.StaticAnimation#onLoad">StaticAnimation#onLoad</a></li><li data-type="method" id="Animation-StaticAnimation#onRun-nav"><a href="Animation.html#.StaticAnimation#onRun">StaticAnimation#onRun</a></li><li data-type="method" id="Animation-StaticAnimation#onComplete-nav"><a href="Animation.html#.StaticAnimation#onComplete">StaticAnimation#onComplete</a></li><li data-type="method" id="Animation-StaticAnimation#soleComplete-nav"><a href="Animation.html#.StaticAnimation#soleComplete">StaticAnimation#soleComplete</a></li><li data-type="method" id="Animation-StaticAnimation#ReverseFrames-nav"><a href="Animation.html#.StaticAnimation#ReverseFrames">StaticAnimation#ReverseFrames</a></li><li data-type="method" id="Animation-StaticAnimation#SingleFrame-nav"><a href="Animation.html#.StaticAnimation#SingleFrame">StaticAnimation#SingleFrame</a></li><li data-type="method" id="Animation-StaticAnimation#getCurrentPixelMap-nav"><a href="Animation.html#.StaticAnimation#getCurrentPixelMap">StaticAnimation#getCurrentPixelMap</a></li><li data-type="method" id="Animation-StaticAnimation#setFrame-nav"><a href="Animation.html#.StaticAnimation#setFrame">StaticAnimation#setFrame</a></li><li data-type="method" id="Animation-StaticAnimation#onUpdate-nav"><a href="Animation.html#.StaticAnimation#onUpdate">StaticAnimation#onUpdate</a></li><li data-type="method" id="Animation-StaticAnimation#run-nav"><a href="Animation.html#.StaticAnimation#run">StaticAnimation#run</a></li><li data-type="method" id="Animation-StaticAnimation#animate-nav"><a href="Animation.html#.StaticAnimation#animate">StaticAnimation#animate</a></li><li data-type="method" id="Animation-StaticAnimation#engage-nav"><a href="Animation.html#.StaticAnimation#engage">StaticAnimation#engage</a></li></ul></li><li id="Frame-nav"><a href="Frame.html">Frame</a></li><li id="Sound-nav"><a href="Sound.html">Sound</a></li><li id="GamepadEvent-nav"><a href="GamepadEvent.html">GamepadEvent</a></li><li id="Renderable-nav"><a href="Renderable.html">Renderable</a></li><li id="GameImage-nav"><a href="GameImage.html">GameImage</a></li><li id="BooleanEvent-nav"><a href="BooleanEvent.html">BooleanEvent</a><ul class='methods'><li data-type="method" id="BooleanEvent-On-nav"><a href="BooleanEvent.html#On">On</a></li></ul></li><li id="InputEvent-nav"><a href="InputEvent.html">InputEvent</a></li><li id="KeyboardEvent-nav"><a href="KeyboardEvent.html">KeyboardEvent</a></li><li id="StaticAnimation-nav"><a href="StaticAnimation.html">StaticAnimation</a></li><li id="BoneSprite-nav"><a href="BoneSprite.html">BoneSprite</a></li><li id="Interactive-nav"><a href="Interactive.html">Interactive</a></li><li id="Item-nav"><a href="Item.html">Item</a></li><li id="SpriteBrush-nav"><a href="SpriteBrush.html">SpriteBrush</a></li><li id="SpriteFill-nav"><a href="SpriteFill.html">SpriteFill</a></li><li id="SpriteGroup-nav"><a href="SpriteGroup.html">SpriteGroup</a></li><li id="Terrain-nav"><a href="Terrain.html">Terrain</a></li></ul>
+  </nav>
+
+  <div id="main">
+    
+    <h1 class="page-title">
+      Item
+    </h1>
+    
+
+    
+
+<section>
+  <header>
+    
+      <h2>
+        
+        Item
+        
+      </h2>
+
+      
+        <div class="class-description">
+          <p>Creates a new Item.</p>
+        </div>
+      
+    
+  </header>
+
+  <article>
+    <div class="container-overview">
+      
+        
+
+
+  
+    <h2>Constructor</h2>
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#Item">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="Item">
+      <span class="type-signature"></span>new Item<span class="signature">(src, scale)</span><span class="type-signature"> &rarr; {<a href="Item.html">Item</a>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+        <th>Default</th>
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>src</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+          <td class="default">
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>the srcPath for the image of the Item</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>scale</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      number
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+          <td class="default">
+            
+              1.0
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>the scale to be applied to size of each animation-frame</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="gamelab.js.html">gamelab.js</a>, <a href="gamelab.js.html#line11976">line 11976</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+  </article>
+</section>
+
+
+
+
+  </div>
+
+  <br class="clear">
+
+  
+  <div class="modal fade" id="searchResults">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Search results</h4>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  
+
+  <footer>
+    Documentation generated by
+    <a href="https://github.com/jsdoc3/jsdoc">JSDoc
+      3.6.3</a>
+  </footer>
+
+  <script src="scripts/linenumber.js"></script>
+  <script src="scripts/pagelocation.js"></script>
+
+  <script>
+
+    var g = {rotation:0};
+
+    var DisplayUpdates = {
+
+      Logo:{
+        start: function () {
+
+        setInterval(function () {
+
+            g.rotation += 1.0;
+
+          var GDom = document.querySelector('i.g-icon');
+
+            GDom.style.transform = `rotate(${g.rotation}deg)`;
+
+        }, 20);
+
+        }
+      }
+
+    };
+
+
+  $(document).ready(function(){
+
+      console.log('Document-Ready::');
+      DisplayUpdates.Logo.start();
+
+  });
+
+  </script>
+
+
+
+  
+  <script type="text/javascript">
+    $(document).ready(function () {
+
+      SearcherDisplay.init();
+
+      $('#search-form').submit(function (e) {
+
+        //alert('form submit'); localStorage.setItem('searchValue', $('#search-input').val());
+
+        SearcherDisplay.startSearch();
+
+        e.preventDefault();
+
+        return false;
+
+      });
+    });
+  </script>
+  
+
+  <script type="text/x-docstrap-searchdb">
+    <%= searchableDocuments %>
+  </script>
+
+
+</body>
+</html>

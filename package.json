@@ -1,8 +1,7 @@
 {
-  "name": "gamelab-js",
-  "version": "0.8.0",
-  "description": "The javascript library for 2D games",
-  "main": "main.js",
+  "name": "gamelab",
+  "version": "1.0.0",
+  "description": "framework + demos for 2D games",
   "scripts": {
     "test": "npm-run-all  -p -r system serve",
     "start": "npm-run-all  -p -r system serve",
@@ -16,11 +15,10 @@
     "graphics",
     "javascript",
     "json",
-    "data",
-    "persistence"
+    "data"
   ],
-  "author": "GitHub",
-  "license": "UNLICENSED",
+  "author": "Jordan Edward Joseph Blake",
+  "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.24.0",
     "babel-preset-es2015": "^6.24.0",
@@ -38,17 +36,20 @@
     "sutro-jsdoc-theme": "0.0.1"
   },
   "directories": {
-    "doc": "client/docs"
+    "doc": "docs",
+    "test": "tests"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "latest",
+    "fs-extra": "^9.0.1",
+    "glob": "^7.1.6",
     "grunt": "^1.0.4",
+    "http-server": "latest",
     "jsdoc": "^3.6.1",
     "npm-run-all": "^4.1.5",
-    "opn": "latest",
-    "http-server": "latest"
+    "opn": "latest"
   },
   "bin": {
     "gs-create-game": "bin/create.js"

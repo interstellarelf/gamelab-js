@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>2D-Math: Position-Rotation</title>
+    <script src="../dist/gamelab/gamelab.js"></script>
+    <script src="./js/stats/gl-example-stats.js"></script>
+    <script src="./js/libs/dat.gui.js"></script>
+    <!-- spritebox-example.css style -->
+    <link rel="stylesheet" href="./styles/example.css">
+
+    <style>
+
+      button#rotate {
+        position: absolute;
+        bottom: 11px;
+        left: 20px;
+        width: 140px;
+        height: 32px;
+        padding: 5px;
+        font-size: 14px;
+      }
+
+    </style>
+
+  </head>
+
+  <body>
+    <header>
+      <img src="./images/lib/gamelab-logo.png" alt="" id="logo">
+      <span class="title">2D-Math: Position-Rotation</span>
+    </header>
+
+    <script>
+
+      //create updatable GameWindow
+      let gameWindow = new Gamelab.GameWindow().Background('#111111');
+
+      //create Sprite: shuriken
+      let sprite = new Gamelab.Sprite('./images/weapons/shuriken.png');
+
+      //data-persistent params
+      let params = {
+        position: new Gamelab.Vector(200, 200),
+        rotation: new Gamelab.Vector(0, 0),
+        useSpeed:false,
+        rotationSpeed:0
+      };
+
+      //updates every update of GameWindow
+      sprite.onUpdate(function(){
+
+        this.Position(params.position);
+
+        if(params.rotationSpeed > 0)
+        {
+          this.rotation.x += params.rotationSpeed;
+          params.useSpeed = true;
+        }
+        else{
+            this.Rotation(params.rotation);
+        }
+
+      });
+
+      //add ready(fxn)
+      Gamelab.ready(function () {
+
+        gameWindow.add(sprite);
+
+        //start animating
+        gameWindow.start();
+
+        /*********************************
+        * Section Gui
+        **********************************/
+
+        let gui = new dat.gui.GUI();
+
+        sprite.position.x = 200;
+        sprite.position.y = 200;
+
+        let positionFolder = gui.addFolder('position');
+
+        positionFolder.add(params.position, 'x').min(0).max(600).step(1.0);
+        positionFolder.add(params.position, 'y').min(0).max(600).step(1.0);
+
+        let rotationFolder = gui.addFolder('rotation');
+
+        let useSpeedGui = rotationFolder.add(params, 'useSpeed').listen();
+
+        useSpeedGui.onChange(function(value){
+
+          if(value == false)
+          {
+            rotationSpeedGui.setValue(0);
+          }
+
+        });
+
+        let rotationXGui = rotationFolder.add(params.rotation, 'x').min(0).max(360).step(0.2).listen();
+
+        rotationXGui.onChange(function(value){
+
+          if(value > 0)
+          {
+            useSpeedGui.setValue(false);
+            params.rotation.x = value;
+          }
+
+        });
+
+        let rotationSpeedGui = rotationFolder.add(params, 'rotationSpeed').min(0).max(20).step(0.2).listen();
+
+        rotationSpeedGui.onChange(function(value){
+
+          if(value > 0)
+          {
+              useSpeedGui.setValue(true);
+              rotationXGui.setValue(0);
+          }
+        });
+
+        Stats.showAll();
+
+        /*********************************
+        * End Gui
+        **********************************/
+
+      });
+    </script>
+
+  </body>
+
+</html>

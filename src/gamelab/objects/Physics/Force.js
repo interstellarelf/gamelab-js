@@ -93,18 +93,6 @@
                 itemx.__inAir = true;
 
 
-                if (itemx.position.y >= itemx.groundMaxY) {
-                    itemx.position.y = itemx.groundMaxY;
-                }
-
-                itemx.groundMaxY = 3000000; //some crazy number you'll never reach in-game
-
-                Gamelab.each(topClastics, function (iy, itemy) {
-
-                    itemx.collide_stop_top(itemy);
-
-                });
-
             });
         }
     };

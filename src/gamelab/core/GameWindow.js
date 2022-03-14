@@ -38,9 +38,17 @@ class GameWindow {
     if (!canvas) {
       console.info('GameWindow() had no {canvas:canvas} argument. Creating a new canvas in document.body...');
       this.canvas = document.createElement('CANVAS');
-      this.canvas.setAttribute('class', 'gamewindow');
-      document.body.append(this.canvas);
     }
+    else if(typeof canvas == 'string') {
+      this.canvas = document.querySelector(canvas);
+    }
+    else if(typeof canvas == HTMLCanvasElement)
+    {
+      this.canvas = canvas;
+    }
+
+    this.canvas.setAttribute('class', 'gamewindow');
+    document.body.append(this.canvas);
 
     this.context = this.canvas.getContext('2d');
 
@@ -402,6 +410,78 @@ class GameWindow {
     this.engaged = true;
   }
 
+  batchDraw(drawables) {
+
+    var __gameWindow = this;
+
+    Gamelab.each(drawables, function(ix, item) {
+
+      if (typeof item.draw == 'function') {
+        item.draw(__gameWindow.ctx, __gameWindow.camera);
+      }
+
+    });
+
+  }
+
+  hasDrawableByPosition(px, py) {
+
+    for(var x = 0; x < this.drawables.length; x++)
+    {
+
+      var sprite = this.drawables[x];
+
+      if(px >= sprite.position.x && px <= sprite.position.x + sprite.size.x &&
+        py >= sprite.position.y && py <= sprite.position.y + sprite.size.y)
+        {
+          return true;
+        }
+
+    }
+
+    return false;
+
+  }
+
+  splitCurrentWindowToSpriteArray(sx, sy, frameSizeX, frameSizeY) {
+
+    let sprites = [];
+
+    for(var x = 0; x < frameSizeX; x+=sx)
+    {
+
+      for(var y = 0; y < frameSizeY; y+=sy)
+      {
+
+        if(!this.hasDrawableByPosition(x, y))
+        {
+          continue;
+        }
+
+        var canvas = document.createElement('CANVAS');
+        canvas.width = frameSizeX;
+        canvas.height = frameSizeY;
+        var ctx = canvas.getContext('2d');
+
+        var imageData = this.ctx.getImageData(x, y, sx, sy);
+        ctx.putImageData(imageData, 0, 0);
+
+        var sprite = new Gamelab.Sprite(canvas);
+
+        sprite.Position(x, y);
+
+        sprite.Size(sx, sy);
+
+        sprites.push(sprite);
+
+      }
+
+    }
+
+    return sprites;
+
+  }
+
   draw(canvas) {
 
     if (canvas instanceof HTMLCanvasElement)
@@ -621,6 +701,18 @@ class GameWindow {
     }
   }
 
+  /**
+   * removeAll(): removes all drawables
+   *
+   * @function
+   * @param {Object} obj the object to be removed (Sprite)
+   * @memberof GameWindow
+   **********/
+
+  removeAll() {
+    this.drawables = [];
+  }
+
   has(obj) {
 
     var ix = this.drawables.indexOf(obj);
@@ -722,6 +814,16 @@ class GameWindow {
         this.__statsMS.end();
       }
     }
+  }
+
+  pause() {
+    this.engaged = false;
+    this.paused = true;
+  }
+
+  unpause() {
+    this.engaged = true;
+    this.paused = true;
   }
 
   animate(time, frameInterval) {

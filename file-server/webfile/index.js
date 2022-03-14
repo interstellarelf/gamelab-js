@@ -144,8 +144,6 @@ module.exports = function(options) {
 
     var data = req.body.data;
 
-    res.send('not working');
-
     var content = data.content + "",
       filename = data.filename + "",
       type = data.type + "",
@@ -164,6 +162,9 @@ module.exports = function(options) {
     ensureExists(folders.join('/'), function() {
 
       console.log('--folder existed or was created');
+
+      console.log('saving @' + fullpath);
+
 
       require('fs').writeFile(fullpath, content,
         function(err) {
@@ -186,10 +187,6 @@ module.exports = function(options) {
       filename: filename,
       type: type,
       contentLength: content.length
-    }));
-
-    res.end(jstr({
-      message: "route-test complete"
     }));
 
   });

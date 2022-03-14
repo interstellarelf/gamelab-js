@@ -98,7 +98,7 @@ let Collision = {
 
 
   //takes 2 arrays, returns array (empy array means no-collision)
-  spriteCollideArray(obj1, obj2, gw) {
+  spriteBoxCollideArray(obj1, obj2, gw) {
 
     var collisions = [],
       spritesX = obj1 instanceof Array ? obj1 : [obj1],
@@ -106,7 +106,7 @@ let Collision = {
 
     for (var x = 0; x < spritesX.length; x++) {
       for (var y = 0; y < spritesY.length; y++) {
-        if (this.spriteCollide(spritesX[x], spritesY[y])) {
+        if (this.spriteBoxCollide(spritesX[x], spritesY[y])) {
           collisions.push({
             object: spritesX[x],
             collider: spritesY[y]

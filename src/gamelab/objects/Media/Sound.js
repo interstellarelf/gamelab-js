@@ -14,22 +14,16 @@ class Sound {
         if (typeof(src) == 'object') {
 
             this.sound = document.createElement('audio');
-
             this.sound.volume = src.sound.volume;
-
             this.sound.src = src.src;
-
             this.src = src.src;
         }
 
         else if (typeof(src) == 'string') {
 
             this.sound = document.createElement('audio');
-
             this.sound.volume = 1;
-
             this.sound.src = src;
-
             this.src = src;
 
         }
@@ -156,6 +150,17 @@ class SoundList{
                 }
             }
         }
+    }
+
+    Multiply(number){
+
+      var srcList = [];
+      for(var x = 0; x < number; x++)
+      {
+        srcList.push(this.src || this.sound.src);
+      }
+
+      return new Gamelab.SoundList(srcList).Volume(this.sounds[0].volume);
     }
 
     add(src, name)

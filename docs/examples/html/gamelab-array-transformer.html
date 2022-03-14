@@ -1,0 +1,78 @@
+
+
+<script>
+
+  Array.populateSquare = function(square, value){
+    let total = square * square;
+    for(var x = 0; x < total; x++)
+    {
+      this.push(value || 0);
+    }
+  };
+
+  Array.select = function(callcheck){
+    let list = [];
+    var index = 0;
+    for(var x = 0; x < this.length; x++)
+    {
+      if(callcheck(x, this[x]))
+      {
+        list.push(this[x]);
+      }
+    }
+    return list;
+  };
+
+  Array.innerSquareSelection((stepsFromCenter)=>{
+
+    let memberList = [];
+
+    let square = Math.floor(Math.sqrt(this.length));
+
+    let center = this[Math.floor((square * square) / 2)];
+
+    let halfLength = this.length / 2,
+
+    hasSingularCenter = halfLength !== Math.floor(halfLength);
+
+    let totalSets = Math.ceil(square / 2);
+
+    var inSquareTotal = hasSingularCenter ?
+            stepsFromCenter == 0 ?
+            1 : (stepsFromCenter - 1) * 2 + 4;
+
+    //move out ix steps from center
+    var x = center - (square * stepsFromCenter) - 1 - 1;
+
+    for(var sxo = 0; sxo < square; sxo++)
+    {
+
+      memberList.push({
+        stepsFromCenter: stepsFromCenter,
+        index: x + index,
+        value: this[x + index]
+      });
+
+      if(hasSingularCenter)
+      {
+        memberList.push({
+          stepsFromCenter: stepsFromCenter,
+          index: (x + index) + ((square + 1) * (stepsFromCenter * 2)),
+          value: this[x + index]
+        });
+      }
+      else {
+        memberList.push({
+          stepsFromCenter: stepsFromCenter,
+          index: (x + index) + (square * (stepsFromCenter * 2)),
+          value: this[x + index]
+        });
+      }
+    }
+
+    return memberList;
+
+  });
+
+
+</script>

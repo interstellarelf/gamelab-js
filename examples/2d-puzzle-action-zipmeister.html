@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>ZipMeister</title>
+  <script src="../dist/gamelab/gamelab.js"></script>
+  <script src="./scripts/title/title-screen.js"></script>
+  <!-- spritebox-example.css style -->
+  <link rel="stylesheet" href="./styles/example.css">
+  <link rel="stylesheet" href="./styles/game-fonts.css">
+
+  <style>
+
+    body,
+    html {
+      background: black;
+      overflow: hidden;
+    }
+
+    span.dgc-title {
+      position: absolute;
+      z-index: 9999;
+      width: 241px;
+      height: 20px;
+      font-size: 12px;
+      top: 0;
+      overflow: visible;
+      background: #111;
+      color: lightgrey;
+      padding-left: 4px;
+      border-bottom: 1px solid #444;
+    }
+
+    canvas#gamewindow {
+      position: absolute;
+      top: 0px;
+    }
+
+    div#container {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0px;
+      left: 0px;
+    }
+
+    div.Gamelab-stats {
+      margin: 5px;
+    }
+
+    div.Gamelab-stats span {
+      margin-left: 6px;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <header>
+    <img src="../res/images/gamelab-logo.png" alt="" id="logo">
+    <span class="title">Zipmeister</span>
+  </header>
+
+  <div id="container">
+
+    <canvas id="gamewindow" class="gamewindow"></canvas>
+
+  </div>
+
+  <script>
+    var canvas = document.getElementById('canvas#gamewindow');
+
+    var gameWindow = new Gamelab.GameWindow(canvas).Background('#111');
+
+    var playerSprite;
+
+    function boxCollide(pos1, size1, pos2, size2) {
+      return pos1.x >= pos2.x - size1.x &&
+        pos1.x <= pos2.x + size2.x &&
+        pos1.y >= pos2.y - size1.y &&
+        pos1.y <= pos2.y + size2.y;
+    };
+
+
+
+    Sprite.prototype.hasBoxCollision = function(sprite) {
+
+      let thirdSize = Math.round(0.33 * this.size.x);
+
+      let spriteThirdSize = Math.round(0.33 * sprite.size.x);
+
+      let pos1 = new Gamelab.Vector(this.position).add(thirdSize, thirdSize);
+
+      let pos2 = new Gamelab.Vector(sprite.position).add(spriteThirdSize, spriteThirdSize);
+
+      let size1 = new Gamelab.Vector(thirdSize, thirdSize);
+
+      let size2 = new Gamelab.Vector(spriteThirdSize, spriteThirdSize);
+
+      return boxCollide(pos1, size1, pos2, size2);
+
+    };
+
+    Sprite.prototype.SlideToPosition = function(x, y, duration, cb) {
+      if (typeof(x) == 'object') //argument coercion: x is a vector, y is duration
+      {
+        duration = y;
+        y = x.y;
+        x = x.x;
+      }
+
+      if (!TWEEN instanceof Object) {
+        return console.error('TWEEN.js required for SmoothMotion();');
+      }
+
+      var t = new TWEEN.Tween(this.position)
+        .easing(TWEEN.Easing.Quadratic.InOut)
+
+        .to(new Gamelab.Vector(x, y), duration)
+        .onUpdate(function() {
+          //console.log(objects[0].position.x,objects[0].position.y);
+
+
+        })
+        .onComplete(function() {
+          //console.log(objects[0].position.x, objects[0].position.y);
+
+          if (cb)
+            cb();
+
+        });
+
+      t.start();
+
+    }
+
+    new Gamelab.Module().load('./scripts/pause/pause-message.js');
+
+    var RegionSprites = {
+      top: new Gamelab.Sprite('./images/shapes/rectangle.png'),
+      left: new Gamelab.Sprite('./images/shapes/rectangle.png'),
+      bottom: new Gamelab.Sprite('./images/shapes/rectangle.png'),
+      right: new Gamelab.Sprite('./images/shapes/rectangle.png'),
+      center: new Gamelab.Sprite('./images/shapes/rectangle.png')
+    };
+
+    var zipSoundSources = [
+        './sounds/zip-effect.mp3', './sounds/zip-effect.mp3', './sounds/zip-effect.mp3', './sounds/zip-effect.mp3', './sounds/zip-effect.mp3'
+      ],
+
+      gridSoundSources = [
+        './sounds/grid-move.mp3',
+        './sounds/grid-move.mp3',
+        './sounds/grid-move.mp3',
+        './sounds/grid-move.mp3',
+        './sounds/grid-move.mp3',
+        './sounds/grid-move.mp3',
+        './sounds/grid-move.mp3',
+        './sounds/grid-move.mp3',
+        './sounds/grid-move.mp3',
+        './sounds/grid-move.mp3',
+        './sounds/grid-move.mp3',
+        './sounds/grid-move.mp3',
+        './sounds/grid-move.mp3',
+        './sounds/grid-move.mp3'
+      ],
+
+      bounceSoundSources = [
+        './sounds/bounce-01.mp3',
+        './sounds/bounce-02.mp3',
+        './sounds/bounce-02.mp3',
+        './sounds/bounce-02.mp3',
+        './sounds/bounce-03.mp3',
+        './sounds/bounce-03.mp3',
+        './sounds/bounce-02.mp3',
+        './sounds/bounce-01.mp3',
+        './sounds/bounce-02.mp3',
+        './sounds/bounce-02.mp3',
+        './sounds/bounce-01.mp3',
+        './sounds/bounce-01.mp3',
+        './sounds/bounce-02.mp3',
+        './sounds/bounce-02.mp3',
+        './sounds/bounce-01.mp3',
+        './sounds/bounce-02.mp3',
+        './sounds/bounce-01.mp3',
+        './sounds/bounce-03.mp3',
+        './sounds/bounce-01.mp3',
+        './sounds/bounce-02.mp3',
+        './sounds/bounce-01.mp3',
+      ];
+
+    var ambientOneSources = [
+        './sounds/ambient/ambient-1.mp3',
+      ],
+      ambientTwoSources = [
+        './sounds/ambient/ambient-2.mp3',
+      ],
+      ambientThreeSources = [
+        './sounds/ambient/ambient-3.mp3',
+      ],
+
+      actionTestOneSources = [
+        './sounds/funk/short-song-test/song-test-01.mp3',
+      ],
+      actionTestTwoSources = [
+        './sounds/funk/short-song-test/song-test-02.mp3',
+      ],
+      actionTestThreeSources = [
+        './sounds/funk/short-song-test/song-test-03.mp3',
+      ],
+
+      actionMusicOneSources = [
+        './sounds/funk/aces-high.mp3',
+      ],
+      actionMusicTwoSources = [
+        './sounds/funk/loopster.mp3',
+      ],
+      actionMusicThreeSources = [
+        './sounds/funk/protofunk.mp3',
+      ],
+      actionMusicFourSources = [
+        './sounds/funk/shaving-mirror.mp3',
+      ],
+      actionMusicFiveSources = [
+        './sounds/funk/zig-zag.mp3',
+      ];
+
+    var Program = {
+      timer: 0,
+      enemies: [],
+      shapePadding: 0,
+      difficulty: 5,
+      userMoney: undefined,
+      CashTotal: 0,
+      CashAmounts: {
+        small: 0.10,
+        medium: 0.20,
+        large: 0.50
+      },
+      CollectCash: function(amount) {
+
+        if (typeof Program.userMoney.total == 'string') {
+          Program.userMoney.total = parseFloat(Program.userMoney.total);
+        }
+
+        Program.userMoney.total += amount;
+        Program.userMoney.total = Math.round(Program.userMoney.total * 100) / 100;
+        Program.userMoney.update(Program.userMoney.total);
+        this.CashTotal = Program.userMoney.total;
+
+      },
+      LiveRegions: {
+        top: false,
+        bottom: false,
+        left: false,
+        right: false
+      },
+      ZipTargets: {
+        north: false,
+        south: false,
+        east: false,
+        west: false
+      },
+      Sounds: {
+        zip: new Gamelab.SoundList([...zipSoundSources]),
+        bounce: new Gamelab.SoundList([...bounceSoundSources]),
+        gridMove: new Gamelab.SoundList([...gridSoundSources])
+      },
+      Music: {
+        Funk: [
+          new Gamelab.SoundList([...actionMusicOneSources]),
+          new Gamelab.SoundList([...actionMusicTwoSources]),
+          new Gamelab.SoundList([...actionMusicThreeSources]),
+          new Gamelab.SoundList([...actionMusicFourSources]),
+          new Gamelab.SoundList([...actionMusicFiveSources]),
+        ],
+        Test: [
+          new Gamelab.SoundList([...actionTestOneSources]),
+          new Gamelab.SoundList([...actionTestTwoSources]),
+          new Gamelab.SoundList([...actionTestThreeSources]),
+        ]
+      },
+      shapeSize: new Gamelab.Vector(0, 0),
+      Regions: RegionSprites,
+      shapes: [],
+      showContainers: false,
+      unitSize: 50
+    };
+
+    for (var x in RegionSprites) {
+
+      RegionSprites[x].invisible = !Program.showContainers;
+
+      RegionSprites[x].Layer(-10);
+
+      gameWindow.add(RegionSprites[x]);
+
+      RegionSprites[x].name = x + '-region';
+
+      RegionSprites[x].onUpdate(function() {
+
+        var greaterWidth = gameWindow.canvas.width > gameWindow.canvas.height ?
+          true :
+          false;
+
+        var s = greaterWidth ?
+          gameWindow.canvas.height / 3.0 :
+          gameWindow.canvas.width / 3.0;
+
+        this.Size(s * 0.95, s * 0.95);
+
+        var smallerSize = greaterWidth ?
+          gameWindow.canvas.height :
+          gameWindow.canvas.width;
+
+        this.Pos(gameWindow.canvas.width / 2 - this.size.x / 2, gameWindow.canvas.height / 2 - this.size.y / 2);
+
+        if (this.name == 'top-region') {
+
+          this.position.y -= (this.size.y + 10);
+        }
+
+        if (this.name == 'left-region') {
+
+          this.position.x -= (this.size.x + 10);
+        }
+
+        if (this.name == 'bottom-region') {
+
+          this.position.y += (this.size.y + 10);
+        }
+
+        if (this.name == 'right-region') {
+
+          this.position.x += (this.size.x + 10);
+        }
+
+        Program.unitSize = this.size.x;
+
+      });
+    }
+
+
+    Program.MusicPlayers = {};
+
+    for (var x in Program.Music) {
+
+      Program.MusicPlayers[x] = {
+
+        currentIndex: 0,
+
+        songs: Program.Music[x],
+
+        volume: function(value) {
+
+          if (value > 1.0) {
+            value = 1.0;
+          }
+
+          if (value < 0.1) {
+            value = 0.1;
+          }
+
+          this.songs.forEach(function(item) {
+
+            item.Volume(value);
+
+          });
+
+        },
+
+        start: function() {
+
+          this.next();
+
+        },
+
+        play: function() {
+
+          this.volume(0.3);
+
+          this.next();
+
+        },
+
+        next: function() {
+
+          var $musicBox = this;
+
+          this.songs[this.currentIndex % this.songs.length].play();
+
+          this.songs[this.currentIndex % this.songs.length].sounds[0].sound.onended = function() {
+            $musicBox.next();
+          };
+
+          this.currentIndex += 1;
+
+        }
+
+      };
+    }
+
+
+
+
+
+    new Gamelab.Module().load('./scripts/sprites/zipmeister/shape-array.js', function(ShapeArray) {
+
+      Program.LiveRegions.top = new ShapeArray(6, 6, RegionSprites.top);
+      Program.LiveRegions.left = new ShapeArray(6, 6, RegionSprites.left);
+      Program.LiveRegions.bottom = new ShapeArray(6, 6, RegionSprites.bottom);
+      Program.LiveRegions.right = new ShapeArray(6, 6, RegionSprites.right);
+
+      var regions = ['top', 'left', 'bottom', 'right'];
+
+
+      gameWindow.onBeforeDraw(function() {
+
+        Program.timer += 1;
+
+        if (Gamelab.isPaused()) {
+          return;
+        }
+
+
+        if (!Program.started) {
+          return;
+        }
+
+        var centerPadding = RegionSprites.center.size.mult(0.2),
+          cpos = RegionSprites.center.position.add(centerPadding),
+          csize = RegionSprites.center.size.sub(centerPadding);
+
+        var difficulty = 400 - (Program.difficulty * 20);
+
+        if (Program.timer % difficulty !== 0) {
+          return;
+        }
+
+        console.info(playerSprite);
+
+        console.info(playerSprite.gridIndexVector);
+
+        regions.forEach(function($regionKey) {
+
+          var occupied = true;
+
+          var REGION = Program.LiveRegions[$regionKey];
+
+          var vector,
+            totalTries = 0,
+            doItAnyway = false;
+
+
+
+          while (occupied && totalTries <= 6.0) {
+
+            var randomDigit = Math.floor(Math.random() * 6.0);
+
+            if ($regionKey == 'top') {
+              vector = new Gamelab.Vector(randomDigit, 0);
+            }
+
+            if ($regionKey == 'bottom') {
+              vector = new Gamelab.Vector(randomDigit, 4);
+            }
+
+            if ($regionKey == 'left') {
+              vector = new Gamelab.Vector(0, randomDigit);
+            }
+
+            if ($regionKey == 'right') {
+              vector = new Gamelab.Vector(5, randomDigit);
+            }
+
+            //console.log(REGION.sprites.length);
+
+            occupied = REGION.sprites.hasIndexes(vector.x, vector.y);
+
+            totalTries += 1;
+          }
+
+          while (occupied) {
+
+            var pushVector = new Gamelab.Vector(vector.x, vector.y);
+
+            if ($regionKey == 'top') {
+
+              var sprites = REGION.getAllSpritesByKeyVal('ix', pushVector.x);
+
+              sprites.forEach(function(s) {
+
+                s.iy += 1;
+
+              });
+
+            }
+            if ($regionKey == 'bottom') {
+
+              var sprites = REGION.getAllSpritesByKeyVal('ix', pushVector.x);
+
+              sprites.forEach(function(s) {
+
+                s.iy -= 1;
+
+              });
+
+            }
+            if ($regionKey == 'left') {
+
+              var sprites = REGION.getAllSpritesByKeyVal('iy', pushVector.y);
+
+              sprites.forEach(function(s) {
+
+                s.ix += 1;
+
+              });
+
+            }
+            if ($regionKey == 'right') {
+
+              var sprites = REGION.getAllSpritesByKeyVal('iy', pushVector.y);
+
+              sprites.forEach(function(s) {
+
+                s.ix -= 1;
+
+              });
+
+            }
+
+            occupied = REGION.sprites.hasIndexes(vector.x, vector.y);
+          }
+
+          if (vector.x >= -6.0 && vector.x <= 6.0 && vector.y >= -6.0 && vector.y <= 6.0) {
+
+            Program.LiveRegions[$regionKey].addSprite(vector.x, vector.y);
+
+          }
+
+        });
+
+      });
+
+      RegionSprites.center.onUpdate(function() {
+
+        if (!Program.started) {
+          return;
+        }
+
+
+        var position = this.position;
+
+        if (!position)
+          return console.error('needs containerSprite w/ {position:{x, y}}');
+
+        var greaterWidth = gameWindow.canvas.width > gameWindow.canvas.height ?
+          true :
+          false;
+
+        var s = greaterWidth ?
+          gameWindow.canvas.height / 3.0 :
+          gameWindow.canvas.width / 3.0;
+
+        var SIZE = new Gamelab.Vector(s * 0.95, s * 0.95);
+
+        var smallerSize = greaterWidth ?
+          gameWindow.canvas.height :
+          gameWindow.canvas.width;
+
+        this.Pos(gameWindow.canvas.width / 2 - s / 2, gameWindow.canvas.height / 2 - s / 2);
+
+        this.Size(s, s);
+
+        this.Pos(gameWindow.canvas.width / 2, gameWindow.canvas.height / 2);
+
+        Gamelab.playerBasePosition = this.position;
+
+        this.position = this.position.sub(this.size.div(2));
+
+      });
+
+    });
+
+    new Gamelab.Module().load('./scripts/sprites/zipmeister/player.js', function(Player) {
+
+      playerSprite = new Player();
+
+      var rows = 6,
+        cols = 6;
+
+      setTimeout(function() {
+
+        for (var x = 0; x < cols; x++) {
+          for (var y = 0; y < rows; y++) {
+
+            var sprite = new Gamelab.Sprite('./images/shapes/circle-ripple-white.png');
+
+            sprite.Size(5, 5);
+
+            sprite.position.x = RegionSprites.center.position.x + x * Program.shapeSize.x + Program.shapeSize.x / 2;
+            sprite.position.y = RegionSprites.center.position.y + y * Program.shapeSize.y + Program.shapeSize.y / 2;
+
+            sprite.ix = x;
+            sprite.iy = y;
+
+            sprite.getX = function(ix) {
+
+              return Program.shapePadding + RegionSprites.center.position.x + ix * Program.shapeSize.x + Program.shapeSize.x / 2;
+            };
+
+            sprite.getY = function(ix) {
+
+              return Program.shapePadding + RegionSprites.center.position.y + ix * Program.shapeSize.y + Program.shapeSize.y / 2;
+            };
+
+            sprite.onUpdate(function() {
+
+              this.Pos(this.getX(this.ix), this.getY(this.iy));
+
+            });
+
+            gameWindow.add(sprite);
+
+          }
+        }
+
+      }, 5000);
+
+    });
+
+    function startGame() {
+
+      gameWindow.canvas.style.display = 'block';
+
+      Program.started = true;
+
+      gameWindow.start();
+
+      Program.MusicPlayers.Funk.volume(0.4);
+
+      Program.MusicPlayers.Funk.play();
+
+      new Gamelab.Module().load('./scripts/stats/image-stat.js', function() {
+
+        var items = new Gamelab.ImageStat().Size(25, 25).FontSize('18px').Src("./images/tokens/psi-coin-orange.svg").Text("Coins");
+
+        items.ScaleTop(0);
+
+        items.FontFamily('MajorMono');
+
+        items.MarginTop(55);
+
+        //Show 2nd Image/ImageStatDisplay
+
+        items.total = 0;
+
+        //Update value::
+
+        items.update(items.total);
+
+        Program.userMoney = items;
+
+      });
+
+    };
+
+    function showTitle(onStart) {
+
+      var titleScreen = document.createElement('title-screen');
+
+      titleScreen.onCreate(function() {
+
+        titleScreen.CenterTitle('Zipmeister!');
+
+        titleScreen.EnterStart('[press enter to start]');
+
+      });
+
+      titleScreen.onStart(function() {
+
+        this.style.display = 'none';
+
+        onStart();
+
+      });
+
+      document.body.appendChild(titleScreen);
+
+      gameWindow.canvas.style.display = 'none';
+
+    }
+
+    Gamelab.ready(function() {
+
+      var cardInfo = Gamelab.getVideoCardInfo();
+
+      console.info(cardInfo);
+
+
+      showTitle(function() {
+
+        startGame();
+
+      });
+
+    });
+  </script>
+
+</body>
+
+</html>

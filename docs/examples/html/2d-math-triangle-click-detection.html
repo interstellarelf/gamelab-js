@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>2D-Math: Triangle Click Detection</title>
+  <script src="../dist/gamelab/gamelab.js"></script>
+  <script src="./js/stats/gl-example-stats.js"></script>
+  <script src="./js/libs/dat.gui.js"></script>
+  <script src="./js/sprites/MouseActionSprite.js"></script>
+  <!-- spritebox-example.css style -->
+  <link rel="stylesheet" href="./styles/example.css">
+
+  <style>
+    button#rotate {
+      position: absolute;
+      bottom: 11px;
+      left: 20px;
+      width: 140px;
+      height: 32px;
+      padding: 5px;
+      font-size: 14px;
+    }
+  </style>
+
+</head>
+
+<body>
+  <header>
+    <img src="./images/lib/gamelab-logo.png" alt="" id="logo">
+    <span class="title">2D-Math: Triangle Click Detection</span>
+  </header>
+
+  <button id="rotate" class="mode rotate">Rotate +15 degrees</button>
+
+  <script>
+    let gameWindow = new Gamelab.GameWindow().Background('black');
+
+    //sword sprite
+    let sprite = new Gamelab.Sprite('./images/weapons/sabre.png');
+
+    //mouse having position of vector
+    let mouse = {
+      position: new Gamelab.Vector(0, 0)
+    };
+
+    //pointSprites: array for highlighting hovered object
+    let pointSprites = [];
+
+    //populate pointSprites
+    for (let x = 0; x < 6; x++) {
+      pointSprites.push(new Gamelab.Sprite('./images/selection/point.png'));
+      pointSprites[pointSprites.length - 1].onLoad(function() {
+
+        this.origin = this.size.div(2);
+      });
+
+      //add to gameWindow
+      gameWindow.add(pointSprites[pointSprites.length - 1]);
+    }
+
+    sprite.position.x = 300;
+    sprite.position.y = 60;
+
+    //declare MouseActionSprite for detecting hover
+    new MouseActionSprite(sprite);
+
+    //mousemove / set mouse position
+    gameWindow.canvas.addEventListener('mousemove', function(evt) {
+      console.info('hover::', evt);
+      let rect = gameWindow.canvas.getBoundingClientRect(),
+        position = {
+          x: evt.clientX - rect.left,
+          y: evt.clientY - rect.top
+        };
+      mouse.position = position;
+    });
+
+
+    Gamelab.ready(function() {
+
+      //start animating
+      gameWindow.start();
+
+      //rotate sprite by 15 degrees
+      document.querySelector('button#rotate').onclick = function() {
+        sprite.rotation.x += 15;
+      };
+
+      //call function when sprite is clicked
+      sprite.onClick(gameWindow, function() {
+        console.info('sprite click', sprite);
+      });
+
+      //call function on hover
+      sprite.onHoverUpdate(gameWindow, function(isHovered) {
+        sprite.hovered = isHovered || false;
+      });
+
+      //reference to sprite.isHovered
+      sprite.getHoverState = sprite.isHovered;
+
+      //return collisionPoints from function-call
+      sprite.getHoveredCollisionPoints = function(object, gameWindow) {
+        this.getHoverState(object, gameWindow);
+        return this.collisionPoints;
+      };
+
+      gameWindow.onBeforeDraw(function() {
+
+        //set origin/center of rotation
+        sprite.origin = sprite.size.div(2);
+
+        sprite.Origin(sprite.origin);
+
+        //getHovered >> isHovered, sets sprite.collisionPoints
+        var cPoints = sprite.getHoveredCollisionPoints(mouse, gameWindow);
+
+        //set pointSprites[x].position to each of the collisionPoints
+        if (sprite.collisionPoints) {
+          console.log('--collision');
+          pointSprites[0].position = cPoints[0][0].sub(pointSprites[0].size.div(2));
+          pointSprites[1].position = cPoints[0][1].sub(pointSprites[0].size.div(2));
+          pointSprites[2].position = cPoints[0][2].sub(pointSprites[0].size.div(2));
+          pointSprites[3].position = cPoints[1][0].sub(pointSprites[0].size.div(2));
+          pointSprites[4].position = cPoints[1][1].sub(pointSprites[0].size.div(2));
+          pointSprites[5].position = cPoints[1][2].sub(pointSprites[0].size.div(2));
+        }
+
+        pointSprites.forEach((item) => {
+          if (sprite.hovered) {
+            item.active = true;
+          } else {
+            item.active = false;
+          }
+        });
+
+
+      });
+
+
+
+      //add to gameWindow
+      gameWindow.add(sprite);
+
+
+    });
+  </script>
+
+</body>
+
+</html>
